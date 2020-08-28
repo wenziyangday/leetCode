@@ -1,6 +1,5 @@
 /**
  * 给定一个双数数组重新排序（数组的双插）
- *
  * @param {number[]} nums
  * @param {number} n
  * @return {number[]}
