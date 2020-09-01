@@ -19,6 +19,11 @@ def kids_with_candies_2(candies: List[int], extra_candies: int) -> List[bool]:
     return [True if i + extra_candies > max(candies) else False for i in candies]
 
 
+# tips：
+# 1.数值型列表的最大值 max()
+# 2.列表推导式
+
+
 if __name__ == '__main__':
     val = kids_with_candies_2(candies=[2, 3, 5, 1, 3], extra_candies=3)
     print(val)
