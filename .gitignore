@@ -1,2 +1,5 @@
 # IntelliJ related
 .idea/
+
+# python 环境包
+/venv
