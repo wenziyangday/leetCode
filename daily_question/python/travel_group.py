@@ -14,11 +14,14 @@
 
 
 # 下面的是期望输出的结构
+from typing import Dict
+
 a = {
     'Fizz': [0, 3],
     'Buzz': [0, 5, 15],
     'FizzBuzz': [15, 45]
 }
+
 
 # tips:
 # 1.强类型函数的写法 你可以先不管这种强类型写法
@@ -30,5 +33,23 @@ a = {
 # # dict 添加元素
 # # 数组添加元素
 
+def travel_group() -> Dict[str, list]:
+    back_dict = {
+        'Fizz': [],
+        'Buzz': [],
+        'FizzBuzz': []
+    }
+    for i in range(0, 101):
+        if i % 3 == 0:
+            back_dict['Fizz'].append(i)
+        if i % 5 == 0:
+            back_dict['Buzz'].append(i)
+        if i % 5 == 0 & i % 3 == 0:
+            back_dict['FizzBuzz'].append(i)
+
+    return back_dict
+
+
 if __name__ == '__main__':
-    print('调试区域')
+    dic = travel_group()
+    print(dic)
