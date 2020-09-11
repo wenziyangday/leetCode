@@ -27,8 +27,11 @@ def diagonal_sum(mat: List[List[int]]) -> int:
     index_temp = []
 
     for i in range(mat_len):
+        # 正序取值
         temp_str = str(i) + ',' + str(i)
+        # 逆序取值
         temp_str_2 = str(mat_len - 1 - i) + ',' + str(i)
+        # 坐标存在（数据已经存入）不在进行计算
         if temp_str not in index_temp:
             temp.append(mat[i][i])
             index_temp.append(temp_str)
