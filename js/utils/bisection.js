@@ -13,8 +13,8 @@ const bisection = function (radius, n, point, targetRadius) {
     const degree = 360 / n;
 
     for (let i = 1; i <= n; i++) {
-        const cos = Math.cos(oneRadius * degree * i);
-        const sin = Math.sin(oneRadius * degree * i);
+        const cos = Math.round(Math.cos(oneRadius * degree * i) * 10000) / 10000;
+        const sin = Math.round(Math.sin(oneRadius * degree * i) * 10000) / 10000;
         const x = cos * radius;
         const y = sin * radius;
         let xFlag = 0;
@@ -45,6 +45,10 @@ const bisection = function (radius, n, point, targetRadius) {
                 x: cos * radius + point.x,
                 y: sin * radius + point.y,
             },
+            newCutPoint: {
+                x: x + xFlag * targetRadius + point.x,
+                y: y + yFlag * targetRadius + point.y,
+            }
 
         });
     }
@@ -55,4 +59,4 @@ const bisection = function (radius, n, point, targetRadius) {
 //  tips:
 //  正则分组 $1, $2, $3 ....
 //  关键点正则表达式里的 () 起到分组的功用
-console.log(bisection(100, 12, {x: 200, y: 200}, 10));
+console.log(bisection(300, 12, {x: 300, y: 300}, 100));
