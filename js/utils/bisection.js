@@ -2,7 +2,7 @@
  * 等分一个圆
  * @param {number} radius
  * @param {number} n
- * @param {Object{}} point
+ * @param {{}} point
  * @param {number} targetRadius
  * @return {number[]}
  */
