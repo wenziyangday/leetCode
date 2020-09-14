@@ -14,12 +14,32 @@ from typing import List
 其中 |x| 表示 x 的绝对值。
 
 返回 好三元组的数量 。
+i < j < k
+'''
+
+'''
+分析：
+1. 循环范围 0 <= i < j < k < arr.length
 '''
 
 
 def count_good_triplets(arr: List[int], a: int, b: int, c: int) -> int:
-    print(arr)
-    print(a)
-    print(b)
-    print(c)
-    return 10
+    length = len(arr)
+    triplet = []
+    for i in range(length - 2):
+        for j in range(i + 1, length - 1):
+            for k in range(j + 1, length):
+                if abs(arr[i] - arr[j]) <= a and abs(arr[j] - arr[k]) <= b and abs(arr[i] - arr[k]) <= c:
+                    triplet.append((arr[i], arr[j], arr[k]))
+    print(triplet)
+    return len(triplet)
+
+
+'''
+tips:
+1. and、or 和 & 以及 | 的用法和区别
+2. 多重循环 能不能 优化？
+3. range()的用法
+'''
+if __name__ == '__main__':
+    print(count_good_triplets([3, 0, 1, 1, 9, 7], 7, 2, 3))
