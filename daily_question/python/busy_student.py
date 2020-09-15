@@ -22,9 +22,12 @@ from typing import List
 
 
 def busyStudent(startTime: List[int], endTime: List[int], queryTime: int) -> int:
-    print('开始%结束%查询时间%', startTime, endTime, queryTime)
-    return 10
+    summary = 0
+    for i in range(len(startTime)):
+        if startTime[i] <= queryTime <= endTime[i]:
+            summary += 1
+    return summary
 
 
 if __name__ == '__main__':
-    busyStudent([1, 2, 3], [3, 2, 7], 4)
+    print(busyStudent([1, 2, 3], [3, 2, 7], 4))
