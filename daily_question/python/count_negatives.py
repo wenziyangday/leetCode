@@ -11,9 +11,13 @@ from typing import List
 
 
 def countNegatives(grid: List[List[int]]) -> int:
-    print(grid)
-    pass
+    summary = 0
+    for item in grid:
+        for sub in item:
+            if sub < 0:
+                summary += 1
+    return summary
 
 
 if __name__ == '__main__':
-    pass
+    print(countNegatives([[4, 3, 2, -1], [3, 2, 1, -1], [1, 1, -1, -2], [-1, -1, -2, -3]]))
