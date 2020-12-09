@@ -6,18 +6,18 @@
 
 // 非递减的 顺序排列数组 统计其中 要最小移动的元素的个数
 // sort 排序
-// TODO 原地算法 比较函数( 之前看过一个比较函数哈希值)
+// 原地算法：不依靠额外资源或者依赖少数的额外资源，仅依靠输出来覆盖输入的一种算法 (改变不需要保存的 原始值 从而生成一个新的值)
 
 function heightChecker(heights) {
-  let oldHeights = heights.slice();
-  heights.sort(((a, b) => a - b));
-  let count = 0;
-  oldHeights.forEach((x, index) => {
-    if (x !== heights[index]) {
-      count += 1;
-    }
-  });
-  return count;
+    let oldHeights = heights.slice();
+    heights.sort(((a, b) => a - b));
+    let count = 0;
+    oldHeights.forEach((x, index) => {
+        if (x !== heights[index]) {
+            count += 1;
+        }
+    });
+    return count;
 }
 
 
