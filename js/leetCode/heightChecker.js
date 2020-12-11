@@ -23,5 +23,5 @@ function heightChecker(heights) {
 
 // let height = heightChecker([1, 1, 4, 2, 1, 3]);
 // let height = heightChecker([5, 1, 2, 3, 4]);
-let height = heightChecker([1, 2, 3, 4, 5]);
+const height = heightChecker([1, 2, 3, 4, 5]);
 console.log(height);

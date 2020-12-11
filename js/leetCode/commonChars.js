@@ -32,5 +32,5 @@ function commonIn(arr, target) {
 // console.log(commonIn(common, ['r', 'o', 'l', 'l', 'e', 'r']));
 
 // let char = commonChars(["bella", "label", "roller"]);
-let char = commonChars(["cool", "lock", "cook"]);
+const char = commonChars(["cool", "lock", "cook"]);
 console.log(char);

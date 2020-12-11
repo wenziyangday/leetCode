@@ -28,5 +28,5 @@ function canBeEqual(target, arr) {
 
 // let bo = canBeEqual([], []);
 // let bo = canBeEqual([1,2,3,4], [2,4,1,3]);
-let bo = canBeEqual([3, 7, 9], [3, 7, 11]);
+const bo = canBeEqual([3, 7, 9], [3, 7, 11]);
 console.log(bo);

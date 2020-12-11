@@ -22,6 +22,6 @@ function canFromArray(arr, pieces) {
 // let bo = canFromArray([91, 4, 64, 78], [[78], [4, 64], [91]]);
 // let bo = canFromArray([49,18,16], [[16,18,49]]);
 // let bo = canFromArray([15, 88], [[88], [15]]);
-let bo = canFromArray([12], [[1]]);
+const bo = canFromArray([12], [[1]]);
 
 console.log(bo);

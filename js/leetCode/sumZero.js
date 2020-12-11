@@ -16,5 +16,5 @@ function sumZero(n) {
   return [...arr, -sum];
 }
 
-let sum = sumZero(5);
+const sum = sumZero(5);
 console.log(sum);

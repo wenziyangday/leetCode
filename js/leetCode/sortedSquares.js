@@ -11,5 +11,5 @@ function sortedSquares(nums) {
   return nums.map(x => Math.pow(x, 2)).sort(((a, b) => a - b));
 }
 
-let num = sortedSquares([-4, -1, 0, 3, 10]);
+const num = sortedSquares([-4, -1, 0, 3, 10]);
 console.log(num);

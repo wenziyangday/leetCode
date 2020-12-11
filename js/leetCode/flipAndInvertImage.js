@@ -9,5 +9,5 @@ function flipAndInvertImage(A) {
   return A.map((a) => a.reverse().map((item) => item === 1 ? 0 : 1));
 }
 
-let reverseArr = flipAndInvertImage([[1, 1, 0], [1, 0, 1], [0, 0, 0]]);
+const reverseArr = flipAndInvertImage([[1, 1, 0], [1, 0, 1], [0, 0, 0]]);
 console.log(reverseArr);
