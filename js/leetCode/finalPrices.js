@@ -1,7 +1,7 @@
 /**
  * @description leetCode 1475题 商品折扣后的最终折扣
  * @param {number[]} prices
- // * @return {number }
+ * @return {number []}
  * */
 
 
