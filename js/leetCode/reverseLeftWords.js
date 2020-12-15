@@ -5,9 +5,6 @@
  * @return {string}
  * */
 
-// 当下标 index + k > code.length
-// 子数组
-
 function reverseLeftWords(s, n) {
   let a = s.split('');
   return [...a, a.splice(0, n)].toString().replace(/\,/g, '');

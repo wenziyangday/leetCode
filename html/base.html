@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../js">
+</head>
+<body>
+分割线
+<hr>
+
+基本数据类型：null, undefined, null, string, boolean、 symbol
+引用类型：Array, object, function
+
+基本类型存在于栈中
+引用类型存在内存堆中，但是其指向该堆的指针（索引）存在于栈中
+
+计算机内存和数据结构
+
+<hr>
+解析字符串（parseInt、parseFloat）、强制类型转换（String()）
+parseInt、parseFloat 从左至右拾取数值、遇到非数值 就结束拾取
+强制类型 是全量检查 不满足 就 NaN
+<script>
+    console.log(isNaN(10))
+    console.log(isNaN('o'))
+    console.log(Number.isNaN('x'))
+    console.log(new Array(10));
+
+</script>
+</body>
+</html>
