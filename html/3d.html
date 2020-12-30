@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style> body {
+        margin: 0;
+    } </style>
+
+    <script src="//unpkg.com/3d-force-graph"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <!--<script src="../../dist/3d-force-graph.js"></script>-->
+</head>
+
+<body>
+<div id="3d-graph"></div>
+
+<script>
+  // Random tree
+  const N = 40;
+  const gData = {
+    nodes: [...Array(N).keys()].map(i => ({id: i})),
+    links: [...Array(N).keys()]
+      .filter(id => id)
+      .map(id => {
+        const distance = (Math.random() < 0.2) ? 75 : 250;
+        const width = (distance == 75) ? 4 : 0.2;
+
+        return {
+          source: id,
+          target: Math.round(Math.random() * (id - 1)),
+          width: 0,
+          distance: 0
+        }
+      })
+  };
+  console.log([...Array(N).keys()].map(i => ({id: i})), [...Array(N).keys()]
+    .filter(id => id)
+    .map(id => ({
+      source: id,
+      target: Math.round(Math.random() * (id - 1))
+    })));
+
+  const Graph = ForceGraph3D()
+  (document.getElementById('3d-graph'))
+    .graphData(gData)
+    .linkwidth("width")
+    .nodeLabel((node) => node.id)
+    .linkDirectionalArrowLength(3.5)
+    .linkDirectionalArrowRelPos(1)
+    .linkCurvature(0.25)
+    .d3Force("link", d3.forceLink().distance(d => d.distance));
+</script>
+</body>
+</html>
