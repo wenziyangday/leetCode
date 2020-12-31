@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ajax 请求实现</title>
+</head>
+<body>
+<h1>ajax</h1>
+
+<script>
+    function ajax(url, method, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, url);
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+            callback();
+          }
+        }
+
+        xhr.send();
+
+
+    }
+</script>
+
+</body>
+</html>
