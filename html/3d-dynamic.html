@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <title>3d-dynamic</title>
+<meta charset="UTF-8">
 <head>
     <style> body {
         margin: 0;
@@ -8,43 +9,60 @@
 
     <script src="//unpkg.com/3d-force-graph"></script>
     <!--<script src="../../dist/3d-force-graph.js"></script>-->
+    <style>
+        .btns {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 30px;
+            background: red;
+            z-index: 999;
+        }
+    </style>
 </head>
 
 <body>
 <div id="3d-graph"></div>
 
+<div class="btns" id="btns" onclick="onclicks()">点击</div>
+
 <script>
   const initData = {
-    nodes: [ {id: 0 } ],
+    nodes: [{id: 0, name: '星巴克'}],
     links: []
   };
 
   const elem = document.getElementById("3d-graph");
 
   const Graph = ForceGraph3D()(elem)
-    .enableNodeDrag(false)
     .onNodeHover(node => elem.style.cursor = node ? 'pointer' : null)
-    // .onNodeClick(removeNode)
+    .linkOpacity(0.4)
+    .onNodeClick(onclicks)
+    .linkDirectionalParticles(1)
     .graphData(initData);
 
-  setInterval(() => {
-    const { nodes, links } = Graph.graphData();
+
+  function onclicks(node) {
+    let {nodes, links} = Graph.graphData();
     const id = nodes.length;
     Graph.graphData({
-      nodes: [...nodes, { id }],
-      links: [...links, { source: id, target: Math.round(Math.random() * (id-1)) }]
+      nodes: [...nodes, {id}],
+      links: [...links, {source: id, target: Math.round(Math.random() * (id - 1))}]
     });
-  }, 2000);
-
-  //
+  }
 
   // function removeNode(node) {
-  //   let { nodes, links } = Graph.graphData();
+  //   let {nodes, links} = Graph.graphData();
   //   links = links.filter(l => l.source !== node && l.target !== node); // Remove links attached to node
   //   nodes.splice(node.id, 1); // Remove node
-  //   nodes.forEach((n, idx) => { n.id = idx; }); // Reset node ids to array index
-  //   Graph.graphData({ nodes, links });
+  //   nodes.forEach((n, idx) => {
+  //     n.id = idx;
+  //   }); // Reset node ids to array index
+  //   Graph.graphData({nodes, links});
+  //   onclicks();
   // }
+
 </script>
 </body>
 </html>

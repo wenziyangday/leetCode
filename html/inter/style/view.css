@@ -1,0 +1,9 @@
+#css-load {
+    display: flex;
+    width: 400px;
+    height: 400px;
+    background: red;
+    align-items: center;
+    justify-content: center;
+    transition: all ease-in-out 4s;
+}

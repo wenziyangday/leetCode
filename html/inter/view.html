@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View</title>
+    <link rel="stylesheet" type="text/css" href="style/view.css">
+    <style>
+        .wrap {
+            min-width: 1920px;
+            height: 100vh;
+            background: #e0e0e0;
+            overflow: auto;
+        }
+
+        p {
+            margin: 20px;
+        }
+
+        div {
+            overflow: hidden;
+        }
+
+        span.span {
+            margin: 100px;
+            padding: 100px;
+            background: chartreuse;
+            border: 1px solid red;
+        }
+
+        div.triangle {
+            width: 0;
+            height: 0;
+            /*border-width: 40px;*/
+            /*border-style: solid;*/
+            /*border-color: transparent transparent red transparent;*/
+            border-top: 40px solid red;
+            border-right: 40px solid green;
+            border-bottom: 40px solid blue;
+            border-left: 40px solid gray;
+        }
+
+        div.max-width {
+            min-width: 600px;
+            width: 200px !important;
+            height: 200px;
+            background: beige;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div id="css-load">
+        css-load
+    </div>
+
+
+    <h1>BFC</h1>
+    <p>BFC容器是什么？2</p>
+    <div>
+        <p>BFC容器是什么？1</p>
+    </div>
+
+    <div>
+        <span class="span">行内元素的margin、padding</span>
+    </div>
+
+    <div class="triangle"></div>
+
+    <div class="max-width"></div>
+
+    <div onclick="debounce(1000, () => {
+      console.time('时间');
+      console.log('防抖');
+    })">防抖</div>
+    <script>
+      let timer;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        // doSomething()
+      }, 300);
+
+
+      function debounce(timer, fn) {
+        let _timer;
+
+        return function () {
+          clearTimeout(_timer);
+
+          _timer = setTimeout(() => {
+            fn();
+          }, timer);
+        }
+      }
+
+    </script>
+
+    Set、WeakSet
+    <script>
+        const a = [[1, 2], [1, 2]];
+        const b = [1, 2];
+        let weakSet = new WeakSet(a);
+
+        console.log(weakSet);
+        let aa = [1, 2, 3];
+        const _map = new Map();
+        _map.set(aa, 100);
+        console.log(_map.get(aa));
+
+        const bb = null;
+        _map.set(bb, [1, 2, 3, 4, 5, 6]);
+        console.log(_map.get(bb));
+
+        const cc = NaN;
+        _map.set(cc, [909090]);
+        console.log(_map.get(cc));
+
+        _map.set('1', [12222]);
+        console.log(_map.get('1'));
+
+        _map.set([1, 2], [1, 2, 3, 4, 5, 6]);
+        console.log(_map.get([1, 2]));
+
+
+        const _weakMap = new WeakMap();
+        _weakMap.set(bb, ['kkk']);
+        console.log(_weakMap.get(bb));
+
+
+
+    //    es5 是如何实现继承？
+    </script>
+</div>
+</body>
+</html>
