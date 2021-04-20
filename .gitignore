@@ -3,3 +3,11 @@
 
 # python 环境包
 /venv
+
+# npm 安装的依赖
+/node_modules
+
+# 任意的log
+*.log
+*-lock.json
+*.lock
