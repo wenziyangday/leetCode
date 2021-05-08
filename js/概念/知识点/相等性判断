@@ -1,0 +1,64 @@
+相等性判断：
+
+严格相等判断：===
+  判断时不进行类型的隐式转换
+
+
+抽象相等判断：==
+  判断时进行隐式转化
+  隐式转化的规则：
+    1.类型相同的直接进行值比较
+    2.null 和 undefined 返回 true
+    3.string 和 number 进行比较：string 转成number 然后进行比较
+    4.判断其中一方是否是boolean 是：将boolean 转化为number 然后进行比较
+    5.如果一方是Object、另一方是string、number、symbol 会将Object 转换为字符串在进行比较
+
+    示例：
+      1.数字 == 字符串
+        将字符串转化为数字然后进行比较
+      2.字符串 == 对象（Object）
+        先将对象转化为字符串（Object.toString()）、再将字符串转化为数字(Number())
+      3.null == undefined / null == null / undefined == undefined
+        皆是true
+      3.对象 == 对象
+        比较两个对象在内存中的地址是不是同一地址 （相同对象（每个对象有同一个引用））
+      4.对象 == boolean值
+        都要转化为数值然后进行比较
+      5.数字 == boolean值
+        将boolean转化为数值，然后进行比较
+
+
+Object.is 是判断两个值是不是同一个
+
+同一个的标准：
+1.都是null
+2.都是undefined
+3.数量和顺序一致的的字符串
+4.相同对象（每个对象有同一个引用）
+5.都是数字且
+  都是+0、-0、NaN
+  都是非0且非NaN且是同一个数值
+
+
+特例：
+  Object.is(0, -0) //false
+  Object.is(0, +0) //true
+  Object.is(+0, -0) //true
+  Object.is(-0, -0) //true
+  Object.is(NaN, 0 / 0) // true
+
+
+相等性判断特例：
+  NaN:
+    NaN在 === 和 == 两种相等判断下是false、而在Object.is 中返回值是true
+  +0、-0、0：
+    0的不同形式的相互比较中：=== 和 == 两种相等判断中和认知相同 即 0 === +0 === -0、0 == +0 == -0；
+    而在Object.is中出现了特例：Object.is(0, -0)、Object.is(+0, -0) 为false
+
+
+验证结果：参见 Object.is.js、[] == ![].js
+
+
+
+
+
