@@ -1,0 +1,20 @@
+基本数据类型：
+string、number、boolean、BigInt
+null、undefined、symbol
+
+引用数据类型：
+对象Object、Array
+
+
+bigInt 特点: 加减乘除  必须同为 BigInt 类型的
+
+基本数据类型判断：
+1.获取数据类型：typeof
+2.判断数据类型：改造后的instanceof
+
+对于引用类型的判断：
+1.获取数据类型：Object.prototype.toString.call(str)
+2.判断数据类型：instanceOf
+
+
+
