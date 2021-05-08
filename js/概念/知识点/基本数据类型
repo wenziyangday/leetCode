@@ -9,12 +9,22 @@ null、undefined、symbol
 bigInt 特点: 加减乘除  必须同为 BigInt 类型的
 
 基本数据类型判断：
-1.获取数据类型：typeof
-2.判断数据类型：改造后的instanceof
+  1.获取数据类型：typeof
+  2.判断数据类型：改造后的instanceof
 
 对于引用类型的判断：
-1.获取数据类型：Object.prototype.toString.call(str)
-2.判断数据类型：instanceOf
+  1.获取数据类型：Object.prototype.toString.call(str)
+  2.判断数据类型：instanceOf
 
+
+引用对象转换基本数据类型流程依据：
+  1.如果Symbol.toPrimitive()方法存在，则优先调用此方法返回
+  2.调用valueOf()，如果转换为原始类型，则返回
+  3.调用toString(), 如果转换为原始类型，则返回
+  4.如果都没有返回原始类型，则报错
+
+  引用对象设置Symbol.toPrimitive()，会对对象产生影响
+
+  验证参考：引用对象转换基本数据类型的流程.js
 
 
