@@ -1,0 +1,14 @@
+理解：
+  不同的执行上下文下的变量指代
+
+  显示绑定：call/apply/bind
+  隐式绑定：
+    1.全局上下文：this 指向window （html 引入js 文件 此时this 指向windows，直接执行js的文件，this 为{}） 严格模式下指向 undefined
+    2.直接调用函数: 此时 函数中的this 作用同全局作用域中的this
+    3.对象.方法的形式调用：此时this 指向该对象
+    4.DOM事件绑定：onClick和addEventListener中this默认指向绑定该事件的元素、而IE中使用attachEvent中this 指向window
+    5.new + 构造函数（实例化）：this 指向实例对象
+    6.箭头函数中的this 没有固定指向，逐层查找（由近及远）顶层是window
+
+
+验证 参见 this理解.js
