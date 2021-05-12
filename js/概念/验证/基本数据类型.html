@@ -8,7 +8,36 @@
 <body>
 
 <script>
-    // console.log({}[Symbol.toPrimitive]);
+  // console.log({}[Symbol.toPrimitive]);
+
+  Promise.resolve().then(() => {
+    console.log('微任务-1');
+
+    setTimeout(() => {
+      console.log('宏任务-1');
+    });
+  });
+
+
+
+  setTimeout(() => {
+    console.log('宏任务-2');
+  });
+
+  Promise.resolve().then(() => {
+    console.log('微任务-2');
+  });
+
+  requestAnimationFrame(() => {
+    console.log('宏任务-3');
+  });
+
+  let timer = setInterval(() => {
+    console.log('宏任务-4');
+    clearInterval(timer);
+  });
+
+  console.log('执行');
 </script>
 
 </body>
