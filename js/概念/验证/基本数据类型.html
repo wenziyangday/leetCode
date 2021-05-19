@@ -5,10 +5,28 @@
     <title>基本数据类型</title>
     <script src="./this.js"></script>
     <script src="./proto.js"></script>
+    <script src="./防抖&&节流.js"></script>
 </head>
 <body>
+<input type="text" id="input">
+<input type="text" id="input2">
 <script>
   console.log('script start')
+
+  function input(val) {
+    console.log(val);
+  }
+
+  const thro = throttle(input, 1000);
+  const thro2 = throttle2(input, 1000);
+  const deb = debounce(input, 1000);
+  document.querySelector('#input').addEventListener('keyup', function (e) {
+    console.log(e.target.value);
+    thro2(e.target.value);
+  });
+  document.querySelector('#input2').addEventListener('keyup', function (e) {
+    deb(e.target.value);
+  })
 
   // async function async1() {
   //   await async2()

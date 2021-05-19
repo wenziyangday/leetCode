@@ -1,0 +1,2 @@
+new Date() 前置+号可以将GMT转化为时间戳
+eg: +new Date()
