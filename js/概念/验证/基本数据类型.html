@@ -20,12 +20,13 @@
   const thro = throttle(input, 1000);
   const thro2 = throttle2(input, 1000);
   const deb = debounce(input, 1000);
+  const deb2 = debounce2(input, 1000);
   document.querySelector('#input').addEventListener('keyup', function (e) {
     console.log(e.target.value);
     thro2(e.target.value);
   });
   document.querySelector('#input2').addEventListener('keyup', function (e) {
-    deb(e.target.value);
+    deb2(e.target.value);
   })
 
   // async function async1() {
