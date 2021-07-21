@@ -1,19 +1,30 @@
-const Person = function () {
+/**
+ * instanceof 用于检测构造函数的prototype属性是否存在于某个实例对象的原型链上
+ * */
 
+function Car() {
 }
 
-const p1 = new Person();
+const car = new Car();
+console.log(car instanceof Car);
 
-console.log(p1 instanceof Person);
-console.log(p1 instanceof Object);
-
-
-class PrimitiveNumber {
-  static [Symbol.hasInstance](x) {
-    return typeof x === 'number';
+function myInstanceOf(left, right) {
+  let prototype = right.prototype;
+  let _proto = left.__proto__;
+  while (true) {
+    if (!left) return false;
+    if (prototype === _proto) return true;
+    _proto = _proto.__proto__;
   }
 }
 
-console.log(111 instanceof PrimitiveNumber);
+console.log(myInstanceOf(car, Car));
+
+console.log(car.__proto__);
+console.log(car.constructor.prototype);
+console.log(car.constructor.prototype === car.__proto__);
+console.log(car.constructor === Car)
+console.log(car.__proto__.__proto__ === Object.prototype);
+
 
 
