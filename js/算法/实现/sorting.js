@@ -44,7 +44,7 @@ function bubbleSorting(arr) {
 
 console.log('bubbleSorting', bubbleSorting([10, 9, 12, 18, 10, 30, 25, 100, 80, 90, 70]));
 
-// 快速排序：
+// 快速排序：不稳定 | O(n)  | O(nlogn) TODO
 function quickSorting(arr, low, high) {
   let pivotIndex;
   let len = arr.length;
@@ -74,5 +74,35 @@ function partition(arr, low, high) {
 }
 
 console.log('quickSorting', quickSorting([10, 9, 12, 18, 10, 30, 25, 100, 80, 90, 70]));
+
+// 选择排序：不稳定 | O(1) | O(n2s)
+function selectSorting(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = i + 1; j < arr.length; j++) {
+      if (arr[i] > arr[j]) {
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+  }
+  return arr;
+}
+
+console.log('selectSorting', selectSorting([10, 9, 12, 18, 10, 30, 25, 100, 80, 90, 70]));
+
+// 堆排序 树的结构
+function heapSorting(arr) {
+
+  return arr;
+}
+
+console.log('heapSorting', heapSorting([10, 9, 12, 18, 10, 30, 25, 100, 80, 90, 70]));
+
+// 归并排序：
+function mergeSorting(arr) {
+
+  return arr;
+}
+
+console.log('mergeSorting', mergeSorting([10, 9, 12, 18, 10, 30, 25, 100, 80, 90, 70]));
 
 
