@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: red;
+        }
+
+        .line span:hover {
+            transform: scale(1.2);
+            transition-duration: 1s;
+        }
+    </style>
+</head>
+<body>
+
+<div class="line">
+    <span>张是男是女</span>
+    <span>张是男是女</span>
+</div>
+
+<script>
+    const dom = document.querySelector('.line');
+    console.log(dom.style)
+</script>
+
+</body>
+</html>
