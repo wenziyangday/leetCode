@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    const aaa = { pageNum: '1', limit: '10' };
+    function filterNumber(obj) {
+      let newObj = {};
+
+      Object.keys(obj).forEach((x) => {
+        console.log(Object.keys(obj));
+        if (isNaN(obj[x])) {
+          newObj[x] = obj[x];
+        } else {
+          newObj[x] = parseFloat(obj[x]);
+        }
+      });
+
+      return newObj;
+    }
+
+    const bbb = filterNumber(aaa);
+    console.log(bbb);
+</script>
+</body>
+</html>

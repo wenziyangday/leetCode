@@ -45,3 +45,7 @@ loo.call(this, 1, 2, 4);
 loo.apply(this, [1, 2, 3]);
 
 loo.bind(this, 1, 2, 'bind')();
+
+
+
+console.log('0000000000000000000000100000000'.length);

@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
+         * {
+             margin: 0;
+             padding: 0;
+         }
         .line {
             display: flex;
             align-items: center;
@@ -15,19 +19,50 @@
             transform: scale(1.2);
             transition-duration: 1s;
         }
+
+        #box {
+            width: 200px;
+            height: 200px;
+            margin: 10px;
+            background: #4683ea;
+        }
+
+        #pointer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background: red;
+            z-index: 0;
+        }
     </style>
+
 </head>
 <body>
+<div id="box"></div>
 
-<div class="line">
-    <span>张是男是女</span>
-    <span>张是男是女</span>
-</div>
+<div id="pointer"></div>
 
 <script>
-    const dom = document.querySelector('.line');
-    console.log(dom.style)
+  // console.log(a);
+  let a = 1;
+  console.log(window.a)
 </script>
+<!--<script>-->
+<!--    const ele = document.getElementById("box").getBoundingClientRect();-->
+<!--    const {left, top: tops, x, y, width, height} = ele;-->
+<!--    const el = document.getElementById("pointer");-->
+<!--    el.style.transform = `translate(${left}px, ${tops}px)`-->
+<!--    console.log(ele)-->
+<!--    let evt = new MouseEvent("mouseUp", {-->
+<!--      bubbles: true,-->
+<!--      cancelable: true,-->
+<!--      view: window,-->
+<!--    })-->
+<!--    ele.dispatchEvent(evt)-->
+<!--</script>-->
+
 
 </body>
 </html>

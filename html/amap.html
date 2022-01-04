@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
     <title>地图平移</title>
-    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
     <script src="https://webapi.amap.com/maps?v=1.4.15&key=您申请的key值"></script>
     <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
 
@@ -37,14 +37,33 @@
   console.log(map);
   setTimeout(() => {
     map.panBy(0, 100);
-
   }, 1000)
-  AMap.event.addDomListener(document.getElementById('piexBtn'), 'click', function() {
+  AMap.event.addDomListener(document.getElementById('piexBtn'), 'click', function () {
     map.panBy(0, 100);
   });
-  AMap.event.addDomListener(document.getElementById('pantoBtn'), 'click', function() {
+  AMap.event.addDomListener(document.getElementById('pantoBtn'), 'click', function () {
     map.panTo([116.405467, 39.907761]);
   });
+
+
+  var markerCommon = new AMap.Marker({
+    icon: new AMap.Icon({
+      image: '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
+      imageSize: new AMap.Size(30, 30) //图标大小
+    }),
+    position: new AMap.LngLat(116.343328, 39.949901)
+  });
+
+  map.add(markerCommon);
+
+  AMap.event.addListener(markerCommon, 'click', function (e) {
+    console.log(markerCommon, 'markerCommon');
+  });
+
+  setTimeout(() => {
+    AMap.event.trigger(markerCommon, "click");
+  }, 3000)
+
 </script>
 </body>
 </html>

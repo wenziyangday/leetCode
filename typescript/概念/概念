@@ -1,0 +1,113 @@
+const、readonly 的区别
+  readonly 是 TypeScript 中的一个属性修饰符，我们可以在 interface Class type 以及 array 和 tuple 类型中使用它(readonly 作用域属性)，
+    对数据类型进行更严格的定义。我们可以使用标准库的 Readonly<T> 工具方法来创建一个只读的对象，不需要给每个属性添加 readonly 关键字，也可以通过 + 和 - 号对修饰符进行更灵活的控制
+  const 描述的是一个变量的地址是不能进行改变的也就是说 对于对象中的数据是可以进行修改的
+
+  const:
+    用于变量
+    运行时检查
+    声明时必须进行赋值(初始化)，不能留到以后进行赋值
+
+  readonly: 需要被实例化，但是不能进行实例修改
+    用于属性
+    编译时检查
+    只能确保自身属性不被修改，但当你把这个属性交给其他并没有这种保证的使用者时（类型兼容），会发生改变
+
+private、public、protected修饰符
+  private: 私有变量
+    可以被继承使用，但是不能在类的外部直接被实例化使用
+
+  public: 公开属性
+    类中的属性、方法 皆可以被外部使用
+
+  protected: 保护属性
+    可以被继承使用，但是不能在类的外部直接被实例化使用
+
+implements、extends(派生类的实现)的区别
+  implements: 实现，一个新类，从父类或者接口中实现所有属性和方法，同时可以重写属性和方法，包含一些新的功能
+  extends: 继承，一个新的接口或者类，从父类或者接口中继承所有属性和方法，不可以重写属性，但是可以重写方法
+
+  tips:
+    接口不能实现接口或者类，所以实现只能作用于类身上，即类可以实现接口或者类（类实现类就是将原有类中的属性，方法进行覆盖）
+    接口可以继承接口（同名接口的合并处理就是继承）或者类(继承类时，会忽略类中的方法（类型）检查，但是类实现此接口要保证结构一致)
+    类不能继承接口，类只能继承类
+    可以多继承，多实现
+    类的继承 中super
+
+泛型 和 any类型 unknown 的区别
+  泛型可以进行类型推导
+  any 将会忽略类型检查
+
+
+class说明：
+   一个类中的属性和方法是有静态部分与实例部分之分的。当一个类去实现某个接口时，只会检查这个类的实例部分是否满足接口的要求，而不会去检查类的静态部分。
+
+
+类中的存取器：指的是在方法前面添加get、set关键字
+  tips：
+    存取器要求编译器的版本至少是es5
+    只带有get不带有set的存取器会被自动推断为readonly
+
+
+interface 和 type的区别
+  类型推断：形如 {color: 'qwer'} as unkown as {color: string}
+  索引签名：是指不确定类中属性名称，通过设定签名进行类中属性扩展
+  eg: fun.ts
+  总结：类型推断、类型签名主要用于对象中额外属性的检查
+
+  官方说明:
+    An interface can be named in an extends or implements clause, but a type alias for an object type literal cannot.
+      接口可以在extends或implements子句中命名，但对象类型文字的类型别名不能命名。
+    An interface can have multiple merged declarations, but a type alias for an object type literal cannot.
+      接口可以有多个合并声明，但对象类型文字的类型别名不能。
+    相同点：
+      interface && type 都可以用于描述一个对象或者函数(实现参见fun.ts) 但是要注意的是函数实现的时候参数数量允许和定义数量不一致但是类型必须一致
+      同样可以继承extends（可以进行交叉继承）
+        interface 表示一个函数时，不能进行extends
+
+    不同点：
+      type 可以进行基本类型的别名，联合类型，元组类型
+      interface 可以进行同名类型合并
+
+类型断言：
+  描述一个ts不知道的数据类型，但你希望知道的类型信息
+  但是要注意的是：
+    类型断言在编译阶段是被忽略的
+
+文字类型：
+  有点像是定义常量
+
+字面推导：
+
+
+类型注解：用于说明一个变量是什么类型
+  基本（原始）类型注解: string、number、boolean
+  复合型注解：
+    实现：interface、内联类型注解、泛型注解
+    泛型：算法和数据结构不依赖对象的实际类型，但是你仍想提供约束
+
+  特殊的类型注解：undefined、null、void、any
+    void：通常用于函数，表示一个函数没有返回值
+
+  联合类型：一个变量同时支持多种数据类型
+  交叉类型：
+  元组类型：
+
+
+  interface 中多个同名函数不同参数数量、类型的 ---> 重载
+  类型断言：
+
+实用的高级类型
+  Partial<Type>: 将已经定义的类型转化为可选类型
+  Require<Type>: 将已经定义的类型中所有可选类型转化为必填类型
+  Readonly<Type>: 将已经定义的类型中所有的属性转化为只读类型 eg: Object.freeze function freeze<Type>(obj: Type): Readonly<Type>;
+  Record<Keys, Type>: 构造一个对象的所有key(keys)的值的类型都是Type
+  Pick<Type, key1 | key2...>: 从已经定义的类型中选取指定的键值对
+  Omit<Type, key1 | key2...>: 从已经定义的类型中删除指定的键（key1、key2、。。。）
+  Exclude<Type, ExcludedUnion>: 从已经定义的类型(Type)与指定集合（ExcludedUnion）求差集
+  Extract<Type, Union>: 从已经定义的类型(Type)与指定集合（Union）求交集
+  NonNullable<Type>: 从类型中排除null、undefined
+  Parameters<Type>:
+
+  <html>TS2349: This expression is not callable.<br/>No constituent of type 'boolean | ReactChild | ReactFragment | ReactPortal' is callable.
+

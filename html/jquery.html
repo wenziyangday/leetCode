@@ -3,122 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>jQuery</title>
-    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="./jquery.min.js"></script>
 </head>
 <body>
 <div class="a">1</div>
-<div class="a">2</div>
-<div class="a">3</div>
-<div class="a">4</div>
-<div class="a">5</div>
-<div class="a">6</div>
-<div class="a">7</div>
-<div class="a">8</div>
-<div class="a">9</div>
-<div class="a">10</div>
-<div class="a">11</div>
-<div class="a">12</div>
-<div class="a">13</div>
-<div class="a">14</div>
-<div class="a">15</div>
-<div class="a">16</div>
-<div class="a">17</div>
-<div class="a">18</div>
-<div class="a">19</div>
-<div class="a">20</div>
-<div class="a">21</div>
-<div class="a">22</div>
-<div class="a">23</div>
-<div class="a">24</div>
-<div class="a">25</div>
-<div class="a">26</div>
-<div class="a">27</div>
-<div class="a">28</div>
-<div class="a">29</div>
-<div class="a">30</div>
-<div class="a">31</div>
-<div class="a">32</div>
-<div class="a">33</div>
-<div class="a">34</div>
-<div class="a">35</div>
-<div class="a">36</div>
-<div class="a">37</div>
-<div class="a">38</div>
-<div class="a">39</div>
-<div class="a">40</div>
-<div class="a">41</div>
-<div class="a">42</div>
-<div class="a">43</div>
-<div class="a">44</div>
-<div class="a">45</div>
-<div class="a">46</div>
-<div class="a">47</div>
-<div class="a">48</div>
-<div class="a">49</div>
-<div class="a">50</div>
-<div class="a">51</div>
-<div class="a">52</div>
-<div class="a">53</div>
-<div class="a">54</div>
-<div class="a">55</div>
-<div class="a">56</div>
-<div class="a">57</div>
-<div class="a">58</div>
-<div class="a">59</div>
-<div class="a">60</div>
-<div class="a">61</div>
-<div class="a">62</div>
-<div class="a">63</div>
-<div class="a">64</div>
-<div class="a">65</div>
-<div class="a">66</div>
-<div class="a">67</div>
-<div class="a">68</div>
-<div class="a">69</div>
-<div class="a">70</div>
-<div class="a">71</div>
-<div class="a">72</div>
-<div class="a">73</div>
-<div class="a">74</div>
-<div class="a">75</div>
-<div class="a">76</div>
-<div class="a">77</div>
-<div class="a">78</div>
-<div class="a">79</div>
-<div class="a">80</div>
-<div class="a">81</div>
-<div class="a">82</div>
-<div class="a">83</div>
-<div class="a">84</div>
-<div class="a">85</div>
-<div class="a">86</div>
-<div class="a">87</div>
-<div class="a">88</div>
-<div class="a">89</div>
-<div class="a">90</div>
-<div class="a">91</div>
-<div class="a">92</div>
-<div class="a">93</div>
-<div class="a">94</div>
-<div class="a">95</div>
-<div class="a">96</div>
-<div class="a">97</div>
-<div class="a">98</div>
-<div class="a">99</div>
-<div class="a">100</div>
 <script>
   // document.querySelectorAll("*").forEach(x => x.style.border = "1px solid #" + (~~(Math.random() * (1 << 24))).toString(16))
 </script>
 <script>
-    [].forEach.call(document.querySelectorAll("*"), function (x) {
-      x.style.border = "1px solid #" + (~~(Math.random() * (1 << 24))).toString(16);
+    $.ajax({
+      type: 'GET',
+      url: 'http://gateway-api.newayz.local/industry/v1/industry/org/code/12',
+      dataType: 'json',
+      success: (data) => {
+        console.log(data, 'data');
+      },
+      error: (err) => {
+        console.log(err, 'err');
+      }
     });
 
-//  知识点：
-//  call()
-//  1 << 24 移位运算
-//  ~~(1) 按位取反
-//  toString([radix])
+
 </script>
 
 

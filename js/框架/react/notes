@@ -1,0 +1,185 @@
+react 17 实现方案：参见图片react源码3.1.png
+  任务分割（Fiber）：一套数据结构（链表结构）：既能对应真实的dom又能作为分隔的单元
+  异步执行（并且能让出执行权）：
+    A.调度器（Scheduler）--(异步调度)：一套时间片（优先级）的运行机制
+      说明：使用浏览器的时间片异步执行这些Fiber的工作单元
+      浏览器有一个api叫做requestIdleCallback，他可以在浏览器空闲的时候执行一些任务（该api存在着兼容性和触发不稳定的问题）
+    B.调度的优先级制定：
+      Lane：有了异步调度，我们还需要细粒度的管理各个任务的优先级，让高优先级的任务优先执行，各个Fiber工作单元还能比较优先级，相同优先级的任务可以一起更新
+
+  产生的上层实现：
+    由于有了这一套异步可终端的机制，我们就能实现batchedUpdate批量更新和Suspense
+
+  代数效应：eg: Suspense
+    问题表现：
+      除了cpu的瓶颈问题，还有一类问题和副作用相关的问题，比如获取数据，文件操作等。
+      不同的设备性能和网络状况都不一样
+      react怎样去处理这些副作用，让我们在编码时最佳实践，运行应用是表现一致呢，这就需要react有分离副作用的能力，
+      为什么要分离副作用能，因为要解耦，这就是代数效应
+
+  react的核心可以用UI=fn(state)来表示：更详细的可以用
+    const state = reconcile(update)
+    const UI = commit(state)
+
+    说明：
+      Scheduler（调度器）：
+        排序优先级、让优先级高德任务进行reconciler
+      Reconciler（协调器）：
+        找出哪些节点发生了改变，并打上不同的Flags
+      Renderer（渲染器）：
+        将Reconciler 中大号标签的节点渲染到视图上。
+
+
+        ---------------
+        |             |
+        |   jsx       |
+        |             |
+        ---------------
+
+  jsx：
+    jsx是js语言的扩展，react通过babel词法解析，将jsx转换成React.createElement,
+    React.createElement 方法返回virtual-dom对象（内存中用来描述dom阶段的对象）
+    所有jsx本质上就是React.createElement的语法糖，它能声明式的编写我们想要组件呈现出的什么样的UI效果。
+
+  Fiber双缓存：
+    fiber:
+      Fiber对象上面保存了包括这个节点的属性、类型、dom等，Fiber通过child、sibling、return（指向父节点）来形成fiber树
+      还保存了更新状态时用于计算state的updateQueue，
+      updateQueue是一种链表结构，上面可能存在多个未计算的update，
+      update也是一种数据结构上面包含了更新的数据、优先级等，上面还有和副作用有关的信息
+
+    双缓存：
+      双缓存是指存在两颗fiber树，
+      current Fiber树描述当前呈现的dom树，
+      workInProcess Fiber是正在更新的Fiber树，
+      这两个Fiber树都是在内存中运行的
+      在workInProcess Fiber构建完成后会将它作为current Fiber应用到dom上
+
+      fiber树形成：
+        在mount（首次渲染）时，会根据jsx对象（Class Component的render函数、FC的返回值），来构建Fiber对象，形成Fiber树。
+        然后这棵Fiber树会作为current Fiber应用到真实dom上，
+        在update（状态更新时如setState）的时候，会根据状态变更后的jsx对象和current Fiber做对比形成新的workInProcess Fiber
+        然后workInProcess Fiber切换成current Fiber应用到真实dom就达到了更新的目的，而这一切都是发生在内存中的，从而减少了对dom消耗性能的操作
+
+      scheduler：
+        scheduler的作用是调度任务
+        实现异步可中断更新：
+          需要浏览器指定一个时间，如果没有时间剩余了就需要暂停任务，React 17采用了MessageChannel来实现
+        在scheduler中的每个任务的优先级都是使用过期时间 表示的，如果一个过期时间离现在很近，则优先级很高，反之，则其优先级很低
+        没有过期的任务存放在timerQueue中，过期的任务存放在taskQueue，
+        timerQueue和taskQueue都是小顶堆，所以peek取出来的都是离现在时间最近也就是优先级最高的那个任务，然后优先执行它。
+
+        过期时间：
+          var expirationTime = startTime + timeout
+
+  Lane模型：
+    react之前的版本用expirationTime属性代表优先级，该优先级和IO不能很好的搭配工作（IO的优先级高于cup的优先级）
+    现在有了更加细粒度的优先级表示方法Lane
+    Lane用二级制位表示优先级，二进制中的1表示位置，同一个二进制数可以有多个相同的优先级的位，这就可以表示批的概念，而且二进制方便计算
+
+    Lane的二进制位说明：1的bits越多，优先级越低
+
+  reconciler（render phase）：参见图片react源码7.2.png
+    Reconciler（协调器） 发生在render阶段，rerender阶段会分别为节点执行beginWork和completeWork，
+    或者计算state，对比节点的差异，为节点赋值相应的effectFlags（对应dom节点的增删改）
+
+    协调器（Reconciler）是在render阶段工作的，简单一句话就是Reconciler会创建或者更新Fiber节点
+    在mount的时候会根据jsx生成Fiber对象，
+    在update的时候会根据最新的state形成的jsx对象和current Fiber树对比构建workInProcess Fiber树，这个过程就是diff算法。
+
+    diff算法发生在render阶段的reconcileChildFibers 函数中，
+    diff算法分为单节点的diff和多节点的diff（eg：一个节点中包括多个子节点就属于多节点的diff），
+    单节点会根据节点的key和type，props等来判断节点是复用还是直接创建新的节点
+    多节点diff会涉及节点的增删和节点位置的变化
+
+    reconcile时会在这些Fiber上打上Flags标签，在commit阶段把这些标签应用到真实dom上，这些标签代表节点的增删改
+    render阶段遍历Fiber树类似dfs（深度优先遍历）的过程，
+    '捕获'阶段发生在beginWork函数中，该函数做的主要工作是创建Fiber节点，计算state和diff算法，
+    '冒泡'阶段发生在completeWork中，该函数主要是做一些收尾工作，例如处理节点的props、形成一条effectList的链表，该链表是被标记了更新的节点形成的链表
+
+  fiberRoot是整个项目中的根节点（有且只有一个），
+  rootFiber是应用的根节点，可能存在多个 eg：多个ReactDOM.render(<App />, document.getElementById("root"));创建多个应用节点
+
+    renderer (commit phase)：参见图片react源码10.1.png(TODO 此时理解差点意思)
+      Renderer 发生在commit阶段，commit阶段遍历effectList执行对应的dom操作或者部分生命周期
+      Renderer 是在commit阶段工作的，commit阶段户遍历render阶段形成的effectList，并执行真实dom节点的操作和一些生命周期，eg:浏览器对应的就是react-dom
+      commit阶段发生在commitRoot函数中，该函数主要遍历effectList，分别用3个函数来处理effectList上的节点，这三个函数时commitBeforeMutationEffects、
+      commitMutationEffects、commitLayoutEffects
+
+    concurrent：
+      它是一类功能的合集（eg：fiber、scheduler、lane、suspense），
+      其目的是为了提高应用的响应速度，使应用CPU密集型的更新 不那么卡顿，其核心是实现了一套异步可中断、带优先级的更新
+
+      我们知道一般浏览器的fps是60HZ 也就是每16.6ms会刷新一次，
+      而js执行线程和GUI也就是浏览器的绘制是互斥的，
+      因为js可以操作dom,影响最后呈现的结果，所以如果js执行的时间过长，会导致浏览器没时间绘制dom，会造成卡顿
+      react17会在每一帧分配一个时间（时间片）给js执行，如果在这个时间内js还没执行完，那就要暂停他的执行，等下一帧继续执行，把执行权交给浏览器去绘制
+
+      开启与未开启的concurrent mode的区别：开启之后，构建Fiber的任务的执行不会一直处于阻塞状态，而是分成一个个的task
+
+
+    virtual Dom：
+      用js对象表示信息和结构，更新时重新渲染更新后的对象对应的dom，这个对象就是React.createElement()的返回结果。
+      virtual Dom 是一种编程方式，它以对象的形式保存在内存中，它描述了我们dom的必要信息，兵器用类似react-dom等模块和真实dom进行同步，这一过程叫做协调reconciler
+      这种方式可以声明式的渲染相应的UI状态，让我们从dom操作中解放出来，
+      在react中是以fiber树的形式存放组件树的相关信息，在更新是可以增量渲染相关dom，所以fiber也是virtual Dom实现的一部分
+
+      为什么要使用virtual Dom ？
+        大量的dom操作慢，很小的更新都有可能一起页面的重新排列，js 对象由于处在内存中，处理起来更快。
+        可以通过diff算法比较新老virtual Dom的差异，并且批量、异步、最小化的执行dom的变更，以提高性能
+        另外就是，可以进行跨平台，jsx-->ReactElement对象-->真实节点，
+        有中间层的存在，就可以在操作真实节点之前进行对应的处理，处理的结果反映到真实的节点上，这个真实的节点可以是浏览器环境也可以是Native环境
+
+        virtual Dom 真的快吗？
+          其实virtual Dom 只是在更新的时候快，在初始化的时候不一定快。
+
+    jsx&createElement：
+      jsx可以声明式的描述视图，提升开发效率，通过babel可以转换成React.createElement的语法糖，也就是js的语法扩展。
+      jsx是ClassComponent的render函数或者FC的返回值，可以用来表示组件的内容，讲过babel编译后形成React.createElement,
+      这就是为什么要在jsx文件前声明import React from 'react';的原因，但是react 17之后就不用引入了
+
+      React.createElement的源码做了如下几件事：
+        处理config：把除了保留属性外的其他config赋值给props
+        把children处理后赋值给props.children
+        处理defaultProps
+        调用ReactElement返回一个jsx对象（virtual-dom）
+
+      说明：
+        jsx对象是没有优先级、状态、effectTags等标记的，这些标记在Fiber对象上，在mount时Fiber根据jsx对象创建的（current Fiber），
+        在update时根据最新状态的jsx和current Fiber对比，形成新的workInProcess Fiber，最后workInProcess Fiber 切换成current Fiber
+        如果组件是ClassComponent则type 是class本身，如果是FC创建的，则type是function，源码中用ClassComponent.prototype.isReactComponent进行二者区分的，
+
+    render：
+      render(element, container, callback)：重点关注这个入参。
+
+    Component:  ReactBaseClasses.js
+      Component(props, context, updater)：
+        函数中主要在当前实例上挂载props（props属性）、context（当前context）、refs（ref挂载的对象）、updater（更新的对象），
+        所以在组件的实例上能拿到这些，而更新主要的承载结构就是updater，主要关注isReactComponent,这是用来表示这个组件是类组件
+
+        tips：
+          jsx 就是React.createElement的语法糖，jsx通过babel转化成React.creatElement函数，React.creatElement执行后返回jsx对象（virtual-DOM），
+          Fiber会根据jsx对象和current Fiber进行对比形成workInProcess Fiber
+          pureComponent也很简单，和component差不多，他会进行原型继承，然后赋值isPureReactComponent
+
+
+  legacy&&concurrent模式入口函数：
+    legacy模式在合成事件中邮自动批处理的功能，但仅限于一个浏览器任务。非React事件想使用这个功能必须使用unstable_batchUpdates.
+    在blocking和concurrent模式下，所有的setState在默认情况下都是批处理的，会在开发中发出警告。
+
+    不同模式在react运行时的含义：
+      legacy模式是我们常用的，它构建dom的过程是同步的，
+      所以在render的reconciler中，如果diff的过程中特别耗时，那么导致的结果就是js一直阻塞高优先级的任务（例如用户点击事件），表现为页面的卡顿、无法响应
+      concurrent Mode是react未来的模式，他用时间片调度实现了异步可中断的任务，根据设备性能的不同，时间片的长度是不一样的，
+      在每个时间片中，如果任务到了过期时间，就会主动让出线程给高优先级的任务 scheduler && lane模式
+
+      diff tips:
+        1.creatRootImpl中传入的第二参数不一样，一个是LegacyRoot一个是ConcurrentRoot
+        2.requestUpdateLane中获取的lane的优先级不同
+        3.在函数scheduleUpdateOnFiber中根据不同优先级进入不同分支，legacy模式进入performSyncWorkOnRoot,concurrent模式异步调度performSyncWorkOnRoot
+
+
+
+
+
+
