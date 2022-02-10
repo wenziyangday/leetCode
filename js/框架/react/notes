@@ -30,11 +30,11 @@ react 17 实现方案：参见图片react源码3.1.png
         将Reconciler 中大号标签的节点渲染到视图上。
 
 
-        ---------------
-        |             |
-        |   jsx       |
-        |             |
-        ---------------
+        ------------------
+        |                |
+        |      jsx       |
+        |                |
+        ------------------
 
   jsx：
     jsx是js语言的扩展，react通过babel词法解析，将jsx转换成React.createElement,
@@ -179,7 +179,53 @@ react 17 实现方案：参见图片react源码3.1.png
         3.在函数scheduleUpdateOnFiber中根据不同优先级进入不同分支，legacy模式进入performSyncWorkOnRoot,concurrent模式异步调度performSyncWorkOnRoot
 
 
+  Fiber架构：
+    Fiber数据结构，做了些什么事情呢？
+      工作单元任务分解：
+        Fiber最重要的功能是作为工作单元，保存原生节点或者组件节点对应信息（包括优先级），这些节点通过指针的形式形成Fiber树
+      增量渲染：
+        通过jsx对象和current Fiber的对比，生成最小的差异补丁，应用到真实节点上。
+      根据优先级暂停、继续、排列优先级：
+        Fiber节点上保存了优先级，能通过不同节点优先级的对比，达到任务的暂停、继续、排列优先级等能力，
+        也为上层实现批量更新、Suspense提供了基础
+      保存状态：
+        因为Fiber能保存状态和更新的信息，所以就能实现函数组件的状态更新，也就是hooks
+
+    Fiber的数据结构：
+
+    Fiber双缓存：
+      Fiber可以保存真实的dom，真实dpm对应在内存中的Fiber节点会形成Fiber树，这个Fiber树在react中叫current Fiber（当前真实dom对应的Fiber树），也就是当前dom树对应的Fiber树
+      正在构建的Fiber树叫workInProcess Fiber，这两棵树的节点通过alternate连接
+      构建workInProcess Fiber 发生在createWorkInProcess中，他能创建或者复用Fiber
+
+      双缓存：
+        经过reconcile（diff）形成了新的workInProcess Fiber 然后将workInProcess 切换成current Fiber应用倒真是的dom中。存在双Fiber的好处就是在
+        内存红形成视图的描述，在最后应用到dom中，减少了对dom的操作
+
+  render阶段：
+    入口：
+      render阶段的主要工作是构建Fiber树和生成effectList
+      performUnitOfWork：workInProcess Fiber 会和已经创建的Fiber连接起来的形成Fiber树（这个过程类似于深度优先遍历）
+      beginWork: 创建或复用子Fiber节点
+      completeWork: 处理fiber的props、创建dom、创建effectList
 
 
+  diff算法：
+    降低算法复杂度：
+      只对同级比较，跨层级的dom不会进行复用，
+      不同类型的节点生成的dom树不同，此时会直接销毁老节点及子孙节点，并创建新节点。
+      可以通过key来对元素的diff的过程提供复用的线索。
 
+    单节点diff：
+      key 和 type 相同的 表示可以复用节点
+      key 不同直接标记删除节点，然后新建节点
+      key相同type不同，标记删除该节点和兄弟节点，然后新创建节点。
+
+
+    多节点diff：
+      属性变化：
+      type变化：
+      新增节点：
+      节点删除：
+      节点位置变化：
 

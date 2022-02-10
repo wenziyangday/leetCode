@@ -7,7 +7,7 @@
 # npm 安装的依赖
 /node_modules
 
-# 任意的log
+# 任意的log、lock
 *.log
 *-lock.json
 *.lock

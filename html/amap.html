@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
     <script src="https://webapi.amap.com/maps?v=1.4.15&key=您申请的key值"></script>
     <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+    <script src="./inner-js/geo.js"></script>
 
     <style>
         html,
@@ -20,50 +21,27 @@
 </head>
 <body>
 <div id="container"></div>
-<div class="input-card" style="width: auto">
-    <div class="input-item">
-        <input id="piexBtn" type="button" class="btn" value="平移像素值：(50,100)"/>
-    </div>
-    <div class="input-item">
-        <input id="pantoBtn" type="button" class="btn" value="地图中心点平移至：(116.405467,39.907761)"/>
-    </div>
-</div>
 <script>
   var map = new AMap.Map('container', {
     resizeEnable: true,
-    zoom: 13,
-    center: [116.397428, 39.90923]
-  });
-  console.log(map);
-  setTimeout(() => {
-    map.panBy(0, 100);
-  }, 1000)
-  AMap.event.addDomListener(document.getElementById('piexBtn'), 'click', function () {
-    map.panBy(0, 100);
-  });
-  AMap.event.addDomListener(document.getElementById('pantoBtn'), 'click', function () {
-    map.panTo([116.405467, 39.907761]);
+    zoom: 7,
+    center: [107.943579, 30.131735],
   });
 
+  const geoJson = new AMap.GeoJSON({
+    geoJSON: geos,
+    getPolygon: function(geojson, lnglats) {
+      console.log(lnglats, 'llkklklklkl');
+      // 计算面积
+      return new AMap.Polygon({
+        path: lnglats,
+        strokeColor: 'white',
+        fillColor: 'red'
+      });
+    }
+  })
 
-  var markerCommon = new AMap.Marker({
-    icon: new AMap.Icon({
-      image: '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
-      imageSize: new AMap.Size(30, 30) //图标大小
-    }),
-    position: new AMap.LngLat(116.343328, 39.949901)
-  });
-
-  map.add(markerCommon);
-
-  AMap.event.addListener(markerCommon, 'click', function (e) {
-    console.log(markerCommon, 'markerCommon');
-  });
-
-  setTimeout(() => {
-    AMap.event.trigger(markerCommon, "click");
-  }, 3000)
-
+  geoJson.setMap(map);
 </script>
 </body>
 </html>

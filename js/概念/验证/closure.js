@@ -6,11 +6,11 @@ function aa() {
 
 
 function f() {
-  let a = 100;
+  let bb = 100;
 
   return function () {
-    a ++;
-    return a;
+    bb ++;
+    return bb;
   }
 }
 

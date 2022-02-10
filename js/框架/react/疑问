@@ -1,0 +1,6 @@
+1.创建workInProcess Fiber时机（初始化、update）？
+  在beginWork函数中通过current === null 进行判断是mount还是update从而进行不同的逻辑
+
+2.current Fiber 切换时机（什么时候触发切换）？
+
+3.什么是环状链表？
