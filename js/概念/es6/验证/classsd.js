@@ -70,6 +70,5 @@ class DistributedEdit extends mix(Loggable, Serializable) {
 
 const aa = new DistributedEdit();
 aa.log();
-aa._log();
 aa.info();
 console.log(DistributedEdit.name);
