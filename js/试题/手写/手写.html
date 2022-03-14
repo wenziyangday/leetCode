@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+      const allTags = [...document.querySelectorAll('*')];
+      const tagNames = allTags.map(x => x.tagName);
+      const count = tagNames.reduce((a, b) => {
+        a[b] = a[b] ? a[b] + 1 : 1;
+        return a;
+      }, {});
+      const aa = Object.entries(count).sort((a, b) => {
+        return b[1] - a[1];
+      })
+      console.log(aa[0]);
+    </script>
+</head>
+<body>
+
+</body>
+</html>

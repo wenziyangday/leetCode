@@ -1,0 +1,612 @@
+1.如何实现一个元素的水平垂直居中
+2.502和504
+  502 Bad Gateway 服务应用报错，网关无法接收
+  504 Gateway Timeout 应用层服务超时
+
+@time 2022-02-22
+3.
+  防抖（debounce）：
+    防止抖动，指的是在一段时间内触发的n次，但是真正执行的只有一次(这一次是最后改变才进行触发的)
+
+  节流（throttle）:
+    控制事件发生的频率，在一定时间内只进行一次事件的执行，当事件执行完成之后，才会进行下一次的触发
+
+@time 2022-02-23 TODO
+4.promise：
+  简单点说：Promise就是一个容器，保存着一个未来才结束的某个事件的结果
+  从语法上：Promise是一个对象，从这个对象中可以获取异步操作的消息
+  原型方法：
+    then、catch、finally
+  对象方法：
+    all、race、allSettled、any、resolve、reject、try
+      all: 所有状态都变成fulfilled，才会变成fulfilled，否则是rejected
+
+      ------------------------------------------------------------------------------------------------------------------
+      race: Promise列表中promise 率先发生变更（rejected || fulfilled）则后续状态变更为对应的状态
+      ------------------------------------------------------------------------------------------------------------------
+
+      allSettled: 所有的状态都被处理完成（无论是rejected 还是 fulfilled），则其状态变更为fulfilled
+      any: 只要有一个状态变更为fulfilled，整个状态就是fulfilled
+      resolve：将现有的一个对象转化为一个promise对象,有一个缺点：改变原有函数的执行顺序（同步函数）
+        参数有以下几种情况：
+          1）参数是一个promise
+          2）参数是一个thenable对象
+          3）参数不是一个对象，而是一个常规的值
+          4）不带参数
+
+      reject：返回一个promise实例，但是该实例状态为rejected
+      try: 将现有对象转化为一个promise对象,现阶段只是一个提案
+      map: 进行并发数控制
+
+@time 2022-03-01
+5.浏览器唯一标识：
+  由于不同的系统显卡绘制canvas时的渲染参数、抗锯齿算法等不同，因此绘制不同的crc校验不一致
+
+6.bind、call、apply：硬绑定
+  bind：创建一个新的函数，在bind被调用是，这个新函数的this指向bind的第一个参数，而其余参数作为这个新函数的参数，共调用时使用
+  apply: 调用一个给定this值的函数，以一个数组（类数组）的形式作为参数
+  call：调用一个给定this值的函数，单独给出一个或者多个值作为参数来调用函数。
+
+7.softBind: 软绑定 TODO
+
+8.npm 发布过package，如何发布
+  1）注册账号
+  2）本地执行npm login
+  3）进入到项目，在package.json 中指定发布文件、文件夹
+  4）执行npm publish --registry=https://registry.npmjs.org/ 即可发布
+
+9.js 代码压缩 minify的原理是？
+  minify把CSS和JS压缩和削减(Minify：去掉空格回车符等)，以及把多个CSS，JS文件整合到一个文件里
+  1）去除多余字符：空格、换行以及注释
+  2）压缩变量名称：变量名简化、函数名、属性名
+  3）解析程序逻辑：合并声明以及布尔值简化
+  4）解析程序逻辑：编译预计算（1*10*10  转换为100）
+
+10.json 中在进行JSON.stringify 有哪些注意项：
+  1）忽略undefined项
+  2）保留null项
+  3）忽略对象中的函数，但是对于带有get 修饰符的函数会先进行计算 （含有return值的[return 1000]，则该项变成 函数名: 1000）
+    对于无return的以及return; 则进行忽略。
+    eg: const aa = {
+      get aaa() {
+        return 10000
+      },
+      b: null,
+      c: undefined
+    }
+
+    JSON.stringify(aa) === '{"aaa": "10000", "b": null}'
+  4）对于对象中含有的Map、Set 会转化为一个空对象{}，忽略其中的具体值
+    const objs = {
+      a: '1',
+      b: null,
+      c: undefined,
+      d: function () {
+        return '12'
+      },
+      e: Array('3'),
+      f: new Object({'as': 'sds'}),
+      g: new Map([['a', 'as']]),
+      h: new Set([1, 2, 3, 4]),
+      get aa() {
+        return;
+      },
+      get bb() {
+        return '';
+      }
+    }
+    JSON.stringify(objs) === '{"a":"1","b":null,"e":["3"],"f":{"as":"sds"},"g":{},"h":{},"bb":""}'
+
+11.CSRF攻击：
+  Cross-site request forgery(跨站请求伪造)：
+    是一种挟制用户在当前已登录的 Web 应用程序上执行非本意的操作的攻击方法。
+    跟跨网站脚本（XSS）相比，XSS 利用的是用户对指定网站的信任，
+    CSRF 利用的是网站对用户网页浏览器的信任。
+
+  减轻CSRF攻击：
+    1）使用 JSON API。（应对页面可见的form发送json）
+      使用JavaScript发起AJAX请求是限制跨域的。
+      不能通过一个简单的<form>来发送JSON， 所以，通过只接收JSON，你可以降低发生上面那种情况的可能性。
+
+    2）CSRF Token。（代码中生成不在明面上进行展示）
+      生成一个随机的 token，切勿放在 cookie 中，每次请求手动携带该 token 进行校验。
+
+    3）SameSite Cookie。
+      设置为 Lax 或者 Strict，禁止发送第三方 Cookie。
+
+12.js 如何将一个类数组（Array Like）转化为数组：
+  Array.from、...（扩展运算符）
+
+  稀疏数组：
+    使用 Array(n) 将会创建一个稀疏数组，为了节省空间，
+      稀疏数组内含非真实元素，在控制台上将以 empty 显示，
+    [,,,] 与 Array(3) 都将返回稀疏数组
+
+  所以最靠谱的转换方法：
+    Array.from(arrayLike);
+    Array.apply(null, arrayLike);
+    Array.prototype.concat.apply([], arrayLike);
+
+  要注意 稀疏数组的存在 情况：
+    Array.prototype.filter.call(divs, (x) => 1);
+    Array.prototype.map.call(arrayLike, (x) => x);
+
+  要注意 iterable object：
+    [...arrayLike];
+
+  常见类数组：
+    DOM API 中的选择器
+    函数中的 arguments
+
+13.如何在url中传递数组？TODO 也就随便看看
+  a=3&a=4&a=5
+  a=3,4,5
+  a[]=3&a[]=4&a[]=5
+  a[0]=3&a[1]=4&a[2]=5
+
+14.如何实现compose函数，进行函数合成
+  进行函数合成：
+    const add10 = (x) => x + 10;
+    const mul10 = (x) => x * 10;
+    const add100 = (x) => x + 100;
+
+    // (10 + 100) * 10 + 10 = 1110
+    compose(add10, mul10, add100)(10);
+
+
+15.lodash.get函数 TODO
+  使用 get 函数可避免长链的 key 时获取不到属性而出现问题，此时进行异常避免时及其服务，如 o.a && o.a.b && o.a.b.c && o.a.b.c.d
+
+16.可选链操作符 ?.
+  const arr = [0, 1, 2]
+  console.log(arr?.[0]);
+
+17.深拷贝实现 TODO
+  tips:
+    本质上是断链（复杂对象的指针指向）
+
+  const obj = {
+    re: /hello/,
+    f() {},
+    date: new Date(),
+    map: new Map(),
+    list: [1, 2, 3],
+    a: 3,
+    b: 4,
+  };
+
+  要注意点：
+  1）如何处理复杂对象，如Date、Regexp等
+  2）如何处理循环引用问题
+
+18.跨域，跨域解决方案：
+  跨域：
+    协议、域名、端口，只要这三者中出现一个不一致，就是跨域
+
+  跨域解决方案：
+    1）CORS 设置服务端响应头：Access-Control-Allow-Origin: *
+    2）Reverse Proxy ,在Nginx等反向代理服务器中设置为同一域名
+    3）JSONP
+
+@time 2022-03-02
+19.Event Loop
+  栈、堆、queue之间的关系
+
+  宏任务：
+    requestAnimationFrame
+    setInterval,
+    setTimeout
+
+  微任务：
+    Promise.then 、catch、finally
+
+  执行顺序（优先级）：常规代码 > 微任务 > 宏任务
+
+20.flatMap函数
+  flatMap：
+    首先使用映射函数映射每个元素（map），然后将结果压缩成一个新数组（flat）。
+    它与 map 连着深度值为1的 flat 几乎相同，
+      但 flatMap 通常在合并成一种方法的效率稍微高一些。
+
+    tips:
+      只能进行第一层的flat
+
+    实现方案：
+      map(callback).flat()
+
+21.手动实现一个async/await TODO @focus
+  async实现原理：
+    就是将 Generator函数 和 自动执行器 封装到一个函数里
+
+    async函数返回一个Promise 对象
+    async函数内部return语句返回的值，会成为then方法回调函数的参数
+    async函数内部抛出错误，会导致返回的Promise 对象变为reject状态，抛出的错误对象会被catch方法的回调接收
+
+22.使用async / await 实现一个 Promise.all 的效果
+   无答案，Promise.all 实现的并行触发（并发），而async，await是异步的会存在先后顺序
+
+23.js捕捉不到的异常状况：
+  网络错误
+
+24.Promise.allSettled
+  接收Promise 列表，当给定的promise状态都发生变更（pending -> fulfilled, pending -> rejected）
+  则这个状态变更为fulfilled
+
+25.LRU Cache （最近最少使用）缓存机制 TODO @focus
+  1）使用Map做数据保存
+  2）自检双向链表做元素使用频率保存及空间大小限制
+
+26.cookie有哪些字段
+  path
+  domain
+  key
+  value
+  httpOnly
+  sameSite
+
+@time 2022-03-03
+27.bind、call、apply之间的区别
+  bind 返回的是一个函数，接收的是一个或者多个参数
+  call 直接进行执行的函数，接收的是一个或者多个参数
+  apply 直接进行执行的函数，接收一个数组或者类数组作为参数
+
+28.v8垃圾回收机制： TODO @focus
+  引用计数清除：
+    当对象没有其他对象进行引用的时候 (对象的引用为null 也就是 a = null)，则进行垃圾回收
+
+    这有一个问题：
+      循环引用的问题
+
+  标记清除：
+    假定有一个叫根的对象，垃圾回收器定期从根部开始进行逐个查找，然后找到该对象及其子对象的所有引用对象，把游离在该对象之外的 进行垃圾回收
+
+    限制就是：
+      会出现误删一些不需要删除的对象
+
+29.fetch中credentials 的用途
+  使用fetch请求是否应该发送cookie
+
+30.Promise.race()
+  根据promise列表中的率先发生状态的变化的请求保持一致，这个状态是rejected 这race是rejected，相反就是fulfilled
+
+31.js中在new的时候发生了什么？手写一个new
+  new运算符：
+    创建一个用户定义的对象类型的实例，或者是构造函数的内置对象的实例
+
+  1）创建一个对象， 链接到原型
+  2）绑定this指向
+  3）返回该对象
+
+  function _new(fn, ...args) {
+    // 创建一个对象，并连接到原型
+    const thisObj = Object.create(fn.prototype);
+    // 绑定this指向
+    const result = fn.call(thisObj, ...args);
+    // 返回对象
+    return typeof result === 'object' ? result: thisObj
+  }
+
+32.Iterable对象，和Array区别
+  实现了[Symbol.iterator]属性的对象，可以进行for...of 迭代
+
+33.将一个串中的部分用另一个串替换
+  str.split('foo').join('bar')
+  join方法：
+    将一个数组或者类数组的对象用某种方式连接成一个字符串，并返回该字符串
+
+34.js中如何实现继承 TODO
+  class 类型 extends
+  构造函数类型：
+    1）原型链继承（原型式继承）
+    2）构造函数继承
+    3）实例继承
+    4）拷贝继承
+    5）组合继承
+    6）寄生继承
+
+35.实现一个once函数，记忆返回结果指执行一次
+  function(f) {
+    let result;
+    let revoked = false;
+
+    return (...args) => {
+      if(revoked) return result;
+
+      const _result = f(...args);
+      revoked = true;
+      result = _result;
+      return result;
+    }
+  }
+
+36.实现一个函数isPlainObject判断是否是一个纯对象
+  Object.getPrototypeOf 获取对象的原型
+
+  纯对象：
+    通过Object构造函数创建 或 __proto__ === null(true)
+
+  function(obj) {
+    if (typeof obj !== 'object' || obj === null) {
+      return false;
+    }
+
+    let proto = obj;
+    while(Object.getPrototypeOf(proto) !== null) {
+      proto = Object.getPrototypeOf(proto);
+    }
+
+    return Object.getPrototypeOf(obj) === proto;
+  }
+
+37.无限累加
+  这是一个关于懒计算的函数，使用sum收集，所有累加项，使用valueOf进行计算
+  1）sum返回一个函数，收集好所有的累加项，使用递归实现
+  2）返回函数带有valueOf属性，用于统一计算
+
+  function sum(..args) {
+    const f = (...rest) => sum(...args, ...rest);
+    f.valueOf = args.reduce((x, y) => x + y, 0);
+    return f;
+  }
+
+38.reduce(cb, initialVal)
+  initialVal: 初始值(起始值) （累加数据的起点 ）
+  eg:
+    [0, 1, 2, 3, 4].reduce((accumulator, currentValue, currentIndex, array) => {
+        return accumulator + currentValue
+    }, 10) === 20;
+
+39.同步的sleep函数
+  因此抛弃了，setTimeout
+  function sleep(delay) {
+    console.log("begin");
+    const startTime = +(new Date());
+    let curTime = startTime;
+
+    while (true) {
+      curTime = +(new Date());
+      if (curTime - startTime >= delay) {
+        break;
+      }
+    }
+
+    console.log("end");
+  }
+
+  异步sleep函数：
+    function sleep(delay) {
+      return new Promise((resolve) => setTimeout(resolve, delay))
+    }
+
+  delay 函数：
+    function delay(fn, delay, ...args) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          Promise.resolve(fn(...args)).then(resolve).catch(reject);
+        }, delay);
+      });
+    }
+
+  作用：
+    sleep 让线程休眠，到指定时间恢复执行
+    delay函数：改变原有的调度
+
+40.parseUrl
+  // uri = ?a=10&b=oo&c=100
+  Object.fromEntries(new URLSearch(uri));
+
+41.随机获取数组的一个元素 (或者参考生成乱序)
+  Math.random(0, length)
+  [].sort(() => 0.5 - Math.random())[0]
+
+42.剪切板
+  oncopy事件
+
+43.jsonp 原理：
+  1）动态创建script，使用script.src 加载请求跨过跨域
+  2）script.src加载的脚本内容为jsonp
+
+  function jsonp({ url, onData, params }) {
+    const script = document.createElement("script");
+
+    // 一、为了避免全局污染，使用一个随机函数名
+    const cbFnName = `JSONP_PADDING_${Math.random().toString().slice(2)}`;
+
+    // 二、默认 callback 函数为 cbFnName
+    script.src = `${url}?${stringify({ callback: cbFnName, ...params })}`;
+
+    // 三、使用 onData 作为 cbFnName 回调函数，接收数据
+    window[cbFnName] = onData;
+
+    document.body.appendChild(script);
+  }
+
+44.数组去重
+  利用Set [...new Set(arrayLike)]
+  利用Map 将数组转化为map，然后对keys 进行遍历for of
+
+45.页面文本不可复制
+  css: user-select: none;
+  js: onselectstart: e.preventDefault
+      oncopy: e.preventDefault
+
+46.洗牌函数 shuffle
+  洗牌算法：每次都是让当前数组状态的最后一个和 其前面数据的随机位置进行交换 从而形成一个乱序数组 （本质上就是一个等概率事件）
+  function shuffle(arr) {
+    let len = arr.length;
+    let array = arr.slice();
+
+    while(len) {
+      let index = Math.floor(Math.random * len --);
+      [array[index], array[len]] = [array[len], array[index]];
+    }
+
+    return array;
+  }
+
+47.defer与async的区别：
+
+  js执行过程：加载、解析、执行
+
+  相同点：
+    都是进行异步加载
+
+  不同点：
+    async加载完成后立即执行，因此可能会阻塞dom解析
+    defer加载完成后延迟到dom解析完成后才会执行，但会在事件之前
+
+48.vue3中，监听数组数据变化
+  基于Proxy
+
+49.typeof 和 instanceof的区别
+  1）typeof
+    用以判断基础数据类型（null除外）
+
+  2）instanceof
+    检查操作符右边的函数原型是否存在于左边对象的原型链中
+
+50.js 翻转字符串
+  str.split().reverse().join()
+  [...str].reduceRight((acc, v) => acc + v);
+  reduceRight:
+    接受一个函数作为累加器（accumulator）和数组的每个值（从右到左）将其减少为单个值。
+
+51.amd、umd、CMD、CommonJS
+  AMD是RequireJS在推广过程中对模块定义的规范化产出，AMD是异步加载模块，推崇依赖前置。
+  CMD是SeaJS在推广过程中对模块定义的规范化产出，对于模块的依赖，CMD是延迟执行，推崇依赖就近。
+  根据CommonJS规范，一个单独的文件就是一个模块。加载模块使用require方法，该方法读取一个文件并执行，最后返回文件内部的module.exports对象。
+  UMD又是个什么玩意呢？
+    UMD是AMD和CommonJS的一个糅合。
+      AMD是浏览器优先，异步加载；CommonJS是服务器优先，同步加载。
+      既然要通用，怎么办呢？
+        那就先判断是否支持node.js的模块，存在就使用node.js；再判断是否支持AMD（define是否存在），存在则使用AMD的方式加载。这就是所谓的UMD。
+
+52.浏览器中的module
+  <script type="module">
+    模块自动使用严格模式
+    需要使用defer属性，模块才能自动延迟加载
+
+53.lodash.merge
+
+54.过滤数组中的falsy value
+  falsy value：
+    false, null, 0, "", undefined, NaN
+
+    arr.filer(Boolean)
+
+55.闭包
+  每创建一个函数会创建一个作用域，闭包里面的函数没有要释放，但是在外层却返回了本函数，导致变量不能被释放而留存下来，应用就是对于有存储变量的需求可以用
+
+@time 2022-03-07
+56.Map 和 WeakMap 区别
+  Map可以接收任何类型数据作为key，但因其在内部实现原理中需要维护两个数组，存储 key/value，因此垃圾回收机制无法回收
+
+  WeakMap：只能使用引用类型的数据作为key。
+    弱引用，不在内部维护两个数组，可被垃圾回收，但因此无法被遍历！
+
+57.Object.defineProperty
+  数据描述符：
+    1）configurable
+    2）enumerable
+    3）writable
+    4）value
+
+  存取描述符：
+    1）get
+    2）set
+
+58.Object.keys和Object.getOwnPropertyNames() 区别
+  Object.keys：列举所有enumerable为true的属性
+  Object.getOwnPropertyNames：列出所有属性值(包括可枚举与不可枚举)
+
+59.类型转化 TODO 记忆点
+
+60.词法作用域
+  访问某个变量时，先在当前作用域中查找，如果查找不到则在嵌套作用域中查找，直到找到。如果找不到，则报 ReferenceError。
+
+61.暂时性死区（TDZ）
+  ES6新增的let、const关键字声明的变量会产生块级作用域，
+  如果变量在当前作用域中被创建之前被创建出来，由于此时还未完成语法绑定，如果我们访问或使用该变量，就会产生暂时性死区的问题，
+  由此我们可以得知，从变量的创建到语法绑定之间这一段空间称之为TDZ
+
+62.代码片段
+  function F () {
+   this.a = 3;
+   return {
+     a: 4;
+   }
+  }
+
+  const f = new F();
+  console.log(f.a);
+  // 4
+
+64.箭头函数和普通函数的区别
+  1）箭头函数没有自己的this对象
+  2）箭头函数不可以作为构造函数，也就是不能进行new操作
+  3）箭头函数不可以使用arguments对象，如果一定要用需要进行解构参数
+  4）不能使用yield命令，因为箭头函数不能用为Generator函数
+
+65.纯函数
+  一个函数的返回结果只依赖于它的参数， 并且在执行过程里面没有副作用
+
+66.千位符
+  100,000,000,000
+
+67.深比较
+  基础数据类型，对象，（NaN, +0, -0）
+
+68.Object.is和===的区别
+  +0 和 -0
+  NaN 和NaN
+
+69.手动实现Object.is
+  Object.myIs = function(x, y) {
+    if (x === y) {
+      return x !== 0 || 1 / x === 1 / y;
+    } else {
+      return x !== x && y !== y;
+    }
+  }
+
+70.将对象转化为二维数组：
+  Object.entries({a: 3})
+
+71.多个 promise then 的执行顺序是
+  按同步的运行顺序，执行 Promise 的构造函数
+  将所有 Promise 构造函数后的第一个 then() 函数放入异步队列中（如果存在的话）
+  将所有 Promise 构造函数后的第二个 then() 函数放入异步队列中（如果存在的话）
+
+72.JSBridge
+  JSBridge 就是 JavaScript 和 Native(IOS/Android)之间的桥梁，提供两者相互调用的能力
+
+73.随机字符串
+  Math.random().toString(36)
+
+74.整数
+  Number.isInteger()
+
+  安全整数
+  Number.isSafeInter()
+
+75.数组转化为迭代器
+  const arr = [];
+  const it = arr[Symbol.iterator]();
+  it.next();
+
+@time 2022-03-09
+76.循环引用判断
+
+77.异步任务为什么区分为宏任务和微任务 TODO
+
+78.遍历对象
+  Reflect.ownKeys({})
+  Object.keys({})
+  Object.entries({})
+
+79.setTimeout 最小的只能设置4ms TODO
+  实现一个0ms的setTimeout
+
+80.instanceof
+  用于检测构造函数的prototype是否出现在某个实例对象的原型链上
+  obj instanceof constructor

@@ -1,0 +1,24 @@
+1.return promise(A)和return await promise(B)区别
+  上下文执行中，执行的顺序是不一样的
+  A得到的是一个promise实例，B得到的是一个值
+
+2.手动实现instanceof
+  function myInstanceof(instance, parent) {
+    if (typeof instance !== 'object' && typeof instance !== 'function') {
+      return false;
+    }
+
+    let proto = instance?.__proto__ || null;
+
+    while(true) {
+      if (proto === null) {
+        return false;
+      }
+
+      if (proto === parent.prototype) {
+        return true;
+      }
+
+      proto = proto.__proto__;
+    }
+  }
