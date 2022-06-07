@@ -11,17 +11,28 @@
   // document.querySelectorAll("*").forEach(x => x.style.border = "1px solid #" + (~~(Math.random() * (1 << 24))).toString(16))
 </script>
 <script>
-    $.ajax({
-      type: 'GET',
-      url: 'http://gateway-api.newayz.local/industry/v1/industry/org/code/12',
-      dataType: 'json',
-      success: (data) => {
-        console.log(data, 'data');
-      },
-      error: (err) => {
-        console.log(err, 'err');
-      }
-    });
+  $.ajax({
+    type: 'POST',
+    url: 'http://ddt-api.newayz.local/v1/question/open_store',
+    headers: {
+      'Content-Type': 'application/json',
+      vtoken:
+        'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI1YTNvRUY3Uk83MUpVSXZSSkdxdXN2RUhyY2dlb0JkdSIsImlhdCI6MTY0ODUzNDE0OSwiZXhwIjoxNjQ4NzA2OTQ5fQ.n_GM77-VhowMB3lY6zfqN_Ock6vjFCOxD-4GRJZNqOU'
+    },
+    data: {
+      "fixedCost": 0,
+      "operationCost": 0,
+      "operationDataGrossMargin": 0,
+      "operationDataSales": 0
+    },
+    dataType: 'json',
+    success: (data) => {
+      console.log(data, 'data');
+    },
+    error: (err) => {
+      console.log(err, 'err');
+    }
+  });
 
 
 </script>

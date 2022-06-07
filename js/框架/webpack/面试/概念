@@ -1,0 +1,32 @@
+1.webpack是什么？原理是？TODO
+
+2.loader的作用 TODO
+
+3.plugin 的作用 TODO
+
+4.优化项目体积：TODO
+
+5.HMR？原理是？ TODO
+
+6.如何更好利用long term cache TODO
+
+7.Tree shaking 原理 TODO
+
+8. code Splitting 原理 TODO
+  动态加载chunk
+
+9.webpack 如何分包 TODO
+
+10.压缩前端项目中js的体积 TODO
+
+11.webpack 的 runtime做了什么 TODO
+
+12.打包器 如何将js资源注入html中 TODO
+  如何加载json、image等非JavaScript资源
+  如何加载style样式资源
+
+13.webpack构建资源速度提升 TODO
+
+14.如何分析前端打包体积
+  npm install webpack-bundle-analyzer --save-dev
+

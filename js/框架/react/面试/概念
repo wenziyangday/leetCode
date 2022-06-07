@@ -1,0 +1,290 @@
+1.ErrorBoundary
+  错误边界：
+    错误边界是一种 React 组件，这种组件可以捕获发生在其子组件树任何位置的 JavaScript 错误，并打印这些错误，
+    同时展示降级 UI，而并不会渲染那些发生崩溃的子组件树。
+    错误边界可以捕获发生在整个子组件树的渲染期间、生命周期方法以及构造函数中的错误。
+
+  无法捕获的：
+    事件处理
+    异步代码
+    服务端渲染
+    自身错误
+
+  应用：
+    页面路由报错
+
+2.react hooks
+  why hooks：
+    https://stackoverflow.blog/2021/10/20/why-hooks-are-the-best-thing-to-happen-to-react/#:~:text=Hooks%20make%20React%20so%20much,React%20class%20and%20functional%20components.
+    提供更简单、更可组合、更灵活、可扩展的代码，从而使执行这些功能变得更加容易
+
+3.cloneElement和createElement
+  createElement 创建一个react对象(React element)，
+  cloneElement 基于React element 添加新的属性
+
+  区别：
+    cloneElement 接收的第一个参数是react element
+    而createElement 接收标签名或者组件
+
+4.React Portal 有哪些使用场景
+  Modal 模态框、Popover 弹出 Drawer抽屉
+  Portal 允许我们根据需求任意地挂载节点
+  React.createPortal(child, container) 提供了一种将子节点渲染到存在于父组件以外的 DOM 节点的优秀的方案。
+
+5.virtual DOM
+  虚拟dom 就是将真实的dom 通过一个个对象进行结构描述，然后再通过函数将这些对象解析到浏览器
+
+  优点：
+    抽象了原本的结构，从而使得跨端变得更加方便（此时只需要实现对vdom的解析方法就可以实现跨端页面的渲染）
+    vDOM 增加了可维护性，提升效率
+
+  缺点：
+    首次渲染时，由于多了一层vDOM,会比innerHTML插入慢
+    方便大量DOM操作，但是对于一些DOM操作少的，单一的，会不太友好
+
+6.react与vue数组中的key
+  diff算法在进行dom 对比时，发现有很多相同的dom节点不利于区分，这时就需要一个身份来进行这些dom的标记，
+  此时就在创建虚拟dom时，react/vue会在dom对象中添加key来作为其唯一标识，从而在进行diff算法操作的时候会更容易进行区别dom（提升了dom比较的效率），
+  减少渲染时的消耗
+
+7.ref
+  用于直接进行dom操作
+
+8.hooks 如何模拟componentDidMount
+  useEffect(() => {}, []) 依赖收集
+
+9.实现一个message API
+  创建一个div到dom下，然后通过ReactDOM.render将组件渲染到这个容器下
+
+10.react hooks替代/部分替代 redux
+  useReducer + useContext
+
+11.react/vue中数组是否可以以数组中的index作为key值
+  相同的index但是值是不一致的，所以不可以了
+
+12.fiber
+  Fiber 用于描述时间片的数据结构
+
+  Fiber是通过分片来解决JavaScript中同步操作时间片过程的问题（由于JavaScript是单线程的原因，每个同步任务不能耗时太长，否则就会引起页面渲染堵塞）
+  将同步过程中时间片过长的，进行拆分多个时间片，从而可以释放线程独占权，让其他任务也能得到运行的机会
+
+  React Fiber 把更新过程碎片化，每执行完一段更新过程，就会把控制权交给react负责任务协调的模块，优先更新紧急任务，
+
+13.useCallback
+  返回一个memoized 的回调函数
+
+14.useEffect 中async、await
+  无法直接使用，通过函数封装，然后在useEffect 进行调用
+
+  useEffect 中使用return 进行离开时调用
+
+15.hooks
+  什么是hooks？
+    在function组件中，每一次更新都是一次新的函数执行, 为了保存一些状态（闭包）, 执行一些副作用钩子, 所以产生了hooks，去帮助记录组件的状态，处理一些额外的副作用
+
+  运行规则：
+    不要再循环，条件语句，嵌套函数中使用hooks
+      就能确保 Hook 在每一次渲染中都按照同样的顺序被调用。
+      这让 React 能够在多次的 useState 和 useEffect 调用之间保持 hook 状态的正确
+
+    只能在函数组件中使用hooks
+
+16.redux 解决的是什么问题
+  跨页面之间的数据共享
+
+  替代方案：
+    useContext + useReducer
+
+17.immutable（不可变）--react的性能优化工具
+  背景：
+    JavaScript 中的对象一般是可变的(Mutable)，因为使用了引用赋值，新的对象简单的引用了原始对象，改变新的对象将影响到原始对象。
+    如 foo={a: 1}; bar=foo; bar.a=2 你会发现此时 foo.a 也被改成了 2。
+    虽然这样做可以节约内存，但当应用复杂后，这就造成了非常大的隐患，Mutable 带来的优点变得得不偿失。
+    一般的做法是使用 shallowCopy(浅拷贝) 或 deepCopy(深拷贝) 来避免被修改，但这样做造成了 CPU 和内存的浪费，Immutable 可以很好地解决这些问题
+
+  Immutable 的核心是 不可变(Persistent Data Structure) + 结构共享(Structural Sharing)。
+    不可变，指的是 Immutable 创建的对象均为不可变对象，对象的任何修改都会返回一个新的对象，原有对象不会发生任何变化。
+    结构共享，可以让两个不同的对象共享一部分内存.
+
+18.react 中 setState（useState）
+  setState 用于更新state，接收一个新的state值并将组件的一次重新渲染加入队列
+  在后续的重新渲染中，useState 返回的第一个值将始终是更新后的 最新的state(这个是一个全量数据替换) (说明state 是有存储属性的)
+  setState 更新是一个 异步的过程
+
+  React 会将传入的参数对象与组件当前的状态合并，然后触发所谓的调和过程（Reconciliation）。
+  经过调和过程，React 会以相对高效的方式根据新的状态构建 React 元素树并且着手重新渲染整个UI界面。
+  在 React 得到元素树之后，React 会自动计算出新的树与老树的节点差异，然后根据差异对界面进行最小化重渲染。
+  在差异计算算法中，React 能够相对精确地知道哪些位置发生了改变以及应该如何改变，这就保证了按需更新，而不是全部重新渲染
+
+19.dom diff O(n3)--n的3次方 优化到O(n)
+  O(n3):
+    生成将一棵树转换成另一棵树的最小操作次数(n就是树的节点树)
+
+  O(n)的假设前提：
+    两个不同类型的元素会产生出不同的树；
+    开发者可以通过设置key属性，来告知渲染哪些子元素在不同的渲染下可以保存不变；
+
+    同层比较（React 内存中维护了两棵树）
+
+20.排查react 应用中的性能问题
+  react devtool
+  profiler F12
+
+21.React 17的变化
+  React将不再在文档级别支持事件处理程序
+
+22.现在框架 和原生开发优势
+  多平台开发能力
+    代码维护更少（一套代码多端使用）
+    人员成本更少
+
+23.router 实现原理
+  hash模式：
+    格式是url后有个#
+    当#号后面的地址发生变化时，通过hashChange事件监听，然后进行页面跳转
+
+  history模式：
+    url后面没有#号
+    通过history.pushState 和 history.replaceState改变url
+
+  区别：
+    hash 只能改变#号之后的值，而history可以随意设置同源url
+    hash 只能添加字符串类型的数据，而history 可以通过api添加多种数据类型的值
+    hash 的历史记录只显示domain 而不会显示hash值，而history的每条记录都会添加进历史记录
+    hash 无需后端配置且兼容性好，而history需要配置index.html 用于匹配不到资源的情况
+
+24.[ssr]判断 服务器端 还是 浏览器端
+  const isServer = typeof window === 'undefined'
+
+25.SSR是？
+  在服务端将请求的所有资源生成 HTML，客户端收到后可以直接渲染。
+
+  优势：
+    更好的SEO
+    更快的内容到达时间
+
+26.React code splitting
+  按需加载
+  Code Splitting 是 webpack 作为打包工具的核心特征。
+  它通过分离点（逻辑断点）的形式将代码拆分成Chunk，在分离点中依赖的模块会被打包到一起，实现异步加载。
+  一个分离点会产生一个打包文件，从而减小资源体积，缩短加载时间
+
+  入口起点：使用 entry 配置手动地分离代码。
+  防止重复：使用 CommonsChunkPlugin 去重和分离 chunk，用于分离第三方库。
+  动态导入：通过模块的内联函数调用来分离代码。
+
+27.react性能优化
+  代码分割
+  React.memo()、useCallback
+  Fragments避免额外标记
+  错误边界避免组件在出错时破坏整个应用
+
+28.数组方法分类
+  改变原数组的方法：push/unshift/pop/shift/sort/splice/reverse
+  不改变原数组的方法：concat/join/reduce/map/forEach/filter/slice/findIndex
+
+29.合成事件
+  指将原生事件合成一个React事件，之所以要封装自己的一套事件机制，
+  目的是为了实现全浏览器的一致性，抹平不同浏览器之间的差异性。
+  react16.x 所有事件绑定在 React Root Element 进行事件委托
+  react17 委托在挂载的容器上
+
+30.react的副作用
+  纯函数：
+    确定的输入，产生确定的输出，与执行次数、时间无关
+    不产生副作用
+
+    eg:
+      const addOne = x => x + 1;
+      const addOneItem = arr => arr.map(addOne);
+
+  常见的副作用有哪些:
+    系统IO相关API
+    Date.now()、Math.random()等不确定性方法
+    在函数体内修改函数外变量的值
+    在函数体内修改函数参数的值
+    调用会产生副作用的函数
+    http请求
+
+31.react/vue 受控组件/不受控组件
+  受控组件（有状态组件）：
+    用state来获取和设置输入元素值的组件
+    将状态交给组件外部管理，包括状态的设置和使用，外部程序需要接管一切与状态相关的逻辑，保持状态的一致性
+
+    场景：
+      使状态在程序中保持一致性使用
+
+  不受控组件（无状态组件）：
+    在内部自行管理状态，对外部透明，外部程序可通过组件的引用使用组件的状态
+
+32.react 中监听input的onChange事件的原生事件是？
+
+33.原生事件和合成事件 TODO
+  原生事件：
+    原生事件就是js的原生事件，如通过document.addEventListener来设置的监听事件。
+
+  合成事件：
+    React有自己的一套事件机制,它重新封装了绝大部分的原生事件。
+    合成事件采用了事件池，这样做可以大大节省内存，而不会频繁的创建和销毁事件对象。
+    React基于浏览器的事件机制自身实现了一套事件机制，包括事件注册、事件的合成、事件冒泡、事件派发等，
+    在React中这套事件机制被称之为合成事件.
+
+    与原生事件直接在元素上注册的方式不同的是，React的合成事件不会直接绑定到目标DOM节点上，用事件委托机制，
+      以队列的方式，从触发事件的组件向父组件回溯，直到Root节点。
+    因此，React组件上声明的事件最终绑定到了Root对象（React17之前是Document）上。
+
+    在Root节点，用一个统一的监听器去监听，这个监听器上保存着目标节点与事件对象的映射。
+    当组件挂载或卸载时，只需在这个统一的事件监听器上插入或删除对应对象；
+    当事件发生时（即Root上的事件处理函数被执行），在映射里按照冒泡或捕获的路径去组件中收集真正的事件处理函数，
+    然后，由这个统一的事件监听器对所收集的事件逐一执行。
+
+34.forceUpdate
+  使用方式：
+    component.forceUpdate(callback)
+
+  说明：
+    默认情况下，当组件的 state 或 props 发生变化时，组件将重新渲染。
+      如果 render() 方法依赖于其他数据，则可以调用 forceUpdate() 强制让组件重新渲染。
+
+    调用 forceUpdate() 将致使组件调用 render() 方法，此操作会跳过该组件的 shouldComponentUpdate()。
+      但其子组件会触发正常的生命周期方法，包括 shouldComponentUpdate() 方法。如果标记发生变化，React 仍将只更新 DOM。
+
+    通常你应该避免使用 forceUpdate()，尽量在 render() 中使用 this.props 和 this.state
+
+  模拟forceUpdate：
+    const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+
+    function handleClick() {
+      forceUpdate();
+    }
+
+35.兄弟组件之间的通信
+   将兄弟组件置于一个组件之内，然后将状态通过这个组件共享至其中
+   eventBus用于兄弟组件之间的通信
+
+36.React.memo 如何实现性能优化的
+  当 React 中一个组件进行更新时，它的所有子组件都会进行重新渲染，即便子组件的 props 并未发生任何改变。
+  React.memo 对子组件默认使用浅比较对比前后两次 props 的变更，若未发生变更则不会重新渲染，因此提高了性能。
+
+35.immer TODO
+  proxy
+
+36.React.useMemo 和React.useCallback 是如何进行性能优化的
+  通过传入的依赖（浅比较）来确定是否返回新的值还是以前的值
+
+37.React 性能优化
+  a）避免不必要的渲染，shouldComponentUpdate、React.memo、React.useMemo、React.useCallback。
+  b）代码分割，React.lazy 动态加载组件
+  c）使用 react-query，对请求响应进行缓存、重发等，避免多次请求，减少网络 IO 消耗及优化渲染次数
+  d）使用 useDebounce，对值及事件处理函数进行防抖，避免状态频繁变动，优化渲染次数
+  e）使用 useImmer
+
+38.useLayoutEffect和useEffect区别
+  useLayoutEffect 和 componentDidMount 和 componentDidUpdate 触发时机一致（都在在 DOM 修改后且浏览器渲染之前）；
+  useLayoutEffect 要比 useEffect 更早的触发执行；
+  useLayoutEffect 会阻塞浏览器渲染，切记执行同步的耗时操作
+
+39.usePrevious TODO 实现
+
+40.在虚拟 DOM 中进行 diff 算法时，介绍当根据 key 对数组进行重用时的算法
+  function updateChildren(element, oldVNodes, newVNodes) {}

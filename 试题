@@ -610,3 +610,21 @@
 80.instanceof
   用于检测构造函数的prototype是否出现在某个实例对象的原型链上
   obj instanceof constructor
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

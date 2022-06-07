@@ -1,0 +1,18 @@
+1.proxy 替代 Object.defineProperty
+  Object.defineProperty 问题：
+    不能监听数组变化
+    必须遍历对象的每一个属性
+    必须深层遍历嵌套的对象
+
+  proxy新加入的规范
+    针对对象：针对的是整个对象，而非其中的一个属性，所以不需要进行Object.keys()遍历。
+    支持数组：Proxy不需要对数组的方法进行重载，省去众多的hack，较少代码量就是减少了维护成本，而且标准就是最好的
+
+    proxy的第二个参数可以用13中拦截方法，这比起Object.defineProperty更加丰富
+    Proxy作为新标准受到浏览器厂商的关注和性能优化，而Object.defineProperty()是一个已有的老方法
+
+2.vue中的computed的原理：TODO
+
+3.vue-loader的实现原理： TODO
+
+4.nextTick的实现原理 TODO
