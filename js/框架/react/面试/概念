@@ -109,7 +109,7 @@
 18.react 中 setState（useState）
   setState 用于更新state，接收一个新的state值并将组件的一次重新渲染加入队列
   在后续的重新渲染中，useState 返回的第一个值将始终是更新后的 最新的state(这个是一个全量数据替换) (说明state 是有存储属性的)
-  setState 更新是一个 异步的过程
+  调用 setState 更新是一个 异步的过程
 
   React 会将传入的参数对象与组件当前的状态合并，然后触发所谓的调和过程（Reconciliation）。
   经过调和过程，React 会以相对高效的方式根据新的状态构建 React 元素树并且着手重新渲染整个UI界面。
@@ -288,3 +288,4 @@
 
 40.在虚拟 DOM 中进行 diff 算法时，介绍当根据 key 对数组进行重用时的算法
   function updateChildren(element, oldVNodes, newVNodes) {}
+

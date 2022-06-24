@@ -15,6 +15,12 @@
           height: 100px;
           background: green;
       }
+
+      #some-element-you-want-to-animate {
+          width: 100px;
+          height: 100px;
+          background: #ccccff;
+      }
   </style>
 </head>
 <body>
@@ -65,6 +71,32 @@
 
   const gos = obj.gos;
   gos();
+</script>
+<div id="some-element-you-want-to-animate"></div>
+<script>
+  const element = document.getElementById('some-element-you-want-to-animate');
+  let start;
+
+  function step(timestamp) {
+    console.log(timestamp, 'timestamp')
+    if (start === undefined)
+      start = timestamp;
+    const elapsed = timestamp - start;
+
+    //这里使用`Math.min()`确保元素刚好停在 200px 的位置。
+    element.style.transform = 'translateX(' + Math.min(0.1 * elapsed, 200) + 'px)';
+
+    if (elapsed < 2000) { // 在两秒后停止动画
+      window.requestAnimationFrame(step);
+    }
+  }
+
+  window.requestAnimationFrame(step);
+</script>
+
+<script>
+  console.log(aaa, 'aaaa');
+  var aaa = 1;
 </script>
 </body>
 </html>

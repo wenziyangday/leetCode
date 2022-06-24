@@ -40,6 +40,6 @@ nodejs中的EventLoop:
   版本 < 11 定时器出现会将微任务暂时保存，直接去执行新的定时器任务，然后将新的微任务添加得到微任务队列中
 
 
-浏览区的EventLoop和nodejs 的区别：
+浏览器的EventLoop和nodejs 的区别：
   浏览器在处理微任务时候，是在宏任务执行完毕后进行执行的
   nodejs中的微任务是在EventLoop不同阶段间进行执行的
