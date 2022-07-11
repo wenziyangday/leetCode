@@ -1,0 +1,17 @@
+1.作用域链
+2.变量提升（暂时性死区）
+3.闭包
+4.原型、原型链、constructor
+5.flex布局
+6.手写代码 bind、call、apply、debounce、throttle
+7.promise（实现）
+
+
+vue框架：
+1.组件通信
+2.dom diff
+3.虚拟dom
+4.跨域
+
+http:
+1.网络请求

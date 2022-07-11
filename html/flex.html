@@ -19,18 +19,34 @@
 
       .one {
           height: 100px;
-          background: red;
+          background: #6200ff;
           border-right: 1px solid;
+      }
+
+      .one::after {
+          content: '54321';
+          display: block;
+      }
+
+      .one:before {
+          content: '12345';
+          display: block;
       }
   </style>
 </head>
 <body>
 
 <div class="wrap">
-    <div class="one">one</div>
-    <div class="one">one</div>
-    <div class="one">one</div>
-    <div class="one">one</div>
+  <div class="one">one</div>
+  <div class="one">one</div>
+  <div class="one">one</div>
+  <div class="one">one</div>
 </div>
+
+<script>
+  document.cookie = Math.random() + '';
+</script>
+
+
 </body>
 </html>
