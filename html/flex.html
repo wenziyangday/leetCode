@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+      * {
+          margin: 0;
+          padding: 0;
+      }
+
+      .wrap {
+          height: 800px;
+          border: 1px solid #c3c3c3;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+      }
+
+      .one {
+          height: 100px;
+          background: #6200ff;
+          border-right: 1px solid;
+      }
+
+      .one::after {
+          content: '54321';
+          display: block;
+      }
+
+      .one:before {
+          content: '12345';
+          display: block;
+      }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="one">one</div>
+  <div class="one">one</div>
+  <div class="one">one</div>
+  <div class="one">one</div>
+</div>
+
+<script>
+  document.cookie = Math.random() + '';
+</script>
+
+
+</body>
+</html>

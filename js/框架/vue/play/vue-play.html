@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+</head>
+<body>
+
+<script>
+  Vue.prototype.$eventBus = new Vue();
+
+  const vue = new Vue({
+    data: {
+      a: 'we'
+    }
+  });
+
+  console.log(vue, Vue.observable({}));
+</script>
+
+</body>
+</html>

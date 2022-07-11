@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+      .red {
+          width: 200px;
+          height: 200px;
+          background: red;
+      }
+
+      .green {
+          width: 100px;
+          height: 100px;
+          background: green;
+      }
+
+      #some-element-you-want-to-animate {
+          width: 100px;
+          height: 100px;
+          background: #ccccff;
+      }
+  </style>
+</head>
+<body>
+<div class="red">
+  <div class="green"></div>
+</div>
+
+<script>
+  const red = document.querySelector('.red');
+  const green = document.querySelector('.green');
+  red.addEventListener('click', function (e) {
+    console.log('red', e.target.className, e.currentTarget.className);
+  });
+
+  green.addEventListener('click', function (e) {
+    console.log('green', e.target.className, e.currentTarget.className);
+  });
+</script>
+
+
+<script>
+  a = 100;
+  console.log(a);
+  var a;
+</script>
+
+<script>
+  foo();
+  console.log(foo);
+
+  function foo() {
+    console.log('foo')
+  }
+
+  // var foo = function () {
+  //   console.log('lkkl')
+  // }
+
+  const name = '体恒的'
+  const obj = {
+    name: '账上',
+    gos: function () {
+      console.log(this.name);
+    }
+  }
+
+  obj.gos();
+
+  const gos = obj.gos;
+  gos();
+</script>
+<div id="some-element-you-want-to-animate"></div>
+<script>
+  const element = document.getElementById('some-element-you-want-to-animate');
+  let start;
+
+  function step(timestamp) {
+    console.log(timestamp, 'timestamp')
+    if (start === undefined)
+      start = timestamp;
+    const elapsed = timestamp - start;
+
+    //这里使用`Math.min()`确保元素刚好停在 200px 的位置。
+    element.style.transform = 'translateX(' + Math.min(0.1 * elapsed, 200) + 'px)';
+
+    if (elapsed < 2000) { // 在两秒后停止动画
+      window.requestAnimationFrame(step);
+    }
+  }
+
+  window.requestAnimationFrame(step);
+</script>
+
+<script>
+  console.log(aaa, 'aaaa');
+  var aaa = 1;
+</script>
+</body>
+</html>

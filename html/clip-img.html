@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    .box-img {
+        width: 230px;
+        height: 230px;
+        box-sizing: border-box;
+        border: 1px solid red;
+        overflow: hidden;
+        text-align: center;
+        position: relative;
+    }
+
+    img.one {
+        display: inline-block;
+        /*一个图片在一个宽高固定的盒子里，如果只设置图片宽度，那么高度是自适应的。*/
+        width: 228px;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+    }
+
+    img.two {
+        display: inline-block;
+        width: 228px;
+    }
+
+    img.three {
+        max-width: 228px;
+        max-height: 228px;
+        display: inline-block;
+    }
+
+</style>
+</head>
+<body>
+<!-- 水平方向上的解决方案 -->
+<div class="box-img">
+  <img src="https://img.alicdn.com/bao/uploaded/i3/740173676/TB1Y81Ad5qAXuNjy1XdXXaYcVXa_!!0-item_pic.jpg_400x400.jpg"
+       alt="" class="one">
+</div>
+
+
+<div class="box-img">
+  <img src="https://img.alicdn.com/bao/uploaded/i3/740173676/TB1Y81Ad5qAXuNjy1XdXXaYcVXa_!!0-item_pic.jpg_400x400.jpg"
+       alt="" class="two">
+</div>
+
+<div class="box-img">
+  <img src="https://img.alicdn.com/bao/uploaded/i3/740173676/TB1Y81Ad5qAXuNjy1XdXXaYcVXa_!!0-item_pic.jpg_400x400.jpg"
+       alt="" class="three">
+</div>
+
+</body>
+
+</html>

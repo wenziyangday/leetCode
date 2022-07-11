@@ -21,12 +21,12 @@ function spawn(gF) {
       Promise.resolve(next?.value).then(function (v) {
         step(function () {
           gen.next(v);
-        }, function (e) {
-          step(function () {
-            return gen.throw(e);
-          })
-        });
-      })
+        })
+      }, function (e) {
+        step(function () {
+          return gen.throw(e);
+        })
+      });
     }
 
     step(function () {

@@ -1,0 +1,337 @@
+1.react hooks的优势
+  react hooks是16.18引入的特性，他允许你在不写class的情况下，操作state和react的其他特性
+  react hooks 要解决的问题是状态共享，不会产生jsx嵌套地狱问题
+  这个状态是指状态逻辑，所以称为状态逻辑复用，因为只共享数据处理逻辑，不会共享数据本身（状态逻辑隔离，之间互不干扰）
+
+2.react useEffect 中使用async/await
+  useEffect 函数组件中执行副作用操作，会返回一个回调函数（销毁函数）
+  返回函数的执行时机：
+    首次渲染不会进行清理，会在下一次渲染，清除上一次的副作用
+    卸载阶段也会执行清除操作
+
+  如果是一个异步的，则其返回结果是一个不确定性的，很难进行bug定位
+
+  可以通过IIFE 或者在useEffect中创建一个异步函数并执行
+
+3.性能优化的点：
+  代码层：
+    列表设置key
+    数据绑定尽可能做成事件委托的形式，避免列表式的绑定
+    对于复杂的数据结构使用immutable
+      复杂数据结构（引用数据类型）带来的问题：
+        引用时会出现一些难以排查的bug，这个时候一般会进行拷贝（深、浅）但是这个会带来CPU和内存的浪费
+      immutable优点：
+        降低了可变的复杂度
+        节省内存
+        不会存在并发问题（数据本身就是不可变的）
+        拥抱函数式编程
+
+  网络层：
+
+4.React.memo和useMemo和useCallback
+  useMemo: 返回一个memorized的值，通过其依赖项进行细粒度的更新
+  useCallback: 返回一个memorized的函数，同样通过其依赖项进行更新
+  React.memo: HOC，通过传入的props，进行判断是否需要更新
+  但是当其中使用了useState, useReducer, useContext,当状态state、context发生变化时，组件依然会更新
+  默认情况下，其只会对复杂对象进行浅比较，如果要控制比较过程，需要传入第二参数进行比较，但必须得道一个Boolean值
+
+
+5.为什么不能在循环，条件或者嵌套函数中调用hooks
+  如果在条件语句中使用hooks，React 会error
+  这与React Hooks的底层设计的数据结构有关，react 通过链表来严格保证hooks的顺序
+
+6.父子组件的生命周期执行顺序
+  react生命周期广义上：
+    挂载、渲染、卸载 （挂载卸载过程、更新过程）
+
+  挂载卸载过程：
+    constructor： 完成react的数据初始化
+    componentWillMount: 组件初始化数据后，但是还未渲染dom钱
+    componentDidMount：组件第一次渲染完成，此时dom节点已经生成
+    componentWillUnmount: 组件的卸载和数据的销毁
+
+  更新过程：
+    componentWillReceiveProps(nextProps): 父组件改变后的props需要重新渲染组件时
+    shouldComponentUpdate(nextProps, nextState): 主要用于性能优化（部分更新），因为react 父组件的重新渲染会导致其所有子组件的重新渲染
+    这个时候，其实我们是不需要所有子组件都跟着重新渲染，我们可以通过return false 可以阻止组件的更新
+    componentDidUpdate(prevProps, prevState)： 组件更新完毕后触发
+    render：渲染时触发
+
+  父子组件加载顺序：
+    在挂载时，子组件的挂载钩子先被触发，卸载时，子组件的卸载钩子后被触发
+
+  在挂在函数上注册监听器，说明此时是可以与页面交互的：
+    其实所有的挂载钩子都是在父组件实际挂载到dom树上菜触发的，不过是在父组件挂载后一次触发子组件的componentDidmount，最后触发自身的挂载钩子
+    也就是说componentDidmount其实是异步钩子
+    相反，卸载时，父节点先移除，再从上至下依次触发子组件的卸载钩子
+
+    有时我们也会在卸载钩子上卸载监听器，这说明componentDidmount 其实在父组件从dom树上卸载前触发的，先触发自身的卸载钩子，但此时并未从dom树上玻璃
+    然后依次尝试触发所有子组件的卸载钩子，最后，父组件从dom树上完成实际的卸载
+
+7.react事件和原生事件的执行顺序（先捕获，然后进行冒泡）
+  react的所有事件都挂载在document，当真实dom触发后冒泡到document后才会对react事件进行处理
+  所以原生事件先执行，然后执行合成事件，最后执行真正在document上挂载的事件
+
+8.闭包陷阱 TODO
+  react Hooks存在闭包渲染问题，每次render都会闭包缓存当前render对应的state（数据不同步）
+  可以通过useRef、state更新时的回调函数处理这个问题
+  使用 EffectHook 依赖时要注意取消副作用
+
+9.keepAlive TODO
+
+10.useEffect&useLayoutEffect
+  相同点：
+    都是用于处理副作用，这些副作用包括改变dom 设置订阅，操作定时器，在函数组件内部处理副作用是不被允许的，所以需要使用这两个函数去处理
+    两者在使用上没有任何差异，基本可以直接替换
+
+  diff：
+    场景上：
+      useEffect 在react的渲染过程中是被异步调用的，用于绝大多数场景；
+      而useLayoutEffect会在所有的dom变更之后同步调用,主要用于处理dom操作，调整样式，避免页面闪烁等问题，也正是因为是同步处理，所以要避免在useLayoutEffect
+      中做计算量较大的耗时任务从而造成阻塞
+    使用效果：
+       useEffect 是按照顺序执行代码的，改变屏幕像素之后执行（先渲染，后改变dom），当改变屏幕内容时可能会产生闪烁，
+       useLayoutEffect是改变屏幕像素之前执行的（会推迟页面显示的事件，先改变dom后渲染），不会产生闪烁
+       useLayoutEffect 总是比useEffect先执行
+
+11.hooks使用限制
+  不要再循环，条件或嵌套函数中调用hooks
+  在react的函数组件中调用hook
+
+  旧开发模式的问题：
+    组件之间难以复用状态逻辑
+    复杂的组件变得难以理解，生命周期函数和业务逻辑耦合太深，导致关联部分难以拆分
+    人和机器都很容易混淆类。常见的this指向问题
+
+12.useState 使用数组作为返回值
+  降低使用复杂度，返回数组的话可以直接根据顺序进行解构（在这里面就可以直接声明对应的变量了，而不需要在进行别名转换了），而返回对象的话要想多次使用就要进行别名了
+
+13.使用useState, 连续调用setState （setState({...oldVal, newVal})）会造成值丢失
+  首先useState 是异步执行的，也就是执行setState后，不会立即更新，多次调用时，出现了值覆盖的情况。
+  如果本次状态更新依赖于上一次最近的状态更新，那么我们可以给setState 传递一个函数进去，函数的参数即为最后一次更新的状态的值
+  setState(prevState => ({...prevState, newVal}))
+
+14.受控组件，不受控组件
+  组件内部状态仅在初始化进行传入，之后不随外部状态发生变化而变化
+
+15.react Router 模式
+  hash模式：
+    特点#：通过判断#号之后的url变化进行路由跳转
+    通过hashChange监听变化
+  history模式：
+    history.replaceState, history.pushState
+
+16.react router
+  可以实现无刷新的条件下切换显示不同的页面
+  路由的本质就是页面url发生改变时，页面的显示结果可以根据url的变化而变，但是页面不刷新(不是浏览器的刷新操作)
+  因此，可以通过前端路由可以实现单页应用
+
+  常用的组件
+    BrowserRouter、HashRouter
+    Route：用于路径匹配，然后进行组件渲染
+      path 路径
+      component 对应路径匹配的组件
+      render 设置匹配路径后，渲染的内容
+      exact 开启精准匹配，只有精准匹配到完全一致的路径，才会渲染对应的组件
+
+    Link、NavLink
+      路径跳转，最终渲染为a 用to代替href属性
+
+    Switch
+      当匹配到第一个组件的时候后面的组件就不应该继续匹配
+
+    redirect
+      用于路由重定向
+
+  hooks：
+    useHistory 可以让组件内部直接访问history，无需通过props获取（一般可以通过该方法进行路由跳转）
+    useParams 获取路由中的参数
+    useLocation 会返回当前URL的location对象
+
+  路由参数：
+    动态路由
+    search传递参数
+    NavLink、Link to 中传递参数
+
+17.动画
+  react-transition-group
+  react-motion
+  animated
+  css动画
+
+18.构建组件的方式
+  组件就是把图形、非图形的各种逻辑抽象为一个同一的概念来实现开发的模式
+  优势：
+    降低耦合性
+    调试方便（排除法定位问题位置）
+    提高可维护性，组件的单一职责，组件复用
+
+  如何构建：
+    函数式创建
+    React.createClass
+    继承React.Component
+
+  区别：
+    React.createClass 创建方式太过冗余
+
+19.state、props
+  组件的显示形态可以由数据状态和外部参数决定，而数据状态就是state
+  区别：
+    相同点：
+      对象，
+      用于存储信息
+      props和state都能触发渲染更新
+
+    diff：
+      props来源于外部，而state是组件内部进行自我状态管理
+      props组件内部是不能进行修改的，但state在组件内部是可以修改的（setState）
+
+20.react 中引用css 的方式
+  引入外联样式文件（.css, .module.css）
+  进行行内样式书写
+  创建样式对象进行使用
+
+21.Immutable 不可变的数据（一旦创建，就不能更改的数据）
+  对Immutable 对象的任何修改或添加删除操作都会返回一个新的Immutable对象
+  原理：
+    持久化数据结构（Persistent Data Structure）
+    用一种数据结构来保存数据
+    当数据被修改时，会返回一个对象，但是新的对象会尽可能的利用之前的数据结构而不会对内存造成浪费
+
+  说明：
+    也就是使用旧数据创建新数据时，要保证旧数据同时可用且不变，同时为了避免deep copy把所有节点都复制一遍带来的性能损耗，Immutable使用了 结构共享（Structural Sharing）
+    如果对象树中一个节点发生变化，只修改这个节点和它影响的父节点，其他节点进行共享
+
+  使用：
+    通过一个Immutable.js库
+
+  在react中的应用：
+    使用Immutable可以给react应用带来性能的优化，主要体现在减少渲染次数
+    在做react性能优化的时候，为了避免重复渲染，我们会在shouldComponentUpdate中做对别，当返回true执行render方法
+
+    Immutable 通过is方法则可以完成对比，而无需进行深度比较
+    在使用redux过程中也可以结合Immutable,不使用Immutable前修改一个数据需要进行深拷贝
+
+22.jsx转换为真实dom的过程
+  使用react.createElement或者jsx 编写的组件，实际上所有的jsx代码都是转换为react.createElement(),babel帮助我们完成了这个转换过程
+  createElement函数对key和ref等特殊的props进行处理，并获取defaultProps 对默认props 进行赋值，并且对传入的孩子节点进行处理，最终构造出一个DOM对象
+  ReactDOM.render将生成好的虚拟dom渲染到指定容器上，其中采用了批处理、事务等机制并且对特定浏览器进行了性能优化，最终转换为真实dom
+
+23.错误边界ErrorBoundary：（仅可以捕获子组件报错）
+  一种react 组件，这种组件可以捕获发生在其子组件树任何位置的JavaScript错误，并打印同时展示降级UI，而不会渲染那些崩溃的子组件树
+  形成错误边界的两个条件：
+    使用了 static getDerivedStateFromError()
+    使用了 componentDidCatch()
+
+  无法捕获的异常：
+    事件处理
+    异步代码
+    服务端渲染
+    自身抛出了错误
+
+24.react服务端渲染
+  SSR，由服务侧完成页面的HTML结构拼接的页面处理技术，发送到浏览器，然后为其绑定状态与事件，成为完全可以交互页面的过程
+  解决两个问题：
+    SEO
+    加速首屏加载问题，解决白屏问题
+
+25.react 组件通信
+  父到子：props
+  子到父：
+    父级组件向子组件传递一个方法，然后通过这个函数的回调，拿到子组件的值，
+    通过ref，React.forwardRef，useImperativeHandle 将子组件的方法和状态暴露给父级组件
+  兄弟组件：借助父级组件进行中间转述
+  多级组件：createContext
+  非关系组件传递：全局建立一个资源管理（redux）
+
+26.react 懒加载 （原理？）
+  React.lazy(() => import()) .他需要返回一个Promise，该Promise需要resolve 一个default export的组件
+  import()、React.lazy 和 Suspense 共同一起实现了 React 的懒加载，也就是我们常说了运行时动态加载
+  React.lazy 必须结合 Suspense一起使用，在Suspense中渲染多个React.lazy异步加载的组件，单独使用，报错
+  Suspense 可以设置多个懒加载组件的中间loading
+
+  原理：
+    webpack动态加载
+      在react.lazy 中使用了import语法，webpack检测到这种语法会自动代码分割。
+      使用这种动态导入语法代替以前的静态输入，可以让组件再渲染时再去加载对应的资源（如何实现？）。
+        webpack 通过创建script标签来实现动态加载的，找出依赖对应的chunk信息，然后生成script标签来动态加载chunk，每个chunk都有对应的状态：未加载，加载中，已加载
+
+      Suspense组件：
+         Suspense 内部主要通过捕获组件的状态去判断如何加载，上面我们提到 React.lazy 创建的动态加载组件具有 Pending、Resolved、Rejected 三种状态，
+         当这个组件的状态为 Pending 时显示的是 Suspense 中 fallback 的内容，只有状态变为 resolve 后才显示组件。
+
+      Error Boundaries 处理资源加载失败场景
+
+27.React 性能优化
+  减少计算的量
+    减少渲染节点/降低渲染计算量（复杂度）
+    不要再渲染函数中进行不必要的计算
+    减少不必要的嵌套（滥用HOC）
+    使用虚拟列表
+    惰性渲染（必要时才会进行渲染）
+    合适的样式方案：
+      css > 大部分css in js > inline style
+  利用缓存 (避免重新渲染) 主要是通过memo、
+    简化props
+      复杂的props 违背了组件的单一职责，应进行拆分
+      复杂的props 也会难以维护，还会让组件变得难以预测和调试
+
+    不变的事件处理器（缓存事件处理器）useCallback
+      避免使用箭头函数的事件处理器，在组件中使用箭头函数每次渲染都会进行一次新的事件处理器的创建
+
+    不可变数据（Immutable.js）
+      可以让状态变得可预测，也让shouldComponentUpdate 浅比较变得可靠
+
+    简化state
+      不是所有的状态都是放在state中的
+      state放入原则：
+        组件需要响应对应的变动，或者需要渲染到视图中的数据，才会放进state中，这样可以避免不必要的数据变动导致的组件的重新渲染
+
+  精确重新计算范围（精细化渲染）
+    定义：
+      只有一个数据来源导致组件重新渲染
+
+      响应式数据的精细化渲染
+
+      不滥用context
+
+28.react Fiber 是实现 更新进程可控
+  更新过程可控体现在：
+    任务拆分
+      在Fiber机制中，它采用化整为零的思想，将调和阶段 递归遍历vdom这个大任务分成若干小任务，每个人物只负责一个节点的处理
+
+    任务挂起、恢复、终止
+      workInProcess tree
+        workInProcess 代表当前正在执行更新的Fiber 树。在render或者setState后，会构建一颗Fiber树，也就是workInProcess tree，这棵树在构建
+        每一个节点的时候会收集当前节点的副作用，整棵树构建完成后，会形成一条完整的副作用链
+
+      currentFiber tree
+        currentFiber表示上次渲染构建的Fiber 树。每一次更新完成后 workInProcess会赋值给currentFiber。在新一轮更新时，workInProcess tree再重新构建
+        新workInProcess的节点通过alternate属性 和 currentFiber 的节点建立联系
+
+      在新的workInProcess tree 的创建过程中，会同currentFiber的对应节点进行diff比较，收集副作用。同时也会复用和  currentFiber对应的节点对象
+      减少新创建对象带来的开销，也就是说无论创建还是更新、挂起、恢复以及终止操作都发生在workInProcess tree的创建过程中。workInProcess tree 构建过程
+      其实就是循环的执行任务和创建下一任务
+
+      挂起：
+        当第一个小任务完成后，先判断这一帧是否还有空闲时间，没有就挂起下一个任务的执行，记住当前挂起的节点，让出控制权给浏览器执行更高优先级的任务
+
+      恢复：
+        在浏览器渲染完成一帧后，判断当前帧是否有剩余时间，如果有就恢复执行之前挂起的任务。如果没有任务需要处理，代表调和阶段完成，可以开始进入渲染阶段
+
+          如何判断一帧是否有空闲时间：
+            使用RIC(RequestIdleCallback)浏览器原生api，react源码中为了兼容低版本浏览器，对该方法进行了polyfill
+
+          恢复执行的时候又是如何知道下一任务的是什么：
+            通过前面设计的链表。在React Fiber 中每个任务其实就是在处理下一个FiberNode对象，然后又生成下一个任务需要处理的FiberNode
+
+      终止：
+        其实并不是每次更新都会走到提交阶段，当在调和过程中触发了新的更新，在执行下一任务的时候，判断是否有优先级更高的执行任务，如果有就终止原来将要执行的任务，
+        开始新的workInProcessFiber树构建过程，开始新的更新流程。这样可以避免重复操作更新操作。这也是在react16以后生命周期函数componentWillMount有可能会执行多次的原因
+
+    任务具备优先级
+      React Fiber 除了通过挂起，恢复和终止来控制更新外，还给每个任务分配了优先级。具体点就是在创建或者更新FiberNode的时候，通过算法给每个任务
+      分配一个到期事件。在每个任务执行的时候需要判断剩余时间，如果当前处理节点已经过期，那么无论现在是否有空闲时间都必须执行该任务。过期时间的大小还代表着任务的优先级
+
+      任务在执行过程中顺便收集了每个 FiberNode 的副作用，将有副作用的节点通过 firstEffect、lastEffect、nextEffect 形成一条副作用单链表 A1(TEXT)-B1(TEXT)-C1(TEXT)-C1-C2(TEXT)-C2-B1-B2(TEXT)-B2-A。
+      其实最终都是为了收集到这条副作用链表，有了它，在接下来的渲染阶段就通过遍历副作用链完成 DOM 更新。这里需要注意，更新真实 DOM 的这个动作是一气呵成的，不能中断，不然会造成视觉上的不连贯（commit）。
