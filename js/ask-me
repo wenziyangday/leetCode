@@ -1,10 +1,11 @@
 1.作用域链
 2.变量提升（暂时性死区）
 3.闭包
-4.原型、原型链、constructor
+4.原型、原型链、constructor（三者之间的关系）
 5.flex布局
 6.手写代码 bind、call、apply、debounce、throttle
 7.promise（实现）
+8.怎么看待事件循环（event loop）
 
 
 vue框架：
@@ -12,6 +13,8 @@ vue框架：
 2.dom diff
 3.虚拟dom
 4.跨域
+5.生命周期
+
 
 http:
 1.网络请求
