@@ -12,7 +12,7 @@
 // async1().then(res => console.log(res))
 
 
-async function testSometing() {
+async function testSomething() {
   console.log("执行testSometing");
   return "testSometing";
 }
@@ -24,7 +24,7 @@ async function testAsync() {
 
 async function test() {
   console.log("test start...");
-  const v1 = await testSometing();
+  const v1 = await testSomething();
   console.log(v1);
   const v2 = await testAsync();
   console.log(v2);

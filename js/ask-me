@@ -6,6 +6,9 @@
 6.手写代码 bind、call、apply、debounce、throttle
 7.promise（实现）
 8.怎么看待事件循环（event loop）
+9.垃圾回收的理解
+10.深浅拷贝
+11.本地存储
 
 
 vue框架：

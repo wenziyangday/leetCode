@@ -12,10 +12,27 @@ bigInt 特点: 加减乘除  必须同为 BigInt 类型的
   1.获取数据类型：typeof
   2.判断数据类型：改造后的instanceof
 
+  eg:
+    class Array2 {
+      [Symbol.hasInstance](instance) {
+        return Array.isArray(instance)
+      }
+    }
+
+    [] instanceof Array2
+
+Symbol.hasInstance()
+  判断某对象是否为某构造器的实例，可以进行自定义 instanceof 操作符在某个类上的行为
+
+Symbol.iterator():
+  为每一个对象定义了默认的迭代器。该迭代器可以被for。。。of循环使用
+
+Symbol.toPrimitive():
+  作为对象的函数值属性存在的，当一个对象转换为对应的原始值时，会调用此函数。
+
 对于引用类型的判断：
   1.获取数据类型：Object.prototype.toString.call(str)
   2.判断数据类型：instanceOf
-
 
 引用对象转换基本数据类型流程依据：
   1.如果Symbol.toPrimitive()方法存在，则优先调用此方法返回

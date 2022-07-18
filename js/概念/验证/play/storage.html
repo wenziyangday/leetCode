@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>storage</title>
+</head>
+<body>
+<script>
+  const _local = localStorage;
+  const _getLocal = _local.getItem('name');
+  const _random = Math.random();
+
+  if (_getLocal) {
+    console.log('我已经存在了')
+  } else {
+    _local.setItem('name', `${_random}`);
+  }
+
+  const _session = sessionStorage;
+  const _getSession = _session.getItem('age');
+
+  if (_getSession) {
+    console.log('session', '我已经存在了');
+  } else {
+    _session.setItem('age', `${_random}`);
+  }
+
+</script>
+</body>
+</html>
