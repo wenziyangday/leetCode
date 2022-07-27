@@ -4,7 +4,7 @@
 4.原型、原型链、constructor（三者之间的关系）
 5.flex布局
 6.手写代码 bind、call、apply、debounce、throttle
-7.promise（实现）
+7.promise（实现）/ 关注异步实现
 8.怎么看待事件循环（event loop）
 9.垃圾回收的理解
 10.深浅拷贝

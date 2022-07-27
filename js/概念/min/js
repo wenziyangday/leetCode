@@ -1,0 +1,10 @@
+1.js 数据类型
+  基本数据类型：
+    string， number， boolean， undefined， null
+    Symbol, bigInt
+
+  引用数据类型：
+    Object、array
+
+2.
+

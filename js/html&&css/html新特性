@@ -1,0 +1,118 @@
+1.语义化：
+  指用合理HTML标记以及其特有的属性去格式化文档内容。
+  eg:
+    标题通过h1~h6来描述
+    头部 通过 header，底部，footer
+    列表通过 ul ol
+    按钮通过button
+    等等
+
+  优点：
+    1）易于用户阅读，样式丢失的时候能让页面呈现清晰的结构
+    2）有利于SEO，搜索引擎根据标签来确定上下文和各个关键字的权重。
+    3）方便其他设备解析，如盲人阅读器根据语义渲染网页
+    4）有利于开发和维护，语义化更具可读性，代码更好维护，与CSS3关系更和谐
+
+2.html5 新特性
+  1）HTML4 规定了三种声明方式，分别是:严格模式、过渡模式 和 框架集模式;而HTML5因为不是 SGML的子集，只需要<!DOCTYPE>就可以了:
+
+  2）语义化更好的内容标签。header/footer/article等
+
+  3）音频、视频 API(audio,video)
+
+  4）表单控件:HTML5 拥有多个新的表单输入类型。这些新特性提供了更好的输入控制和验证。
+    input type 的多中选项color、date、datetime、datetime-local、email、month、number、range、search、tel、time、url、week
+
+  5）本地存储
+    长期存储数据的 localStorage，比较常用，
+    临时存储的 sessionStorage，浏览 器关闭后自动删除，实际工作中使用的场景不多。
+
+  6）画布/Canvas
+    canvas：
+    figure 配合 figcaption：
+      HTML <figure> 元素代表一段独立的内容，经常与说明（caption）<figcaption> 配合使用，并且作为一个独立的引用单元。
+      当它属于主内容流（main flow）时，它的位置独立于主体。
+      这个标签经常是在主文中引用的图片，插图，表格，代码段等等，当这部分转移到附录中或者其他页面时不会影响到主体。
+
+  7）地理/Geolocation：
+    地理位置 API 允许用户向 Web 应用程序提供他们的位置。出于隐私考虑，报 告地理位置前会先请求用户许可
+
+  8）拖拽释放
+    HTML拖拽释放 (Drag and drop) 接口使应用程序能够在浏览器中使用拖放功能。
+    例如， 通过这些功能，用户可以使用鼠标选择可拖动元素，将元素拖动到可放置元素，并通过释放鼠标按 钮来放置这些元素。
+    可拖动元素的一个半透明表示在拖动操作期间跟随鼠标指针。
+
+    说明：
+      这里面包括元素属性的属性draggable：true | false | none
+      拖拽时间 ondragover ondrop ondragstart ondragenter
+
+  9）Web Workers：
+    web worker, websocket, Geolocation, 当在 HTML 页面中执行脚本时，页面的状态 是不可响应的，直到脚本已完成。
+    web worker 是运行在后台的 JavaScript，独立于其他脚本，不会影响页面的性能。
+    您可以继续做任何愿意做的事情:点击、选取内容等等，而此时 web worker 在后台运行。
+
+3.浏览器多个标签页的通信
+  相同域名的前提下：
+    1）WebSocket、SharedWorker;
+    2）localstorage、cookies 等本地存储方式;
+
+4.行内元素、块级元素、空元素
+  行内：
+    a b span img input select strong
+
+  块级：
+    div ul ol li dl dt dd h1 h2 h3 h4... p
+
+  空元素：（自闭合元素）
+   br,hr img input link meta
+
+  diff：
+    行内元素不可以设置宽高，不独占一行；块级元素可以设置宽高，独占一行
+
+5.cookies,webStorage（sessionStorage,localStorage） 的区别
+  1）cookie 是网站为了标示用户身份而储存在用户本地终端(Client Side)上的数据(通常经过加 密)。
+    cookie 数据始终在同源的 http 请求中携带(即使不需要)，记会在浏览器和服务器间来回传递。
+
+  2）sessionStorage 和 localStorage 不会自动把数据发给服务器，仅在本地保存。
+
+  存储大小：
+    cookie 数据大小不能超过 4k
+    sessionStorage 和 localStorage 虽然也有存储大小的限制，但比 cookie 大得多，可以达到 5M 或 更大
+
+  有效时间：
+    1）localStorage 存储持久数据，浏览器关闭后数据不丢失除非主动删除数据;
+    2）sessionStorage 数据在当前浏览器窗口关闭后自动删除。
+    3）cookie 设置的 cookie 过期时间之前一直有效，即使窗口或浏览器关闭
+
+6. 移动端1px 实现
+  引发的原因：
+    一般来说,在桌面的浏览器中,设备像素比（dpr）等于1,一个css像素就是代表的一个物理像素。
+    而在移动端,大多数机型都不是为1,其中iphone的dpr普遍是2和3,那么一个css像素不再是对应一个物理像素,而是2个和3个物理像素。
+    故css设置1px,实际产生的物理像素会变大,使得1px的效果更大
+
+7.浏览器渲染页面过程（输入url 发生了什么--浏览器阶段）
+  1）解析 HTML 文件，创建 DOM 树
+  2）解析 CSS
+  3）构建渲染树
+  4）布局和绘制
+
+8）css权重和优先级
+
+9）box-sizing:
+  border-box:
+    将border 和 padding 计算在 既设宽高的容器内
+
+  content-box:
+    是指内容宽高是由已设宽高决定的，这里不计算padding 和 border
+
+10）盒模型
+  content + margin + border + padding
+
+11）多个div 排列 margin 部分失效的原因
+  所有毗邻的两个或更多盒元素的margin将会合并为一个margin共享之。
+  毗邻的定义为：同级或者嵌套的盒元素，并且它们之间没有非空内容、 Padding或Border分隔。
+  CSS2.1规定浮动元素和绝对定位元素不参与Margin折叠
+
+
+
+
