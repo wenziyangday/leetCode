@@ -1,0 +1,4 @@
+undefined:
+  方法或者是语句中操作的变量没有被赋值，则会返回 undefined
+
+null:

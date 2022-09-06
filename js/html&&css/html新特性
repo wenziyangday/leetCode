@@ -113,6 +113,26 @@
   毗邻的定义为：同级或者嵌套的盒元素，并且它们之间没有非空内容、 Padding或Border分隔。
   CSS2.1规定浮动元素和绝对定位元素不参与Margin折叠
 
+12) flex布局
+  页面的弹性布局方案
+  flex-grow: 定义容器的放大比例： 默认为0 不放大 1 等分剩余空间
+  flex-shrink: 定义容器的缩放比例 0 不进行缩放（空间不足时），默认为1 空间不足时将会进行缩放
+  flex-basis: 设置容器的固定空间
+  align-item: 交叉轴的位置描述
+  justify-content: 主轴的位置描述
+  flex-direction: 主轴的方向 row 描述的是水平方向的；此时交叉轴是垂直方向，column 是指垂直方向的，此时交叉轴为水平方向
+  order: 排序专用
+  flex-wrap：多行换行
+  flex: 1 等价于 flex: 1 1 0
+  flex: auto 等价于 flex: 0 0 auto
+
+13) grid 布局
+  设置grid后子元素的display 属性失效
+  网格轨道：
+    一个网格轨道就是网格中任意两条线之间的空间
+    grid-template-columns 和 grid-template-rows 属性来定义网格中的行和列
+
+
 
 
 

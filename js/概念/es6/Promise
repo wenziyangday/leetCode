@@ -138,7 +138,9 @@ Promise 对象:
     Generator 函数与 Promise 的结合：TODO (可以考虑一下（下一步，下一步操作 使用G函数和promise 的结合）)
       使用 Generator 函数管理流程，遇到异步操作的时候，通常返回一个Promise对象。
 
-
+  Promise 的异步实现：
+    rawAsap 方法是通过 setImmediate 或 process.nextTick 来实现异步执行的任务栈，
+    而 asap 方法是对 rawAsap 方法的进一步封装，通过缓存的 domain 和 try/finally 实现了即使某个任务抛出异常也可以恢复任务栈的继续执行（再次调用rawAsap.requestFlush）。
 
 
 

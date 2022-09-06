@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+  <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+  <title>地图显示</title>
+  <link href="http://www.jq22.com/jquery/bootstrap-3.3.4.css" rel="stylesheet">
+  <style>
+      html,
+      body,
+      #container {
+          width: 100%;
+          height: 90vh;
+      }
+
+      .selector-tree {
+          width: 100%;
+          height: 10vh;
+          background: #ccccff;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+      }
+
+      .button {
+          width: 300px;
+          background: #6200ff;
+      }
+  </style>
+</head>
+<body>
+<div class="selector-tree" data-toggle="distpicker">
+  <select data-province="---- 选择省 ----"></select>
+  <select data-city="---- 选择市 ----"></select>
+  <select data-district="---- 选择区 ----"></select>
+  <div class="button">点击</div>
+</div>
+<div id="container"></div>
+
+<script src="http://www.jq22.com/jquery/1.11.1/jquery.min.js"></script>
+<!--<script src="http://www.jq22.com/jquery/bootstrap-3.3.4.js"></script>-->
+<script src="outer-js/distpicker.data.js"></script>
+<script src="outer-js/distpicker.js"></script>
+
+<script type="text/javascript">
+  window._AMapSecurityConfig = {
+    securityJsCode: '3c3259ae1cdb8046e81e88b69ce45bee',
+  }
+</script>
+<!-- 加载地图JSAPI脚本 -->
+<script src="https://webapi.amap.com/maps?v=2.0&key=2fabc0cb02547ac83e1b8a931d1d98f8&plugin=AMap.PlaceSearch,AMap.Geocoder"></script>
+<script>
+
+  let map = new AMap.Map('container', {
+    viewMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 viewMode: '3D',
+    zoom: 16, //初始化地图层级
+    center: [116.397428, 39.90923] //初始化地图中心点
+  });
+
+  // 构造点标记
+  let marker = new AMap.Marker({
+    icon: "./outer-js/location-city.png",
+    position: [116.397428, 39.90923],
+    height: 20,
+    anchor: 'bottom-center'
+  });
+  map.add(marker);
+
+  let geocoder = new AMap.Geocoder({});
+
+  $('.button').on('click', function (er) {
+    const text = $('select option:selected').text();
+    let placeSearch = new AMap.PlaceSearch({
+      // city 指定搜索所在城市，支持传入格式有：城市名、citycode和adcode
+    })
+    placeSearch.search(text, function (status, result) {
+      console.log(result, ';ll;l;');
+      // 查询成功时，result即对应匹配的POI信息
+      const {poiList: {pois: [first]}} = result;
+      if (first) {
+        const {location: {lat, lng}} = first;
+        map.remove(marker);
+        // 构造点标记
+        let _marker = new AMap.Marker({
+          // icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+          icon: "./outer-js/location-city.png",
+          position: [lng, lat],
+          height: 20,
+          anchor: 'bottom-center'
+        });
+        marker = _marker;
+        map.add(_marker);
+        map?.setCenter([lng, lat]);
+        map.setFitView();
+
+        geocoder.getAddress([lng, lat], function (_status, _result) {
+          console.log(_status, _result);
+        });
+
+      }
+    })
+  })
+</script>
+
+
+</body>
+</html>

@@ -13,14 +13,41 @@
           height: 800px;
           border: 1px solid #c3c3c3;
           display: flex;
+          flex-wrap: wrap;
           align-items: center;
           justify-content: center;
       }
 
       .one {
+          width: 200px;
           height: 100px;
           background: #6200ff;
           border-right: 1px solid;
+
+          color: white;
+          font-size: 20px;
+      }
+
+      .one:nth-child(1) {
+          flex-grow: 1;
+      }
+
+      .one:nth-child(2) {
+          /*flex: 1;*/
+          flex: 1 1 0;
+      }
+
+      .one:nth-child(3) {
+          display: grid;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          order: -1;
+          flex-shrink: 24;
+      }
+
+      .one:nth-child(4) {
+          flex-shrink: 0;
       }
 
       .one::after {
@@ -37,10 +64,16 @@
 <body>
 
 <div class="wrap">
-  <div class="one">one</div>
-  <div class="one">one</div>
-  <div class="one">one</div>
-  <div class="one">one</div>
+  <div class="one">1</div>
+  <div class="one">2</div>
+  <div class="one">3</div>
+  <div class="one">4</div>
+  <div class="one">5</div>
+  <div class="one">6</div>
+  <div class="one">7</div>
+  <div class="one">8</div>
+  <div class="one">9</div>
+  <div class="one">10</div>
 </div>
 
 <script>
