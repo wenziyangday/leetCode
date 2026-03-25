@@ -1,0 +1,49 @@
+flyio: 网络请求库（轻量）
+core-js: 补丁库
+crypto-js: 加密解密
+image-tools: 图片从网络下载，转base64
+jsencrypt: 加解密
+jspdf: pdf 文件生成
+vue-pdf：pdf 文件预览
+vconsole：移动端调试工具
+cross-env：跨环境的 设置环境变量
+mini-types：支付宝小程序 TypeScript 声明文件
+miniprogram-api-typings：wx小程序 TypeScript 声明文件
+mvdir：移动文件
+
+
+形式：原有的形式（套壳）
+  新的结构：uni 独立开发？优化提炼组件、UI组件、业务组件
+  原有的需求文档、以及现在运行中的APP、设计图
+
+技术方案：
+  基于已有的UI框架进行二次组件封装，同时进行业务结构组件提炼
+
+  图表组件
+
+
+国际化
+
+
+uViews
+tmf
+
+$u.getRect //
+$u.mpShare //
+$u.zIndex
+$u.addUnit
+$u.toast
+$u.config
+$u.trim
+$u.guid
+$u.deepClone
+$uGetRect
+
+
+
+
+
+
+
+
+

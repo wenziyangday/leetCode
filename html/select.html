@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" href="select-input.css">
+  <script src="jquery-1.11.3.min.js"></script>
+  <script src="select-input.js"></script>
+  <script>
+    $(function () {
+      $("#organId").fSelect();
+    });
+  </script>
+</head>
+<body>
+
+<select id="organId" name="organId" multiple="multiple">
+  <option value="">1</option>
+  <option value="">2</option>
+  <option value="">3</option>
+  <option value="">4</option>
+  <option value="">5</option>
+  <option value="">6</option>
+  <option value="">7</option>
+  <option value="">8</option>
+  <option value="">9</option>
+  <option value="">10</option>
+</select>
+
+
+<button id="button">
+  跳转
+</button>
+
+<script>
+  $('#button').click(function () {
+    window.location.href = 'https://www.baidu.com'
+  });
+</script>
+
+</body>
+</html>

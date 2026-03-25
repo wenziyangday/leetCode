@@ -1,0 +1,719 @@
+module.exports=[{
+    "root": "pages/batchSales",
+    "pages": [
+        {
+			"path": "extension/credit/reportView",
+			"style": {
+				"navigationBarTitleText": "查看征信报告",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "extension/delay",
+			"style": {
+				"navigationBarTitleText": "展期审核",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "extension/applicationDetail/applicationDetail",
+			"style": {
+				// "navigationBarTitleText": "签到打卡",
+				// "navigationBarBackgroundColor": "#FFFFFF"
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "extension/examination/examination",
+			"style": {
+				"navigationBarTitleText": "展期盘点审查",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "extension/approvalComments/approvalComments",
+			"style": {
+				"navigationBarTitleText": "审批意见",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "extension/surveyOpinion/surveyOpinion",
+			"style": {
+				"navigationBarTitleText": "调查意见",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "extension/viewPicture/viewPicture",
+			"style": {
+				"navigationBarTitleText": "上传材料",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "extension/viewPicture/creditAddPicture",
+			"style": {
+				"navigationBarTitleText": "上传证明材料",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/afterLoan/photoCategories/photoCategories",
+			"style": {
+				"navigationBarTitleText": "影像资料",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "extension/viewPicture/viewPictureLook",
+			"style": {
+				"navigationBarTitleText": "影像查看",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "extension/state/submitSuccess",
+			"style": {
+				"navigationBarTitleText": "提交成功",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "extension/state/backSuccess",
+			"style": {
+				"navigationBarTitleText": "退回成功",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "extension/conDetail/conDetail",
+			"style": {
+				"navigationBarTitleText": "合同额度使用情况",
+				"navigationBarBackgroundColor": "#FFF",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "extension/appProgress/appProgress",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "extension/proDetail/extensionList",
+			"style": {
+				"navigationBarTitleText": "展期进度查询",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "extension/proDetail/proDetail",
+			"style": {
+				"navigationBarTitleText": "审批进度详情",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "extension/material/material",
+			"style": {
+				"navigationBarTitleText": "查看材料",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+        {
+			"path": "afterLoan/guaranteeInspection/guaranteeInspectionDetail",
+			"style": {
+				"navigationBarTitleText": "担保检查报告查询",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "extension/search/search",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarBackgroundColor": "#FFFFFF",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postrecognit/postConfirm/postConfirm",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postrecognit/postConfirm/postConfirm",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+        {
+			"path": "postloan/postexecut/impleInspect/impleInspect",
+			"style": {
+				"navigationBarTitleText": "贷后检查任务处理",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postrecognit/postInitial/postInitial",
+			"style": {
+				"navigationBarTitleText": "贷后现场检查计划确认",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/writeReport/writeReportOne",
+			"style": {
+				"navigationBarTitleText": "撰写报告",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "postloan/postexecut/writeReport/writeReportTwo",
+			"style": {
+				"navigationBarTitleText": "撰写报告",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "postloan/postexecut/writeReport/writeReportThree",
+			"style": {
+				"navigationBarTitleText": "撰写报告",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "postloan/postexecut/writeReport/writeReportFour",
+			"style": {
+				"navigationBarTitleText": "撰写报告",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "postloan/postexecut/writeReport/writeReportFive",
+			"style": {
+				"navigationBarTitleText": "撰写报告",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "postloan/reportApproval/reportApproval",
+			"style": {
+				"navigationBarTitleText": "审批信息",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+        {
+			"path": "postloan/postexecut/inventoryReview/inventoryReview",
+			"style": {
+				"navigationBarTitleText": "整车盘点审核",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/vehicleAudit/vehicleAudit",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/inventoryDetails/inventoryDetails",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/inventoryInfo/inventoryInfo",
+			"style": {
+				"navigationBarTitleText": "盘点信息",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "postloan/postexecut/inventoryAdd/inventoryAdd",
+			"style": {
+				"navigationBarTitleText": "新增贷后检查任务",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/inventorySecond/inventorySecond",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/performInventory/performInventory",
+			"style": {
+				"navigationBarTitleText": "待盘点扫描任务列表",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/performInventory/completeVehicle/completeVehicle",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/performInventory/certifiCate/certifiCate",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/performInventory/inventoryVehicles/inventoryVehicles",
+			"style": {
+				"navigationBarTitleText": "整车盘点",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/performInventory/inventoryVehicles/operation",
+			"style": {
+				"navigationBarTitleText": "盘点操作方法",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/performInventory/certifiCateList/inventoryVehicles",
+			"style": {
+				"navigationBarTitleText": "合格证",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/performInventory/certifiCateList/operation",
+			"style": {
+				"navigationBarTitleText": "盘点操作方法",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/execusurety/guaranteeTask/guaranteeTask",
+			"style": {
+				"navigationBarTitleText": "担保检查任务处理",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/execusurety/guaranteeAdd/guaranteeAdd",
+			"style": {
+				"navigationBarTitleText": "新增经销商担保检查任务",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/execusurety/guaranteeInspect/guaranteeInspect",
+			"style": {
+				"navigationBarTitleText": "担保检查任务处理",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/execusurety/writeReportFive/writeReportFive",
+			"style": {
+				"navigationBarTitleText": "撰写报告",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/execusurety/guaranteeDetail/guaranteeDetail",
+			"style": {
+				"navigationBarTitleText": "担保检查任务处理",
+				"enablePullDownRefresh": false
+			}
+		},
+		// 待盘点
+		{
+			"path": "postloan/performInventory/inventoryVehicles/toBeCounted",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		// 待盘点
+		{
+			"path": "postloan/performInventory/inventoryVehicles/toBeChooseImage",
+			"style": {
+				"navigationBarTitleText": "影像资料",
+				"enablePullDownRefresh": false
+			}
+		},
+		// 已盘点
+		{
+			"path": "postloan/performInventory/inventoryVehicles/counted",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+        {
+			"path": "postloan/postexecut/vehicleInventSheet/vehicleInventSheet",
+			"style": {
+				"navigationBarTitleText": "整车盘点表"
+			}
+		},
+		{
+			"path": "postloan/postexecut/certificateReview/certificateReview",
+			"style": {
+				"navigationBarTitleText": "合格证盘点审核",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/afterSalesManagement/afterSalesManagement",
+			"style": {
+				"navigationBarTitleText": "贷后检查管理",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/reportview/reportview/reportview",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/reportview/reportview/inventoryDetail",
+			"style": {
+				"navigationBarTitleText": "盘点详情",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/reportview/reportview/reportReviewTemplate",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核",
+			}
+		},
+		{
+			"path": "postloan/reportview/reportReviewTemplate/reportReviewTemplateOne",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核"
+			}
+		},
+		{
+			"path": "postloan/reportview/reportReviewTemplate/reportReviewTemplateTwo",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核"
+			}
+		},
+		{
+			"path": "postloan/reportview/reportReviewTemplate/reportReviewTemplateThree",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核"
+			}
+		},
+		{
+			"path": "postloan/reportview/reportReviewTemplate/reportReviewTemplateFour",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核"
+			}
+		},
+		{
+			"path": "postloan/reportview/reportReviewTemplate/reportReviewTemplateFive",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核"
+			}
+		},
+		{
+			"path": "postloan/reportview/edit/writeReportOne",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核"
+			}
+		},
+		{
+			"path": "postloan/reportview/edit/writeReportTwo",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核"
+			}
+		},
+		{
+			"path": "postloan/reportview/edit/writeReportThree",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核"
+			}
+		},
+		{
+			"path": "postloan/reportview/edit/writeReportFour",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核"
+			}
+		},
+		{
+			"path": "postloan/reportview/edit/writeReportFive",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核"
+			}
+		},
+		{
+			"path": "postloan/reportview/edit/writeReportSix",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核"
+			}
+		},
+		{
+			"path": "postloan/afterLoan/guaranteeInspection/guaranteeInspectionDetail",
+			"style": {
+				"navigationBarTitleText": " 担保检查报告查询"
+			}
+		},
+		{
+			"path": "postloan/afterLoan/guaranteeCheckRevise/guaranteeCheckRevise",
+			"style": {
+				"navigationBarTitleText": " 担保检查报告查询"
+			}
+		},
+		{
+			"path": "postloan/postLoanReportDetails/postLoanDetails/postLoanDetails",
+			"style": {
+				"navigationBarTitleText": "贷后检查报告查询"
+			}
+		},
+		{
+			"path": "postloan/postLoanReportDetails/viewReport/viewReport",
+			"style": {
+				"navigationBarTitleText": "查看报告"
+			}
+		},
+		{
+			"path": "postloan/postLoanReportDetails/viewReport/reportEditor",
+			"style": {
+				"navigationBarTitleText": "查看报告"
+			}
+		},
+		{
+			"path": "postloan/reviewAgent/reportReviewTemplate",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核"
+			}
+		},
+		{
+			"path": "postloan/reviewAgent/reportApproval",
+			"style": {
+				"navigationBarTitleText": "贷后报告复核"
+			}
+		},
+		{
+			"path": "postloan/postConfirmat/postApproval/postApproval",
+			"style": {
+				"navigationBarTitleText": "贷后检查计划调整",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postConfirmat/postApprovalAdd/postApprovalAdd",
+			"style": {
+				"navigationBarTitleText": "新增贷后检查计划调整",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postrecognit/postRecovery/postRecovery",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/inventoryReview/upInventPhoto/upInventPhoto",
+			"style": {
+				"navigationBarTitleText": "整车盘点影像",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/executPostCheck/executPostCheck",
+			"style": {
+				"navigationBarTitleText": "贷后检查任务处理",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/executPostCheckReback/executPostCheckReback",
+			"style": {
+				"navigationBarTitleText": "贷后检查任务处理",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/violationCheck/violationCheck",
+			"style": {
+				"navigationBarTitleText": "违规流程",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/inventoryReview/inventDetailPhoto/inventDetailPhoto",
+			"style": {
+				"navigationBarTitleText": "整车盘点影像详情",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/inventoryReview/inventDetailPhoto/certDetailPhoto",
+			"style": {
+				"navigationBarTitleText": "合格证盘点影像详情",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/certificateReview/uploadPhoto/uploadPhoto",
+			"style": {
+				"navigationBarTitleText": "合格证盘点影像上传",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/certificateReview/detailPhoto/detailPhoto",
+			"style": {
+				"navigationBarTitleText": "合格证影像详情",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/violationCheckReback/violationCheckReback",
+			"style": {
+				"navigationBarTitleText": "违规流程",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postConfirmat/postAdjustment/postAdjustment",
+			"style": {
+				"navigationBarTitleText": "贷后检查计划调整",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/violationCheck/detailPhoto",
+			"style": {
+				"navigationBarTitleText": "整车违规查看全部影像",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/violationCheck/inventoryInfo",
+			"style": {
+				"navigationBarTitleText": "盘点信息",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postConfirmat/postmatLoad/postmatLoad",
+			"style": {
+				"navigationBarTitleText": "贷后检查计划调整",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postConfirmat/postmatLoad/postmatLoad",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postConfirmat/postCheckReback/postCheckReback",
+			"style": {
+				"navigationBarTitleText": "贷后检查计划调整",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postLoanReportDetails/comprehensivePage/comprehensivePage",
+			"style": {
+				"navigationBarTitleText": "修改报告",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "extension/viewPicture/lookPDF",
+			"style": {
+				"navigationBarTitleText": "PDF",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/afterLoan/writeReportSix/writeReportSix",
+			"style": {
+				"navigationBarTitleText": "查看报告",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/execusurety/guaranteeInspect/index",
+			"style": {
+				"navigationBarTitleText": "担保检查任务处理",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "postloan/postexecut/vehicleInventSheet/detailPhoto",
+			"style": {
+				"navigationBarTitleText": "查看签约图片"
+			}
+		},
+		{
+			"path": "postloan/execusurety/guaranteeInspect/indexList",
+			"style": {
+				"navigationBarTitleText": "经销商担保信息",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/postexecut/vehicleInventSheet/newSheetIndex",
+			"style": {
+				"navigationBarTitleText": "盘点表电子签"
+			}
+		},
+		{
+			"path": "postloan/postexecut/writeReport/newWriteReportTwo",
+			"style": {
+				"navigationBarTitleText": "撰写报告",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+        {
+			"path": "postloan/execusurety/todoIndex",
+			"style": {
+				"navigationBarTitleText": "担保检查任务协作",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "postloan/dhNotice",
+			"style": {
+				"navigationBarTitleText": "贷后检查/担保检查任务通知",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+        {
+			"path": "postloan/execusurety/guaranteeQuery/index",
+			"style": {
+				"navigationBarTitleText": "担保检查记录查询",
+				"navigationStyle": "custom"
+			}
+		},
+    ]
+}]

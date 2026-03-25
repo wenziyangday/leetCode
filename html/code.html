@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeMirror - 支持代码提示的编辑器</title>
+  <!-- CodeMirror核心CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+  <!-- 主题 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/solarized.min.css">
+  <!-- 代码提示样式 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/show-hint.min.css">
+  <style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		}
+
+		body {
+			color: #333;
+			min-height: 100vh;
+			padding: 20px;
+		}
+
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+		}
+
+		header {
+			text-align: center;
+			padding: 20px;
+			background: rgba(255, 255, 255, 0.9);
+			border-radius: 10px;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+		}
+
+		h1 {
+			color: #2c3e50;
+			margin-bottom: 10px;
+		}
+
+		.subtitle {
+			color: #7f8c8d;
+			font-size: 1.2em;
+		}
+
+		.main-content {
+			display: flex;
+			gap: 20px;
+			flex-wrap: wrap;
+		}
+
+		.editor-container {
+			flex: 2;
+			min-width: 500px;
+			background: white;
+			border-radius: 10px;
+			overflow: hidden;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+			display: flex;
+			flex-direction: column;
+		}
+
+		.editor-header {
+			background: #2c3e50;
+			color: white;
+			padding: 12px 20px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.editor-actions {
+			display: flex;
+			gap: 10px;
+		}
+
+		button {
+			padding: 8px 15px;
+			border: none;
+			border-radius: 5px;
+			background: #3498db;
+			color: white;
+			cursor: pointer;
+			transition: background 0.3s;
+		}
+
+		button:hover {
+			background: #2980b9;
+		}
+
+		.code-editor {
+			flex: 1;
+			height: 500px;
+			overflow: hidden;
+		}
+
+		.config-panel {
+			flex: 1;
+			min-width: 300px;
+			background: white;
+			border-radius: 10px;
+			padding: 20px;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+		}
+
+		.config-title {
+			color: #2c3e50;
+			margin-bottom: 20px;
+			padding-bottom: 10px;
+			border-bottom: 2px solid #ecf0f1;
+		}
+
+		.config-item {
+			margin-bottom: 15px;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+			color: #34495e;
+		}
+
+		select, input {
+			width: 100%;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+
+		.features {
+			background: white;
+			border-radius: 10px;
+			padding: 20px;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+		}
+
+		.features-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+			gap: 15px;
+			margin-top: 15px;
+		}
+
+		.feature-item {
+			background: #f8f9fa;
+			padding: 15px;
+			border-radius: 8px;
+			border-left: 4px solid #3498db;
+		}
+
+		footer {
+			text-align: center;
+			color: white;
+			padding: 20px;
+			font-size: 0.9em;
+		}
+
+		.language-examples {
+			display: flex;
+			gap: 10px;
+			margin-top: 10px;
+			padding: 0 20px;
+		}
+
+		.lang-btn {
+			flex: 1;
+			padding: 8px;
+			background: #ecf0f1;
+			color: #2c3e50;
+			text-align: center;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+
+		.lang-btn.active {
+			background: #3498db;
+			color: white;
+		}
+
+		.hint-info {
+			margin-top: 10px;
+			padding: 10px;
+			background: #e8f4fc;
+			border-radius: 5px;
+			font-size: 0.9em;
+		}
+
+		@media (max-width: 768px) {
+			.main-content {
+				flex-direction: column;
+			}
+
+			.editor-container {
+				min-width: 100%;
+			}
+		}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="main-content">
+    <div class="editor-container">
+      <div class="editor-header" style="display: none">
+        <h2 id="current-language">JavaScript 代码编辑器</h2>
+        <div class="editor-actions">
+          <button id="run-btn">运行</button>
+          <button id="hint-btn">代码提示 (Ctrl+Space)</button>
+        </div>
+      </div>
+      <div class="language-examples" style="display: none">
+        <div class="lang-btn active" data-lang="javascript">JavaScript 示例</div>
+        <div class="lang-btn" data-lang="java">Java 示例</div>
+      </div>
+      <textarea id="editor" class="code-editor"></textarea>
+    </div>
+
+    <div class="config-panel" style="display: none">
+      <h2 class="config-title">编辑器配置</h2>
+
+      <div class="config-item">
+        <label for="theme-select">主题样式</label>
+        <select id="theme-select">
+          <option value="default" selected>Default</option>
+          <option value="dracula">Dracula</option>
+          <option value="material">Material</option>
+          <option value="monokai">Monokai</option>
+          <option value="solarized">Solarized</option>
+        </select>
+      </div>
+
+      <div class="config-item">
+        <label for="mode-select">编程语言</label>
+        <select id="mode-select">
+          <option value="javascript" selected>JavaScript</option>
+          <option value="text/x-java">Java</option>
+        </select>
+      </div>
+
+      <div class="config-item">
+        <label for="indent-unit">缩进单位（空格数）</label>
+        <input type="number" id="indent-unit" min="1" max="8" value="4">
+      </div>
+
+      <div class="config-item">
+        <label for="line-numbers">显示行号</label>
+        <select id="line-numbers">
+          <option value="true" selected>是</option>
+          <option value="false">否</option>
+        </select>
+      </div>
+
+      <div class="config-item">
+        <label for="auto-close">自动补全括号</label>
+        <select id="auto-close">
+          <option value="true" selected>启用</option>
+          <option value="false">禁用</option>
+        </select>
+      </div>
+
+      <div class="config-item">
+        <label for="hint-options">代码提示选项</label>
+        <select id="hint-options">
+          <option value="automatic">输入时自动显示</option>
+          <option value="manual" selected>按Ctrl+Space显示</option>
+        </select>
+      </div>
+
+      <div class="hint-info">
+        <strong>提示：</strong> 输入时按 Ctrl+Space 触发代码提示，或输入点号(.)后自动显示提示。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 引入CodeMirror核心JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+<!-- 引入JavaScript模式 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+<!-- 引入Java模式 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/clike/clike.min.js"></script>
+<!-- 引入主题 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/solarized.min.js"></script>
+<!-- 引入代码提示功能 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/javascript-hint.min.js"></script>
+<!-- 引入其他功能 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/selection/active-line.min.js"></script>
+
+<script>
+	// Java代码示例
+	const javaExample = ``;
+
+	// JavaScript代码示例
+	const jsExample = ``;
+
+	// 自定义Java代码提示
+	const javaKeywords = [
+		"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
+		"continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float",
+		"for", "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native",
+		"new", "package", "private", "protected", "public", "return", "short", "static", "strictfp", "super",
+		"switch", "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while"
+	];
+
+	const javaBuiltins = [
+		"System", "out", "println", "String", "Integer", "Double", "Math", "ArrayList", "HashMap", "Object"
+	];
+
+	// 初始化编辑器
+	const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+		mode: "javascript",
+		theme: "default",
+		lineNumbers: true,
+		indentUnit: 4,
+		autoCloseBrackets: true,
+		matchBrackets: true,
+		styleActiveLine: true,
+		lineWrapping: true,
+		extraKeys: {
+			"Ctrl-Space": "autocomplete",
+			"'.'": function (cm) {
+				setTimeout(function () {
+					if (!cm.state.completionActive) {
+						cm.showHint({completeSingle: false});
+					}
+				}, 100);
+				return CodeMirror.Pass;
+			}
+		}
+	});
+
+	// 设置编辑器大小
+	editor.setSize("100%", "100%");
+
+	// 获取DOM元素
+	const themeSelect = document.getElementById("theme-select");
+	const modeSelect = document.getElementById("mode-select");
+	const indentUnit = document.getElementById("indent-unit");
+	const lineNumbers = document.getElementById("line-numbers");
+	const autoClose = document.getElementById("auto-close");
+	const hintOptions = document.getElementById("hint-options");
+	const runBtn = document.getElementById("run-btn");
+	const hintBtn = document.getElementById("hint-btn");
+	const currentLanguage = document.getElementById("current-language");
+	const langButtons = document.querySelectorAll(".lang-btn");
+
+	// 主题切换
+	themeSelect.addEventListener("change", () => {
+		editor.setOption("theme", themeSelect.value);
+	});
+
+	// 模式切换
+	modeSelect.addEventListener("change", () => {
+		const mode = modeSelect.value;
+		editor.setOption("mode", mode);
+
+		// 更新当前语言显示
+		if (mode === "javascript") {
+			currentLanguage.textContent = "JavaScript 代码编辑器";
+		} else if (mode === "text/x-java") {
+			currentLanguage.textContent = "Java 代码编辑器";
+		}
+
+		// 切换示例代码
+		const activeExample = document.querySelector(".lang-btn.active");
+		if (activeExample) {
+			const lang = activeExample.dataset.lang;
+			if (lang === "javascript") {
+				editor.setValue(jsExample);
+			} else if (lang === "java") {
+				editor.setValue(javaExample);
+			}
+		}
+	});
+
+	// 缩进单位更改
+	indentUnit.addEventListener("change", () => {
+		editor.setOption("indentUnit", parseInt(indentUnit.value));
+	});
+
+	// 行号显示切换
+	lineNumbers.addEventListener("change", () => {
+		editor.setOption("lineNumbers", lineNumbers.value === "true");
+	});
+
+	// 自动补全括号切换
+	autoClose.addEventListener("change", () => {
+		editor.setOption("autoCloseBrackets", autoClose.value === "true");
+	});
+
+	// 代码提示选项切换
+	hintOptions.addEventListener("change", () => {
+		if (hintOptions.value === "automatic") {
+			editor.setOption("extraKeys", {
+				"Ctrl-Space": "autocomplete",
+				"'.'": function (cm) {
+					setTimeout(function () {
+						if (!cm.state.completionActive) {
+							cm.showHint({completeSingle: false});
+						}
+					}, 100);
+					return CodeMirror.Pass;
+				},
+				"'('": function (cm) {
+					setTimeout(function () {
+						if (!cm.state.completionActive) {
+							cm.showHint({completeSingle: false});
+						}
+					}, 100);
+					return CodeMirror.Pass;
+				}
+			});
+		} else {
+			editor.setOption("extraKeys", {
+				"Ctrl-Space": "autocomplete",
+				"'.'": function (cm) {
+					setTimeout(function () {
+						if (!cm.state.completionActive) {
+							CodeMirror.Pass;
+						}
+					}, 100);
+					return CodeMirror.Pass;
+				}
+			});
+		}
+	});
+
+	// 运行代码按钮
+	runBtn.addEventListener("click", () => {
+		try {
+			const code = editor.getValue();
+			// 在实际应用中，这里可以使用更安全的代码执行方式
+			console.log("运行代码:");
+			console.log(code);
+			alert("代码已输出到控制台（在实际应用中会执行代码）");
+		} catch (error) {
+			console.error("执行出错:", error);
+			alert("执行出错: " + error.message);
+		}
+	});
+
+	// 显示代码提示按钮
+	hintBtn.addEventListener("click", () => {
+		editor.showHint({completeSingle: false});
+	});
+
+	// 语言示例切换
+	langButtons.forEach(btn => {
+		btn.addEventListener("click", () => {
+			// 更新活跃按钮
+			langButtons.forEach(b => b.classList.remove("active"));
+			btn.classList.add("active");
+
+			// 更新编辑器内容
+			const lang = btn.dataset.lang;
+			if (lang === "javascript") {
+				editor.setValue(jsExample);
+				editor.setOption("mode", "javascript");
+				modeSelect.value = "javascript";
+				currentLanguage.textContent = "JavaScript 代码编辑器";
+			} else if (lang === "java") {
+				editor.setValue(javaExample);
+				editor.setOption("mode", "text/x-java");
+				modeSelect.value = "text/x-java";
+				currentLanguage.textContent = "Java 代码编辑器";
+			}
+		});
+	});
+
+	// 自定义Java代码提示函数
+	CodeMirror.registerHelper("hint", "java", function (cm) {
+		const cur = cm.getCursor();
+		const token = cm.getTokenAt(cur);
+		const line = cm.getLine(cur.line);
+
+		let start = token.start;
+		let end = token.end;
+
+		// 如果当前正在输入一个词，则匹配该词
+		if (/[\w$]+/.test(token.string)) {
+			const word = token.string;
+			const list = javaKeywords.concat(javaBuiltins).filter(item =>
+				item.startsWith(word)
+			);
+
+			if (list.length) {
+				return {
+					list: list,
+					from: CodeMirror.Pos(cur.line, start),
+					to: CodeMirror.Pos(cur.line, end)
+				};
+			}
+		}
+
+		// 默认返回所有关键字和内置对象
+		return {
+			list: javaKeywords.concat(javaBuiltins),
+			from: CodeMirror.Pos(cur.line, start),
+			to: CodeMirror.Pos(cur.line, end)
+		};
+	});
+</script>
+</body>
+</html>

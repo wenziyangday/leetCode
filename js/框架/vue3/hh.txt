@@ -1,0 +1,35 @@
+
+1.自定义指令
+  局部自定义指令
+    组件内部的
+  全局自定义指令
+    main 里面自定义的（app.use---app 指的是全局vue实例）
+
+  自定义指令接收的参数（binding.value）
+    对象
+    函数
+    字符串
+  修饰符（modifiers）（v-demo:m.mm）其中mm就是修饰符，而m 是参数
+
+2.setUp 中进行 props解构处理 会出现响应式失效
+  在模板中使用ref值时为啥不需要添加value了？
+  
+
+3.provide，inject，跨组件共享（异步网络请求--重复处理），但是跨页面却不会出现
+
+4.reactive 直接进行整个对象 替换（修改），会使该对象的响应式丢失
+  ref 创建的简单对象，进行整体操作不会出现响应式丢失问题
+
+5.h 函数，createVNode()
+
+6.解构 影响响应式的追踪？
+
+7.props/emits（defineProps/defineEmits） 触发方式在子组件内部
+  当触发方式在子组件外部的时候 refs，provide/inject
+
+8.symbol 作为基础数据类型，可以在vue页面上显示，而作为引用类型的键会不显示，至于作为值还没有校验？
+
+9.组件、页面、hooks 几种之间的差异
+
+10.watch 监听一个响应式对象的时候，新旧值是一样的
+

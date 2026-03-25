@@ -1,0 +1,23 @@
+dom diff的 描述：
+  dom diff 本意是为了加快更新页面数据而实现的一种处理方式（算法）
+  具体实现原理：
+    对比两棵树：oldVnode， vnode
+    1. 判断oldVnode === vnode , 结束比较
+    2. 不相等 是否是真实节点（创建一个element），是否是静态节点（则只需要将节点内容进行更新）
+      接下来分别获取对应的children oldCh, ch
+      2.1 如果 oldCh === ch：结束更新
+          不相等 判断ch是否存在，
+                不存在就直接进行 删除oldCh
+                ch 存在old 不存在 创建addVnodes
+                存在需要oldCh && ch 且不相等，patchVnode
+
+
+oldVnode， vnode
+
+vnode
+ 有值说明要更新
+    is
+
+ 无：则直接清空旧值即可
+
+

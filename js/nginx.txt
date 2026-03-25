@@ -1,0 +1,36 @@
+server {
+    listen 80;
+    server_name http://127.0.0.1:5666;  # B域名
+
+    location / {
+        # 这里应该是实际处理请求的配置
+        # 例如：proxy_pass http://backend_server;
+    }
+
+    location /cors_proxy {
+        # 用于CORS的location块
+        # 代理到实际的接口地址
+        proxy_pass http://127.0.0.1:5666/api/; # B域名下的实际接口地址
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # 添加CORS相关的响应头
+        add_header 'Access-Control-Allow-Origin' 'http://87.qz'; # 允许A域名跨域请求
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+        add_header 'Access-Control-Allow-Credentials' 'true';
+
+        # 预检请求响应
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Origin' 'http://87.qz'';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+            add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+            add_header 'Access-Control-Max-Age' 1728000;
+            add_header 'Content-Type' 'text/plain charset=UTF-8';
+            add_header 'Content-Length' 0;
+            return 204;
+        }
+    }
+}

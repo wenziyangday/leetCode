@@ -34,3 +34,20 @@
   4）销毁过程
     顺序：父 beforeDestroy -> 子 beforeDestroy -> 子 destroyed -> 父 destroyed
 
+4.vue nextTick 结合事件循环/js执行机制
+  在下次dom更新循环结束之后执行延迟回调。
+  在修改数据之后立即调用这个方法，可以获取更新后的dom。
+
+  由于Vue DOM更新是异步执行的，即修改数据时，视图不会立即更新，而是会监听数据变化，并缓存在同一事件循环中，等同一数据循环中的所有数据变化完成之后，
+  再统一进行视图更新。为了确保得到更新后的DOM，所以设置了 Vue.nextTick()方法。
+
+  首先，vue中，数据变化 => Dom变化是一个异步过程
+  Promise > setImmediate > MessageChannel > setTimeout
+
+  vue
+
+5.mixin 混入
+  先进行mixin 混入，
+  生命周期混入的执行，顺序 mixin在前，但是要结合生命周期自身的执行顺序（mixin beforeCreate > 使用mixin组件的beforeCreate >
+  mixin created > 使用mixin组件的created ）
+  数据，方法覆盖情况，使用mixin的覆盖mixin本身

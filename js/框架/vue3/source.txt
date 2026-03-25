@@ -1,0 +1,326 @@
+响应式：
+  trigger() => triggerEffects()
+  track() => trackEffects()
+    在此时依赖收集，并触发更新
+
+  ref：
+    createRef(rawRef, shallow)
+      RefImpl(rawValue, shallow)
+        shallow ? toRaw() : toReactive()
+
+        get() {
+          trackRefValue(this)
+        }
+
+        set() {
+          triggerRefValue(this, rawValue)
+        }
+
+      trackRefValue => trackEffects
+      triggerRefValue => triggerEffects
+
+      toReactive() =>
+        reactive() =>
+          isReadonly(target) return target
+
+          return createReactiveObject(
+              target, false,
+              mutableHandlers,
+              mutableCollectionHandlers,
+              reactiveMap
+            )
+              mutableHandlers: {
+                get,
+                set,
+                deleteProperty,
+                has,
+                ownKeys
+              }
+                get: createGetter
+                  接收：isReadonly, shallow
+                  return get(target, key, receiver) 响应式数据的getter
+                    Reflect.get(target, key, receiver)
+                    track(target, TrackOpTypes.GET, key)
+                    根据不同的数据类型，进行判断
+                    当数据的类型是对象的时候会调用reactive() 进行递归创建
+
+
+                set: createSetter
+                  接收：shallow
+                    return set(target, key, value, receiver)
+                      Reflect.set(target, key, value, receiver)
+                        trigger(target, TrackOpTypes.GET, key)
+
+
+              mutableCollectionHandlers: {
+                get: createInstrumentationGetter(false, false)
+              }
+
+              reactiveMap: WeakMap
+
+
+          createReactiveObject()
+            target: Target
+            isReadonly: boolean
+            baseHandlers: ProxyHandler
+            collectionHandlers: ProxyHandler
+            proxyMap: WeakMap
+              必须以对象作为键
+              键为弱键，即作为键的对象被删除或者被重新赋值则键值对会同时消失
+              由于键是弱键，导致无法判断此时此刻，彼时彼刻任一键值对是否存在，导致没有迭代器
+                WeakMap这样的特性意味着当某个target消失或者重新赋值后
+                代理对象所在的键值对在内存中也被自动清除了
+                极大的提高了内存空间的使用效率
+                数据量积累到一定程度后，会对性能也有极大优化
+
+            -处理逻辑
+              !isObject(target) return target
+              target[RAW] && !(isReadonly && target[IS_REACTIVE])  return target  此时说明已经是一个Proxy
+              ProxyMap.get(target)  return  ProxyMap.get(target) 说明target 已经是一个proxy，并存在与weakMap中
+              getTargetType(target) === INVALID return target
+              return new Proxy(target, handler)
+                handlers = targetType === COLLECTION ? collectionHandlers : baseHandlers
+
+
+  toRef:
+    new ObjectRefImpl(object, key, defaultValue)
+
+  toRefs:
+    循环属性调用toRef
+
+  computed：接受一个 getter 函数，返回一个只读的响应式 ref 对象。该 ref 通过 .value 暴露 getter 函数的返回值。
+    ComputedRefImpl
+      getter
+      _setter
+      isReadonly
+      isSSR
+
+  (可能和调度有关)
+  track():
+    依赖收集，收集副作用
+
+  trigger():
+    触发更新
+
+
+  compiler-dom
+    transformStyle(node):
+      将行内样式字符串转化为 对象的方式
+        eg: style="color: red" -> :style='{ "color": "red" }'
+
+    transformVHtml(dir, node, context): 返回一个 对象 {
+      props: [
+        createObjectProperty(key, value) 返回一个对象 {
+            type: NodeTypes.JS_PROPERTY
+            loc: locSub
+            key: isString(key) ? createSimpleExpression(key, true) : key
+            value: value
+          }
+      ]
+    }
+      注：
+        key: createSimpleExpression(`innerHTML`, true, loc)
+        value: exp || createSimpleExpression('', true)
+
+    transformVText(dir, node, context): 返回一个对象 {
+      props: [
+         createObjectProperty(key, value)
+      ]
+    }
+      注：
+        key: createSimpleExpression(`textContent`, true)
+        value:
+          exp
+            ? getConstantType(exp, context) > 0
+              ? exp
+              : createCallExpression(
+                 context.helperString(TO_DISPLAY_STRING),
+                 [exp],
+                 loc
+               )
+             : createSimpleExpression('', true)
+
+
+    transformModel(dir, node, context): 返回一个对象 baseResult: {
+      props: []
+    }
+      注：
+        baseResult: baseTransform(dir, node, context)（本质上执行 transformModel 来源于 compile-core）
+          => createTransformProps(props)
+          {
+            props: [
+              // modelValue: foo
+              createObjectProperty(propName, dir.exp!),
+              // "onUpdate:modelValue": $event => (foo = $event)
+              createObjectProperty(eventName, assignmentExp)
+            ]
+          }
+
+    render.ts
+      createRenderer(hostNode, hostElement) {
+        return {
+          render,
+          hydrate,
+          createApp: createAppAPI(render, hydrate)
+        }
+      } 返回一个带有render函数，用于SSR的hydrate，用于创建vue3 应用程序
+
+
+      render(vnode: VNode || null, container: RendererElement, isSVG: boolean | undefined)
+        if (vnode == null) {
+          container._vnode && unmount  // 没有vnode，同时已经渲染了，那就直接卸载
+        } else {
+          patch(n1, n2, container, anchor, pComponent, isSVG, slotScopeIds, optimized)
+        }
+
+          unmount:
+            (ref != null) setRef(ref, null, parentSuspense, vnode, true) // 清除响应式变量
+            (shapeFlag & shapeFlag.COMPONENT_SHOULD_KEEP_ALIVE) deactivate(vnode) // 清除keepalive 涉及到的组件、节点
+            (shouldInvokeVnodeHook && ((vnodeHook = props && props.onVnodeBeforeUnmount)))
+              invokeVNodeHook(vnodeHook, parentComponent, vnode) // hooks 回调（生命周期）
+                callWithAsyncErrorHandling(hook, instance, ErrorCodes.VNODE_HOOK, [vnode,prevVNode])
+            (shapeFlag & ShapeFlags.COMPONENT) unmountComponent(vnode.component!, parentSuspense, doRemove) // 组件卸载
+            !(shapeFlag & ShapeFlags.COMPONENT)
+              (__FEATURE_SUSPENSE__ && shapeFlag & ShapeFlags.SUSPENSE) {
+                vnode.suspense!.unmount(parentSuspense, doRemove) // 异步加载的处理
+                return
+              }
+              (shouldInvokeDirs) invokeDirectiveHook(vnode, null, parentComponent, 'beforeUnmount')
+              (shapeFlag & ShapeFlags.TELEPORT) (vnode.type as typeof TeleportImpl).remove( // 移除teleport
+                  vnode,
+                  parentComponent,
+                  parentSuspense,
+                  optimized,
+                  internals,
+                  doRemove
+                )
+              (dynamicChildren && (type !== Fragment || (patchFlag > 0 && patchFlag & PatchFlags.STABLE_FRAGMENT)))
+                unmountChildren( // 批量卸载 元素 （循环调用unmount）
+                  dynamicChildren,
+                  parentComponent,
+                  parentSuspense,
+                  false,
+                  true
+                )
+              ((type === Fragment && patchFlag & (PatchFlags.KEYED_FRAGMENT | PatchFlags.UNKEYED_FRAGMENT)) || (!optimized && shapeFlag & ShapeFlags.ARRAY_CHILDREN))
+                unmountChildren(children as VNode[], parentComponent, parentSuspense) // 批量卸载 元素 （循环调用unmount）
+              (doRemove) remove(vnode) // 移除节点
+            ((shouldInvokeVnodeHook &&(vnodeHook = props && props.onVnodeUnmounted)) || shouldInvokeDirs)
+              queuePostRenderEffect() 组件副作用函数，不影响组件重新渲染
+
+          patch(): n1 === null 表示的是一次挂载的过程
+            (n1 === n2) return
+            (n1 && !isSameVNodeType(n1, n2)) {
+              anchor = getNextHostNode(n1) // 获取宿主节点的引用
+              unmount(n1, pComponent, parentSuspense, true)
+              n1 = null
+            }
+
+            (n2.patchFlag === PatchFlags.BAIL) {
+              optimized = false
+              n2.dynamicChildren = null
+            }
+
+            type = n2.type as VNodeTypes
+            switch(type) {
+              case Text: // 文本
+                // 处理组件内部需要渲染的文本内容
+                processText(n1, n2, container, anchor)
+                break
+              case Comment:  // 注释
+                processCommentNode(n1, n2, container, anchor)
+                break
+              case Static: // 静态节点
+                (n1 == null) mountStaticNode(n2, container, anchor, isSVG)
+                break
+              case Fragment: // Fragment 节点
+                processFragment()
+                break
+              default:
+                // 元素节点
+                (shapeFlag & ShapeFlags.ELEMENT) processElement()
+                // 组件节点
+                (shapeFlag & ShapeFlags.COMPONENT) processComponent()
+                // teleport 节点
+                (shapeFlag & ShapeFlags.TELEPORT) (type as typeof TeleportImpl).process()
+                // suspense 节点
+                (__FEATURE_SUSPENSE__ && shapeFlag & ShapeFlags.SUSPENSE) (type as typeof SuspenseImpl).process()
+            }
+
+            (ref != null && parentComponent) setRef(ref, n1 && n1.ref, parentSuspense, n2 || n1, !n2)
+
+      hydrate:
+        createHydrationFns()
+
+      createApp: createAppAPI(render, hydrate) {
+        return createApp(rootComponent, rootProps) {
+          return app
+        }
+      }
+
+      注：
+        processText(n1, n2, container, anchor): // 文本节点
+          (n1 == null) {
+            // 创建一个新的text 节点，然后放到 container
+            hostInsert((n2.el = hostCreateText(n2.children as string)), container, anchor)
+          } else {
+            // 更新子节点
+            (n2.children !== n1.children) hostSetText(el, n2.children)
+          }
+
+        processCommentNode(n1, n2, container, anchor): // 注释
+          (n1 == null) {
+            // 没有的直接创建，有的直接替换
+            hostInsert((n2.el = hostCreateComment((n2.children as string) || '')), container, anchor)
+          } else {
+            n2.el = n1.el
+          }
+
+        mountStaticNode(n2, container, anchor, isSVG): // 没有n1 则直接创建n2 相关的静态节点
+          hostInsertStaticContent(n2.children, container, anchor, isSVG, n2.el, n2.anchor)
+
+        processFragment(n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, slotScopeIds, optimized)  // 解析 Fragment
+
+        processElement(n1, n2, container, anchor, parentComponent,  parentSuspense, isSVG, slotScopeIds, optimized) // 渲染组件
+          // 挂载组件
+          (n1 === null) mountElement(n2, container, anchor, parentComponent,  parentSuspense, isSVG, slotScopeIds, optimized)
+            (shapeFlag & ShapeFlags.TEXT_CHILDREN) hostSetElementText(el, vnode.children as string) // 修改元素的文本
+            (shapeFlag & ShapeFlags.ARRAY_CHILDREN) mountChildren() // 挂载子元素
+            (dirs) invokeDirectiveHook(vnode, null, parentComponent, 'created')
+            (props) {
+              for (const key in props) {
+                (key !== 'value' && !isReservedProp(key)) hostPatchProp(el, key, null, props[key], isSVG, vnode.children as VNode[], parentComponent, parentSuspense, unmountChildren)
+              }
+              ('value' in props) hostPatchProp(el, 'value', null, props.value)
+              ((vnodeHook = props.onVnodeBeforeMount)) invokeVNodeHook(vnodeHook, parentComponent, vnode)
+            }
+            (dirs) invokeDirectiveHook(vnode, null, parentComponent, 'beforeMount')
+            (needCallTransitionHooks) transition!.beforeEnter(el)
+            hostInsert(el, container, anchor)
+            ((vnodeHook = props && props.onVnodeMounted) || needCallTransitionHooks || dirs) queuePostRenderEffect(() => {
+               vnodeHook && invokeVNodeHook(vnodeHook, parentComponent, vnode)
+               needCallTransitionHooks && transition!.enter(el)
+               dirs && invokeDirectiveHook(vnode, null, parentComponent, 'mounted')
+             }, parentSuspense)
+
+          // 打补丁--比较n1，n2
+          (n1 !== null) patchElement(n1, n2, parentComponent,  parentSuspense, isSVG, slotScopeIds, optimized)
+            {patchFlag, dynamicChildren, dirs} = n2
+            patchFlag |= n1.patchFlag & PatchFlags.FULL_PROPS // 与运算 后或运算
+            ((vnodeHook = newProps.onVnodeBeforeUpdate))  invokeVNodeHook(vnodeHook, parentComponent, n2, n1)
+            (dirs)  invokeDirectiveHook(n2, n1, parentComponent, 'beforeUpdate')
+            (dynamicChildren) patchBlockChildren(n1.dynamicChildren!, dynamicChildren, el, parentComponent, parentSuspense, areChildrenSVG, slotScopeIds)
+            (!optimized) patchChildren(n1, n2, null, parentComponent, parentSuspense, areChildrenSVG, slotScopeIds, false)
+            (patchFlag > 0)
+              (patchFlag & PatchFlags.FULL_PROPS) patchProps
+              (!(patchFlag & PatchFlags.FULL_PROPS))
+                (patchFlag & PatchFlags.CLASS)
+                  (oldProps.class !== newProps.class) hostPatchProp(el, 'class', null, newProps.class, isSVG)
+                (patchFlag & PatchFlags.STYLE) hostPatchProp(el, 'style', oldProps.style, newProps.style, isSVG)
+
+
+
+
+
+
+

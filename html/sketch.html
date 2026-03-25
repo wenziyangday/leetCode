@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>我家</title>
+
+  <style>
+      * {
+          margin: 0;
+          padding: 0;
+          font-size: 10px;
+      }
+
+      .family {
+          position: relative;
+          width: 987px;
+          height: 368px;
+          background: #ccccff;
+      }
+
+      .chufang-xuanguan {
+          float: right;
+          width: 260px;
+          height: 368px;
+          background: #4387fd;
+      }
+
+      .chufang {
+          width: 260px;
+          height: 236px;
+          background: #6200ff;
+      }
+
+      .qiang {
+          width: 260px;
+          height: 12px;
+          background: white;
+      }
+
+      .xuanguan {
+          display: flex;
+          width: 260px;
+          height: 120px;
+          background: #aeaeae;
+      }
+
+      .left-xuanguan {
+          width: 54px;
+          height: 120px;
+          background: #c3c3c3;
+      }
+
+      .men {
+          position: relative;
+          width: 106px;
+          height: 120px;
+          background: #620;
+      }
+
+      .men-shen {
+          position: absolute;
+          bottom: -17.5px;
+          left: 0;
+          width: 106px;
+          height: 17.5px;
+          background: red;
+      }
+
+      .right-xuanguan {
+          width: 100px;
+          height: 120px;
+          background: #c3c3c3;
+      }
+
+      .canting {
+          float: right;
+          width: 240px;
+          height: 368px;
+          background: #aeaeae;
+      }
+
+      .zoulang {
+          float: right;
+          width: 105px;
+          height: 368px;
+          background: #4387fd;
+      }
+
+      .square {
+          position: relative;
+          float: left;
+          width: 80px;
+          height: 80px;
+          background: rgba(255, 0, 0, .2);
+          border-bottom: 2.5px solid #000000;
+          border-right: 2.5px solid #000000;
+      }
+
+      .keting {
+          float: right;
+          width: 382px;
+          height: 368px;
+          background: #c3c3c3;
+      }
+
+      .zhuan {
+          position: absolute;
+          width: 990px;
+          height: 412.5px;
+          z-index: 9;
+
+      }
+
+      h2 {
+          margin-top: 100px;
+      }
+
+      .family-2, .family-3, .family-4 {
+          padding-top: 44.5px;
+          padding-left: 3px;
+      }
+
+      .family-2 .zhuan, .family-3 .zhuan, .family-4 .zhuan {
+          top: 0;
+          left: 0;
+      }
+
+      .family-3 .zhuan .square:nth-child(12n) {
+          position: relative;
+          margin-right: 17.5px;
+      }
+
+      .family-3 .zhuan .square:nth-child(12n):after {
+          position: absolute;
+          right: -18px;
+          top: 0;
+          display: block;
+          content: '';
+          width: 18px;
+          height: 80px;
+          background: rgba(0, 0, 255, .2);
+      }
+
+      .family-3 .zhuan {
+          width: 1007.5px;
+      }
+
+      .family-3 {
+          padding-left: 17.5px;
+      }
+
+      .family-4 {
+          padding-left: 6px;
+      }
+
+      .nanciwo-zoulang-weishengjian {
+          display: flex;
+          position: relative;
+          margin-bottom: -44.5px;
+          padding-left: 6px;
+          width: 987px;
+          height: 289px;
+          background: #ccccff;
+          z-index: 1;
+      }
+
+      .nanciwo-zoulang-weishengjian .zhuan {
+          left: 0;
+          top: 0;
+      }
+
+      .qiang-men {
+          width: 12px;
+          height: 289px;
+      }
+
+      .qiang-men .men {
+          width: 12px;
+          height: 90px;
+      }
+
+      .qiang-men .qiang {
+          width: 12px;
+          height: 200px;
+      }
+
+      .nanciwo-qiang {
+          width: 370px;
+          height: 289px;
+      }
+
+      .nanciwo-qiang .nanciwo {
+          width: 370px;
+          height: 266px;
+      }
+
+      .nanciwo-qiang .qiang {
+          width: 370px;
+          height: 23px;
+      }
+
+      .zhuwo-zoulang-beiciwo {
+          display: flex;
+          position: relative;
+          width: 987px;
+          height: 349px;
+          background: #ccccff;
+          padding-left: 6px;
+      }
+
+      .zhuwo-zoulang-beiciwo .zoulang {
+          display: flex;
+          align-items: flex-end;
+          height: 349px;
+      }
+
+      .zhuwo-zoulang-beiciwo .zoulang .men {
+          width: 105px;
+          height: 23px;
+      }
+
+      .zhuwo-qiang .zhuwo {
+          width: 382px;
+          height: 326px;
+      }
+
+      .zhuwo-qiang .qiang {
+          width: 382px;
+          height: 23px;
+      }
+
+      .zhuwo-zoulang-beiciwo .zhuan {
+          left: 0;
+          top: 23px;
+      }
+
+
+      .blank {
+          width: 100vw;
+          height: 100px;
+      }
+
+  </style>
+</head>
+<body>
+<h2>原始</h2>
+<div class="family">
+  <div class="chufang-xuanguan">
+    <div class="chufang">厨房</div>
+    <div class="qiang">墙</div>
+    <div class="xuanguan">
+      <div class="left-xuanguan"></div>
+      <div class="men"></div>
+      <div class="right-xuanguan"></div>
+    </div>
+  </div>
+  <div class="canting">餐厅</div>
+  <div class="zoulang">zoulang</div>
+  <div class="keting"></div>
+</div>
+<h2>第一种</h2>
+<div class="family">
+  <div class="chufang-xuanguan">
+    <div class="chufang">厨房</div>
+    <div class="qiang">墙</div>
+    <div class="xuanguan">
+      <div class="left-xuanguan"></div>
+      <div class="men"></div>
+      <div class="right-xuanguan"></div>
+    </div>
+  </div>
+  <div class="canting">餐厅</div>
+  <div class="zoulang">zoulang</div>
+  <div class="keting"></div>
+
+  <div class="zhuan">
+    <div class="square">1</div>
+    <div class="square">2</div>
+    <div class="square">3</div>
+    <div class="square">4</div>
+    <div class="square">5</div>
+    <div class="square">6</div>
+    <div class="square">7</div>
+    <div class="square">8</div>
+    <div class="square">9</div>
+    <div class="square">10</div>
+    <div class="square">11</div>
+    <div class="square">12</div>
+    <div class="square">13</div>
+    <div class="square">14</div>
+    <div class="square">15</div>
+    <div class="square">16</div>
+    <div class="square">17</div>
+    <div class="square">18</div>
+    <div class="square">19</div>
+    <div class="square">20</div>
+    <div class="square">21</div>
+    <div class="square">22</div>
+    <div class="square">23</div>
+    <div class="square">24</div>
+    <div class="square">25</div>
+    <div class="square">26</div>
+    <div class="square">27</div>
+    <div class="square">28</div>
+    <div class="square">29</div>
+    <div class="square">30</div>
+    <div class="square">31</div>
+    <div class="square">32</div>
+    <div class="square">33</div>
+    <div class="square">34</div>
+    <div class="square">35</div>
+    <div class="square">36</div>
+    <div class="square">37</div>
+    <div class="square">38</div>
+    <div class="square">39</div>
+    <div class="square">40</div>
+    <div class="square">41</div>
+    <div class="square">42</div>
+    <div class="square">43</div>
+    <div class="square">44</div>
+    <div class="square">45</div>
+    <div class="square">46</div>
+    <div class="square">47</div>
+    <div class="square">48</div>
+    <div class="square">49</div>
+    <div class="square">50</div>
+    <div class="square">51</div>
+    <div class="square">52</div>
+    <div class="square">53</div>
+    <div class="square">54</div>
+    <div class="square">55</div>
+    <div class="square">56</div>
+    <div class="square">57</div>
+    <div class="square">58</div>
+    <div class="square">59</div>
+    <div class="square">60</div>
+  </div>
+</div>
+<h2>第二种</h2>
+<div class="family family-2">
+  <div class="chufang-xuanguan">
+    <div class="chufang">厨房</div>
+    <div class="qiang">墙</div>
+    <div class="xuanguan">
+      <div class="left-xuanguan"></div>
+      <div class="men"></div>
+      <div class="right-xuanguan"></div>
+    </div>
+  </div>
+  <div class="canting">餐厅</div>
+  <div class="zoulang">zoulang</div>
+  <div class="keting"></div>
+
+  <div class="zhuan">
+    <div class="square">1</div>
+    <div class="square">2</div>
+    <div class="square">3</div>
+    <div class="square">4</div>
+    <div class="square">5</div>
+    <div class="square">6</div>
+    <div class="square">7</div>
+    <div class="square">8</div>
+    <div class="square">9</div>
+    <div class="square">10</div>
+    <div class="square">11</div>
+    <div class="square">12</div>
+    <div class="square">13</div>
+    <div class="square">14</div>
+    <div class="square">15</div>
+    <div class="square">16</div>
+    <div class="square">17</div>
+    <div class="square">18</div>
+    <div class="square">19</div>
+    <div class="square">20</div>
+    <div class="square">21</div>
+    <div class="square">22</div>
+    <div class="square">23</div>
+    <div class="square">24</div>
+    <div class="square">25</div>
+    <div class="square">26</div>
+    <div class="square">27</div>
+    <div class="square">28</div>
+    <div class="square">29</div>
+    <div class="square">30</div>
+    <div class="square">31</div>
+    <div class="square">32</div>
+    <div class="square">33</div>
+    <div class="square">34</div>
+    <div class="square">35</div>
+    <div class="square">36</div>
+    <div class="square">37</div>
+    <div class="square">38</div>
+    <div class="square">39</div>
+    <div class="square">40</div>
+    <div class="square">41</div>
+    <div class="square">42</div>
+    <div class="square">43</div>
+    <div class="square">44</div>
+    <div class="square">45</div>
+    <div class="square">46</div>
+    <div class="square">47</div>
+    <div class="square">48</div>
+    <div class="square">49</div>
+    <div class="square">50</div>
+    <div class="square">51</div>
+    <div class="square">52</div>
+    <div class="square">53</div>
+    <div class="square">54</div>
+    <div class="square">55</div>
+    <div class="square">56</div>
+    <div class="square">57</div>
+    <div class="square">58</div>
+    <div class="square">59</div>
+    <div class="square">60</div>
+  </div>
+</div>
+
+<h2>第三种</h2>
+<div class="family family-3">
+  <div class="chufang-xuanguan">
+    <div class="chufang">厨房</div>
+    <div class="qiang">墙</div>
+    <div class="xuanguan">
+      <div class="left-xuanguan"></div>
+      <div class="men"></div>
+      <div class="right-xuanguan"></div>
+    </div>
+  </div>
+  <div class="canting">餐厅</div>
+  <div class="zoulang">zoulang</div>
+  <div class="keting"></div>
+
+  <div class="zhuan">
+    <div class="square">1</div>
+    <div class="square">2</div>
+    <div class="square">3</div>
+    <div class="square">4</div>
+    <div class="square">5</div>
+    <div class="square">6</div>
+    <div class="square">7</div>
+    <div class="square">8</div>
+    <div class="square">9</div>
+    <div class="square">10</div>
+    <div class="square">11</div>
+    <div class="square">12</div>
+    <div class="square">13</div>
+    <div class="square">14</div>
+    <div class="square">15</div>
+    <div class="square">16</div>
+    <div class="square">17</div>
+    <div class="square">18</div>
+    <div class="square">19</div>
+    <div class="square">20</div>
+    <div class="square">21</div>
+    <div class="square">22</div>
+    <div class="square">23</div>
+    <div class="square">24</div>
+    <div class="square">25</div>
+    <div class="square">26</div>
+    <div class="square">27</div>
+    <div class="square">28</div>
+    <div class="square">29</div>
+    <div class="square">30</div>
+    <div class="square">31</div>
+    <div class="square">32</div>
+    <div class="square">33</div>
+    <div class="square">34</div>
+    <div class="square">35</div>
+    <div class="square">36</div>
+    <div class="square">37</div>
+    <div class="square">38</div>
+    <div class="square">39</div>
+    <div class="square">40</div>
+    <div class="square">41</div>
+    <div class="square">42</div>
+    <div class="square">43</div>
+    <div class="square">44</div>
+    <div class="square">45</div>
+    <div class="square">46</div>
+    <div class="square">47</div>
+    <div class="square">48</div>
+    <div class="square">49</div>
+    <div class="square">50</div>
+    <div class="square">51</div>
+    <div class="square">52</div>
+    <div class="square">53</div>
+    <div class="square">54</div>
+    <div class="square">55</div>
+    <div class="square">56</div>
+    <div class="square">57</div>
+    <div class="square">58</div>
+    <div class="square">59</div>
+    <div class="square">60</div>
+  </div>
+</div>
+
+<h2>第四种</h2>
+<div class="family family-4">
+  <div class="chufang-xuanguan">
+    <div class="chufang">厨房</div>
+    <div class="qiang">墙</div>
+    <div class="xuanguan">
+      <div class="left-xuanguan"></div>
+      <div class="men">
+        <div class="men-shen"></div>
+      </div>
+      <div class="right-xuanguan"></div>
+    </div>
+  </div>
+  <div class="canting">餐厅</div>
+  <div class="zoulang">zoulang</div>
+  <div class="keting"></div>
+
+  <div class="zhuan">
+    <div class="square">1</div>
+    <div class="square">2</div>
+    <div class="square">3</div>
+    <div class="square">4</div>
+    <div class="square">5</div>
+    <div class="square">6</div>
+    <div class="square">7</div>
+    <div class="square">8</div>
+    <div class="square">9</div>
+    <div class="square">10</div>
+    <div class="square">11</div>
+    <div class="square">12</div>
+    <div class="square">13</div>
+    <div class="square">14</div>
+    <div class="square">15</div>
+    <div class="square">16</div>
+    <div class="square">17</div>
+    <div class="square">18</div>
+    <div class="square">19</div>
+    <div class="square">20</div>
+    <div class="square">21</div>
+    <div class="square">22</div>
+    <div class="square">23</div>
+    <div class="square">24</div>
+    <div class="square">25</div>
+    <div class="square">26</div>
+    <div class="square">27</div>
+    <div class="square">28</div>
+    <div class="square">29</div>
+    <div class="square">30</div>
+    <div class="square">31</div>
+    <div class="square">32</div>
+    <div class="square">33</div>
+    <div class="square">34</div>
+    <div class="square">35</div>
+    <div class="square">36</div>
+    <div class="square">37</div>
+    <div class="square">38</div>
+    <div class="square">39</div>
+    <div class="square">40</div>
+    <div class="square">41</div>
+    <div class="square">42</div>
+    <div class="square">43</div>
+    <div class="square">44</div>
+    <div class="square">45</div>
+    <div class="square">46</div>
+    <div class="square">47</div>
+    <div class="square">48</div>
+    <div class="square">49</div>
+    <div class="square">50</div>
+    <div class="square">51</div>
+    <div class="square">52</div>
+    <div class="square">53</div>
+    <div class="square">54</div>
+    <div class="square">55</div>
+    <div class="square">56</div>
+    <div class="square">57</div>
+    <div class="square">58</div>
+    <div class="square">59</div>
+    <div class="square">60</div>
+  </div>
+</div>
+
+
+<h2>第5种</h2>
+<div class="wrap">
+  <div class="zhuwo-zoulang-beiciwo">
+    <div class="zhuwo-qiang">
+      <div class="zhuwo"></div>
+      <div class="qiang"></div>
+    </div>
+    <div class="zoulang">
+      <div class="men"></div>
+    </div>
+    <div class="zhuan">
+      <div class="square">1</div>
+      <div class="square">2</div>
+      <div class="square">3</div>
+      <div class="square">4</div>
+      <div class="square">5</div>
+      <div class="square">6</div>
+      <div class="square">7</div>
+      <div class="square">8</div>
+      <div class="square">9</div>
+      <div class="square">10</div>
+      <div class="square">11</div>
+      <div class="square">12</div>
+      <div class="square">13</div>
+      <div class="square">14</div>
+      <div class="square">15</div>
+      <div class="square">16</div>
+      <div class="square">17</div>
+      <div class="square">18</div>
+      <div class="square">19</div>
+      <div class="square">20</div>
+      <div class="square">21</div>
+      <div class="square">22</div>
+      <div class="square">23</div>
+      <div class="square">24</div>
+      <div class="square">25</div>
+      <div class="square">26</div>
+      <div class="square">27</div>
+      <div class="square">28</div>
+      <div class="square">29</div>
+      <div class="square">30</div>
+      <div class="square">31</div>
+      <div class="square">32</div>
+      <div class="square">33</div>
+      <div class="square">34</div>
+      <div class="square">35</div>
+      <div class="square">36</div>
+      <div class="square">37</div>
+      <div class="square">38</div>
+      <div class="square">39</div>
+      <div class="square">40</div>
+      <div class="square">41</div>
+      <div class="square">42</div>
+      <div class="square">43</div>
+      <div class="square">44</div>
+      <div class="square">45</div>
+      <div class="square">46</div>
+      <div class="square">47</div>
+      <div class="square">48</div>
+    </div>
+  </div>
+  <div class="nanciwo-zoulang-weishengjian">
+    <div class="nanciwo-qiang">
+      <div class="nanciwo"></div>
+      <div class="qiang"></div>
+    </div>
+    <div class="qiang-men">
+      <div class="men"></div>
+      <div class="qiang"></div>
+    </div>
+    <div class="zoulang"></div>
+    <div class="weishengjian"></div>
+    <div class="zhuan">
+      <div class="square">1</div>
+      <div class="square">2</div>
+      <div class="square">3</div>
+      <div class="square">4</div>
+      <div class="square">5</div>
+      <div class="square">6</div>
+      <div class="square">7</div>
+      <div class="square">8</div>
+      <div class="square">9</div>
+      <div class="square">10</div>
+      <div class="square">11</div>
+      <div class="square">12</div>
+      <div class="square">13</div>
+      <div class="square">14</div>
+      <div class="square">15</div>
+      <div class="square">16</div>
+      <div class="square">17</div>
+      <div class="square">18</div>
+      <div class="square">19</div>
+      <div class="square">20</div>
+      <div class="square">21</div>
+      <div class="square">22</div>
+      <div class="square">23</div>
+      <div class="square">24</div>
+      <div class="square">25</div>
+      <div class="square">26</div>
+      <div class="square">27</div>
+      <div class="square">28</div>
+      <div class="square">29</div>
+      <div class="square">30</div>
+      <div class="square">31</div>
+      <div class="square">32</div>
+      <div class="square">33</div>
+      <div class="square">34</div>
+      <div class="square">35</div>
+      <div class="square">36</div>
+    </div>
+  </div>
+  <div class="family family-4">
+    <div class="chufang-xuanguan">
+      <div class="chufang">厨房</div>
+      <div class="qiang">墙</div>
+      <div class="xuanguan">
+        <div class="left-xuanguan"></div>
+        <div class="men">
+          <div class="men-shen"></div>
+        </div>
+        <div class="right-xuanguan"></div>
+      </div>
+    </div>
+    <div class="canting">餐厅</div>
+    <div class="zoulang">zoulang</div>
+    <div class="keting"></div>
+
+    <div class="zhuan">
+      <div class="square">1</div>
+      <div class="square">2</div>
+      <div class="square">3</div>
+      <div class="square">4</div>
+      <div class="square">5</div>
+      <div class="square">6</div>
+      <div class="square">7</div>
+      <div class="square">8</div>
+      <div class="square">9</div>
+      <div class="square">10</div>
+      <div class="square">11</div>
+      <div class="square">12</div>
+      <div class="square">13</div>
+      <div class="square">14</div>
+      <div class="square">15</div>
+      <div class="square">16</div>
+      <div class="square">17</div>
+      <div class="square">18</div>
+      <div class="square">19</div>
+      <div class="square">20</div>
+      <div class="square">21</div>
+      <div class="square">22</div>
+      <div class="square">23</div>
+      <div class="square">24</div>
+      <div class="square">25</div>
+      <div class="square">26</div>
+      <div class="square">27</div>
+      <div class="square">28</div>
+      <div class="square">29</div>
+      <div class="square">30</div>
+      <div class="square">31</div>
+      <div class="square">32</div>
+      <div class="square">33</div>
+      <div class="square">34</div>
+      <div class="square">35</div>
+      <div class="square">36</div>
+      <div class="square">37</div>
+      <div class="square">38</div>
+      <div class="square">39</div>
+      <div class="square">40</div>
+      <div class="square">41</div>
+      <div class="square">42</div>
+      <div class="square">43</div>
+      <div class="square">44</div>
+      <div class="square">45</div>
+      <div class="square">46</div>
+      <div class="square">47</div>
+      <div class="square">48</div>
+      <div class="square">49</div>
+      <div class="square">50</div>
+      <div class="square">51</div>
+      <div class="square">52</div>
+      <div class="square">53</div>
+      <div class="square">54</div>
+      <div class="square">55</div>
+      <div class="square">56</div>
+      <div class="square">57</div>
+      <div class="square">58</div>
+      <div class="square">59</div>
+      <div class="square">60</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="blank"></div>
+</body>
+</html>

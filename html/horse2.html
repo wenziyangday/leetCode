@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>抖音小游戏：斑斓马烟花特效预览</title>
+  <style>
+		body { margin: 0; background: #020205; overflow: hidden; color: white; font-family: "Microsoft YaHei", sans-serif; cursor: crosshair; }
+		canvas { display: block; }
+		.ui-panel { position: absolute; top: 20px; left: 20px; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+		.money { color: #ffd700; font-size: 24px; font-weight: bold; }
+		.hint { position: absolute; bottom: 30px; width: 100%; text-align: center; color: rgba(255,255,255,0.4); font-size: 14px; }
+  </style>
+</head>
+<body>
+<div class="ui-panel">
+  <div style="font-size: 14px; opacity: 0.8;">特效预览：至尊·斑斓马</div>
+  <div class="money">💰 金币: <span id="goldCount">199003</span></div>
+</div>
+<div class="hint">点击屏幕任意位置：释放大号烟花</div>
+<canvas id="canvas"></canvas>
+
+<script>
+	const canvas = document.getElementById('canvas');
+	const ctx = canvas.getContext('2d');
+	const goldDisplay = document.getElementById('goldCount');
+
+	let width, height;
+	let particles = [];
+	let animationFrames = []; // 存储马的动画帧坐标
+	let currentFrameIdx = 0;
+	let frameTick = 0;
+	let isAnimating = false;
+
+	// 1. 初始化画布
+	function resize() {
+		width = canvas.width = window.innerWidth;
+		height = canvas.height = window.innerHeight;
+	}
+	window.addEventListener('resize', resize);
+	resize();
+
+	// 2. 核心：生成马的动画点阵 (模拟从图片采样)
+	// 这里用数学逻辑生成两帧“奔跑”动作，实际开发用之前给你的Node脚本转JSON
+	function generateHorseFrames() {
+		const frames = [];
+		for (let f = 0; f < 4; f++) { // 生成4帧动作
+			const points = [];
+			const offset = f * 15; // 动作偏移量
+			for (let i = 0; i < 800; i++) {
+				const t = (i / 800) * Math.PI * 2;
+				// 基础躯干公式 (模拟马的流线型)
+				let x = Math.cos(t) * 120;
+				let y = Math.sin(t) * 40;
+
+				// 模拟腿部动作随帧变化
+				if (i > 500) {
+					x += Math.sin(t * 5 + f) * 20;
+					y += Math.abs(Math.cos(t * 3 + f)) * 60;
+				}
+
+				// 头部位置
+				if (i < 100) {
+					x -= 80;
+					y -= 40 + Math.sin(f) * 10;
+				}
+
+				points.push({ x: x, y: y });
+			}
+			frames.push(points);
+		}
+		return frames;
+	}
+	animationFrames = generateHorseFrames();
+
+	// 3. 粒子类
+	class Particle {
+		constructor(x, y) {
+			this.x = x; // 当前坐标
+			this.y = y;
+			this.vx = (Math.random() - 0.5) * 30; // 初始爆炸速度
+			this.vy = (Math.random() - 0.5) * 30;
+			this.targetX = x; // 目标坐标
+			this.targetY = y;
+			this.hue = Math.random() * 360;
+			this.brightness = 50 + Math.random() * 50;
+			this.alpha = 1;
+			this.friction = 0.92; // 空气摩擦
+			this.ease = 0.06 + Math.random() * 0.04; // 聚合成形速度
+			this.state = 'explode'; // explode | horse
+		}
+
+		update(target) {
+			if (this.state === 'explode') {
+				this.x += this.vx;
+				this.y += this.vy;
+				this.vx *= this.friction;
+				this.vy *= this.friction;
+				if (Math.abs(this.vx) < 0.1) this.state = 'horse';
+			} else {
+				// 追踪马的对应点位
+				this.targetX = target.x;
+				this.targetY = target.y;
+				this.x += (this.targetX - this.x) * this.ease;
+				this.y += (this.targetY - this.y) * this.ease;
+				// 色相随时间流动
+				this.hue = (this.hue + 1) % 360;
+			}
+		}
+
+		draw() {
+			ctx.fillStyle = `hsla(${this.hue}, 100%, ${this.brightness}%, ${this.alpha})`;
+			// 使用lighter混合模式时，小方块比圆圈性能更好且有霓虹感
+			ctx.fillRect(this.x, this.y, 2, 2);
+		}
+	}
+
+	// 4. 触发烟花
+	canvas.addEventListener('mousedown', (e) => {
+		const startX = e.clientX;
+		const startY = e.clientY;
+
+		// 每次点击生成一组新粒子
+		const frameData = animationFrames[0];
+		frameData.forEach((pt, i) => {
+			const p = new Particle(startX, startY);
+			// 将马的相对坐标转为屏幕绝对坐标
+			p.initialTarget = { x: pt.x + startX, y: pt.y + startY };
+			particles.push(p);
+		});
+
+		// 金币动效
+		let gold = parseInt(goldDisplay.innerText);
+		goldDisplay.innerText = gold + 50;
+
+		isAnimating = true;
+	});
+
+	// 5. 动画主循环
+	function loop() {
+		// 黑色半透明背景营造拖尾感
+		ctx.fillStyle = 'rgba(2, 2, 5, 0.15)';
+		ctx.fillRect(0, 0, width, height);
+
+		// 开启发光混合模式
+		ctx.globalCompositeOperation = 'lighter';
+
+		// 帧控制器：每10帧切换一次马的动作
+		frameTick++;
+		if (frameTick % 10 === 0) {
+			currentFrameIdx = (currentFrameIdx + 1) % animationFrames.length;
+		}
+
+		particles.forEach((p, i) => {
+			// 获取当前帧对应的点位
+			const frame = animationFrames[currentFrameIdx];
+			const pt = frame[i % frame.length];
+
+			// 注意：这里需要叠加鼠标点击时的中心点位置（简化演示用最后一次点击位置）
+			const realTarget = {
+				x: pt.x + (p.state === 'explode' ? 0 : p.targetX_base || p.x),
+				y: pt.y + (p.state === 'explode' ? 0 : p.targetY_base || p.y)
+			};
+
+			// 记录马的中心位置
+			if (p.state === 'explode' && Math.abs(p.vx) < 0.2) {
+				p.targetX_base = p.x;
+				p.targetY_base = p.y;
+			}
+
+			p.update({ x: pt.x + (p.targetX_base || 0), y: pt.y + (p.targetY_base || 0) });
+			p.draw();
+		});
+
+		ctx.globalCompositeOperation = 'source-over';
+		requestAnimationFrame(loop);
+	}
+
+	loop();
+</script>
+</body>
+</html>

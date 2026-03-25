@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>智线</title>
+  <style>
+		body, html {
+			margin: 0;
+			height: 0;
+      background: #3256BE;
+      background: #6DC1E8;
+		}
+
+		.parent {
+			display: flex;
+			align-content: center;
+			justify-content: center;
+			padding: 20px 0;
+
+			/*参考背景和尺寸 可以删除*/
+			width: 1000px;
+			height: 800px;
+			background: gray;
+		}
+
+		.child {
+			margin: 5% 5% 5% 0;
+			width: 25%;
+			height: 0;
+			opacity: 0;
+			padding-bottom: 25%;
+			background: linear-gradient(to right, red, orange);
+			animation: myOpacity ease-in-out 0.5s forwards;
+		}
+
+		.child:nth-child(1) {
+			animation-delay: 1s;
+		}
+
+		.child:nth-child(2) {
+			animation-delay: 2s;
+		}
+
+		.child:nth-child(3) {
+			animation-delay: 3s;
+		}
+
+
+		.child:last-child {
+			margin-right: 0;
+		}
+
+		@keyframes myOpacity {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+
+  </style>
+</head>
+<body>
+<!--fir-->
+<div class="parent">
+  <div class="child" id="fir"></div>
+  <div class="child"></div>
+  <div class="child"></div>
+</div>
+
+<!--sec-->
+<script>
+	/**
+	 * 事件分发系统（一个对象）
+	 * 其拥有 三个方法 on emit remove
+	 * */
+	class CustomDispatchEvent {
+		constructor() {
+			this.events = {}
+		}
+
+		on(event, cb) {
+			if (!this.events[event]) {
+				this.events[event] = []
+			}
+			this.events[event].push(cb);
+		}
+
+		// 触发一个
+		emit(event, ...args) {
+			if (this.events[event]) {
+				this.events[event].forEach(cb => {
+					cb(...args);
+				})
+			}
+		}
+
+		// 移除事件监听
+		remove(event) {
+			if (this.events[event]) {
+				this.events[event] = []
+			}
+		}
+	}
+
+	const emmiter = new CustomDispatchEvent();
+
+	function cb(...args) {
+		console.log('callback', args);
+	}
+
+	emmiter.on('customEvent', cb);
+	emmiter.emit('customEvent', 'test');
+
+</script>
+
+<!--3th-->
+<script>
+	function getMaxProfit(costProfit, oil) {
+		// 初始化动态规划表
+		let dp = new Array(costProfit.length + 1).fill(0).map(() => new Array(oil + 1).fill(0));
+
+		for (let i = 1; i <= costProfit.length; i++) {
+			let [cost, profit] = costProfit[i - 1];
+			for (let j = 1; j <= oil; j++) {
+				dp[i][j] = dp[i - 1][j];
+				if (j >= cost) {
+				  // 比较收割和不收割两种情况，选择收益更大的那个
+					dp[i][j] = Math.max(dp[i][j], dp[i - 1][j - cost] + profit);
+				}
+			}
+		}
+
+		return dp[costProfit.length][oil];
+	}
+	const dps = [[1, 1], [7, 9], [6, 10], [2, 4], [3, 5], [6, 10]];
+	let maxProfit = getMaxProfit(dps, 10);
+	console.log(maxProfit);
+</script>
+
+<!--关于利用chatgpt提升开发效率-->
+<ul>
+  <li>要抽离自己的问题模型，做出更好的问题描述，减少一些不要的语义歧义</li>
+  <li>也要对其给出的结果做出符合自己代码规范的调整，同时也要进行对应代码的 测试与验证</li>
+</ul>
+</body>
+</html>

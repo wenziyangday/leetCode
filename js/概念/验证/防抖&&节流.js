@@ -55,3 +55,15 @@ function debounce2(fn, delay) {
     }
   }
 }
+
+
+function throttle2(fn, delay) {
+  let last = 0;
+  return function (...args) {
+    const ctx = this;
+    let now = +new Date();
+    if (now - last < delay) return;
+    last = now;
+    fn.apply(ctx, args);
+  }
+}

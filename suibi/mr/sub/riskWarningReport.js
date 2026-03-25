@@ -1,0 +1,123 @@
+module.exports=[{
+    "root": "pages/riskWarningReport",
+    "pages": [
+        {
+			"path": "riskWarning/index",
+			"style": {
+			    "navigationBarTitleText": "预警信号查询",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "riskWarning/reportList",
+			"style": {
+			    "navigationBarTitleText": "预警信号查询",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "report/index",
+			"style": {
+			    "navigationBarTitleText": "预警信号查询",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "report/reportInfoList",
+			"style": {
+			    "navigationBarTitleText": "预警信号列表"
+			}
+		},
+		{
+			"path": "report/reportResultList",
+			"style": {
+			    "navigationBarTitleText": "预警结果列表"
+			}
+		},
+		{
+			"path": "report/reportTimeoutList",
+			"style": {
+			    "navigationBarTitleText": "超时审批统计列表"
+			}
+		},
+		{
+			"path": "report/reportDisposeList",
+			"style": {
+			    "navigationBarTitleText": "处置措施列表"
+			}
+		},
+		{
+			"path": "report/reportClassificationList",
+			"style": {
+			    "navigationBarTitleText": "经销商风险列表"
+			}
+		},
+		{
+			"path": "riskStatement/index",
+			"style": {
+			    "navigationBarTitleText": "风险报表"
+			}
+		},
+		{
+			"path": "riskStatement/statementList",
+			"style": {
+			    "navigationBarTitleText": "预警信号列表"
+			}
+		},
+		{
+			"path": "dealerReport/index",
+			"style": {
+			    "navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "dealerReport/dealerDetails",
+			"style": {
+			    "navigationBarTitleText": "经销商预警信号详情"
+			}
+		},
+		{
+			"path": "dealerReport/riskLevelList",
+			"style": {
+			    "navigationBarTitleText": "风险分类等级列表",
+                "navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "dealerReport/riskLevelDetails",
+			"style": {
+			    "navigationBarTitleText": "风险分类等级详情"
+			}
+		},
+		{
+			"path": "dealerReport/riskLevelClassification",
+			"style": {
+			    "navigationBarTitleText": "风险分类等级调整列表"
+			}
+		},
+		{
+			"path": "dealerReport/earlyWarningSignList",
+			"style": {
+			    "navigationBarTitleText": "预警信号列表"
+			}
+		},
+		{
+			"path": "dealerReport/disposalMeasuresList",
+			"style": {
+			    "navigationBarTitleText": "处罝措施列表"
+			}
+		},
+		{
+			"path": "dealerReport/progressList",
+			"style": {
+			    "navigationBarTitleText": "处罝进展列表"
+			}
+		},
+		{
+			"path": "riskStatement/reportTimeoutList",
+			"style": {
+			    "navigationBarTitleText": "超时审批统计列表"
+			}
+		},
+    ]
+}]

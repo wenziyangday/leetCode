@@ -1,0 +1,493 @@
+<#--获取链接渲染-->
+<#macro getLinkRenders cols>
+    {<#list cols as col><#if col.renderType?? && col.renderType =='LINK' && col.renderConfStr?? >${col.field}:${col.renderConfStr},</#if></#list>}
+</#macro>
+<#--获取链接-->
+<#macro getLinkConfs cols>
+    {<#list cols as col><#if col.linkConf??>${col.field}:${col.linkConf},</#if></#list>}
+</#macro>
+
+<#--获取附件渲染-->
+<#macro getFileRender cols>
+    {<#list cols as col><#if col.fileRenders??>${col.field}:${col.fileRenders},</#if></#list>}
+</#macro>
+
+<#--处理字段显示-->
+<#macro handCtl cellEditor cellEditorIndex>
+    <#if (cellEditor.type=='control')>
+        <#if (!cellEditor.control?? || cellEditor.control=='input')>
+            <a-input v-model:value="row['${cellEditor.field}']"
+                    <#if cellEditor.controlConf?? && cellEditor.controlConf.rules??>
+                @blur="validRule(row,'${cellEditor.field}','${cellEditor.controlConf.regular}','${cellEditor.controlConf.prompt}')"
+            <#else>
+                @blur="cellBlur"
+                    </#if>/>
+        <#elseif (cellEditor.control=='textarea')>
+            <a-textarea v-model:value="row['${cellEditor.field}']"
+                        @blur="cellBlur"/>
+        <#elseif (cellEditor.control=='inputNumber')>
+            <#if cellEditor.renderConf?? && cellEditor.renderConf.format??>
+                <#assign renderNumberFormat=cellEditor.renderConf.format>
+            <#else>
+                <#assign renderNumberFormat=''>
+            </#if>
+            <#if cellEditor.controlConf??>
+                <a-input-number :min="<#if cellEditor.controlConf.min??>${cellEditor.controlConf.min?c}<#else>0</#if>"
+                                :max="<#if cellEditor.controlConf.max??>${cellEditor.controlConf.max?c}<#else>100</#if>"
+                                :step="<#if cellEditor.controlConf.step??>${cellEditor.controlConf.step?c}<#else>1</#if>"
+                                :formatter="function(value){return <#if cellEditor.controlConf.formatter?? && cellEditor.controlConf.formatter!=''>${cellEditor.controlConf.formatter}<#else>value</#if>}"
+                                v-model:value="row['${cellEditor.field}']"
+                                @blur="numberChange(rowIndex,'${cellEditor.field}',row,<#if cellEditor.controlConf.min??>${cellEditor.controlConf.min?c}<#else>0</#if>,<#if cellEditor.controlConf.max??>${cellEditor.controlConf.max?c}<#else>100</#if>,'${renderNumberFormat}')"/>
+            <#else>
+                <a-input-number :min="0"
+                                :max="100"
+                                :step="1"
+                                :formatter="function(value){return value;}"
+                                v-model:value="row['${cellEditor.field}']"
+                                @blur="numberChange(rowIndex,'${cellEditor.field}',row,0,100,'${renderNumberFormat}')"/>
+            </#if>
+        <#elseif (cellEditor.control=='checkbox')>
+            <#if cellEditor.controlConf??>
+                <rx-form-checkbox v-model="row['${cellEditor.field}']" true-value="${cellEditor.controlConf.trueValue}" false-value="${cellEditor.controlConf.falseValue}" />
+            <#else>
+                <rx-form-checkbox v-model="row['${cellEditor.field}']"  />
+            </#if>
+        <#elseif (cellEditor.control=='datePicker')>
+            <#if cellEditor.controlConf?? && cellEditor.controlConf.format??>
+                <#assign dateFormat=cellEditor.controlConf.format>
+            <#else>
+                <#assign dateFormat='YYYY-MM-DD'>
+            </#if>
+            <#if cellEditor.renderConf?? && cellEditor.renderConf.format??>
+                <#assign renderDateFormat=cellEditor.renderConf.format>
+            <#else>
+                <#assign renderDateFormat=''>
+            </#if>
+            <a-date-picker style="width:100%;" :showTime="<#if dateFormat!='YYYY-MM-DD'>true<#else>false</#if>" format="${dateFormat}" @ok="cellBlur" @change="gridChangeDate($event,$event,{record:row,dataIndex:'${cellEditor.field}',format:'${dateFormat}',renderFormat:'${renderDateFormat}',showTime:<#if dateFormat!='YYYY-MM-DD'>true<#else>false</#if>})"  />
+        <#elseif (cellEditor.control=='select')>
+            <rx-select v-model="row['${cellEditor.field}_select']" :labelInValue="true" style="width:100%;"
+                       <#if (!cellEditor.controlConf?? || cellEditor.controlConf.from=='self')>:dataSource="cellOptions${cellEditorIndex}" value-field="key" text-field="name"
+                       <#elseif (cellEditor.controlConf.from=='url')>url="${cellEditor.controlConf.url}" value-field="${cellEditor.controlConf.url_valuefield}" text-field="${cellEditor.controlConf.url_textfield}"
+                       <#elseif (cellEditor.controlConf.from=='dic')>url="/api-system/system/core/sysDic/treeByKey?key=${cellEditor.controlConf.dicKey}" value-field="value" text-field="name"
+                       <#elseif (cellEditor.controlConf.from=='sql')>url="/api-form/form/core/formCustomQuery/queryForJson_${cellEditor.controlConf.sql}" data-field="data" value-field="${cellEditor.controlConf.sql_valuefield}" text-field="${cellEditor.controlConf.sql_textfield}" ajaxType="post"
+                    </#if> @blur="selectCtlChange('${cellEditor.field}',row['${cellEditor.field}_select'],row)"/>
+        <#elseif (cellEditor.control=='dialog')>
+            <#if cellEditor.controlConf??>
+                <rx-input-button v-model="row['${cellEditor.field}']"
+                                 :allowInput="<#if cellEditor.controlConf.allowinput??>${cellEditor.controlConf.allowinput}<#else>false</#if>"
+                                 :allowClear="<#if cellEditor.controlConf.showclose??>${cellEditor.controlConf.showclose}<#else>false</#if>"
+                                 :multiple="false" :config="{dialog:'${cellEditor.controlConf.dialog}',dialog_name:'${cellEditor.controlConf.dialog_name}',valueField:'${cellEditor.controlConf.valueField}',returnFields:returnFields${cellEditorIndex}}"
+                                 @btnClick="onGridDialogShow($event,{field:'${cellEditor.field}',record:row,index:rowIndex})"/>
+            <#else>
+                <rx-input-button v-model="row['${cellEditor.field}']"
+                                 :allowInput="false"
+                                 :allowClear="false"
+                                 :multiple="false" :config="{dialog:'',dialog_name:'',valueField:'',returnFields:returnFields${cellEditorIndex}}"
+                                 @btnClick="onGridDialogShow($event,{field:'${cellEditor.field}',record:row,index:rowIndex})"/>
+            </#if>
+        </#if>
+    </#if>
+</#macro>
+
+<#--处理字段渲染-->
+<#macro handRender cellEditor>
+
+    <#assign typeAry=['DISPLAY_ITEMS','DISPLAY_LABEL','DISPLAY_RANGE','NUMBER','TEXT','MAP','DATE','ADDRESS','FLOW_STATUS','CUR_NODE','SCRIPT','REG_LIB','AREA','CUR_ASSIGNEE']/>
+    <#if (cellEditor.type=='render')>
+        <#if (!cellEditor.renderType?? || cellEditor.renderType=='COMMON')>
+            <#if (cellEditor.renderConf??) && (cellEditor.renderConf.html??)>
+                ${cellEditor.renderConf.html}
+            <#else>
+                <span v-html="row.${cellEditor.field}"></span>
+            </#if>
+        <#elseif ((cellEditor.renderType=='USER') && (cellEditor.renderConf??))>
+            <user-rendering :attribute='row.${cellEditor.field}_render'></user-rendering>
+        <#elseif (cellEditor.renderType=='GROUP' && (cellEditor.renderConf??))>
+            <group-rendering :attribute='row.${cellEditor.field}_render'></group-rendering>
+        <#elseif (cellEditor.renderType=='SYSINST' && (cellEditor.renderConf??))>
+            {{row['${cellEditor.field}_render']}}
+        <#elseif (cellEditor.renderType=='IMG')>
+          <span v-html="onImgRender(row['${cellEditor.field}_render'],'${cellEditor.field}',{'${cellEditor.field}':<#if cellEditor.renderConf??>{imgHeight:<#if cellEditor.renderConf.imgHeight??>${cellEditor.renderConf.imgHeight}<#else>100</#if>,imgWidth:<#if cellEditor.renderConf.imgWidth??>${cellEditor.renderConf.imgWidth}<#else>100</#if>}<#else>{imgHeight:100,imgWidth:100}</#if>})"></span>
+        <#elseif (cellEditor.renderType=='APPENDIX')>
+            <rx-fileList class="upFiles" field="${cellEditor.field}" :fileRenders="fileRenders" :files="row.${cellEditor.field}" />
+        <#elseif (cellEditor.renderType=='RICHTEXT')>
+            <span v-html="row.${cellEditor.field}"></span>
+        <#elseif (cellEditor.renderType=='DICRENDER')>
+            <span v-html="row['${cellEditor.field}_display'] || row.${cellEditor.field}"></span>
+        <#elseif (cellEditor.renderType=='RELQUERY')>
+            <span v-text="row.${cellEditor.field}_display"></span>
+        <#elseif (cellEditor.renderType=='LINK')>
+            <a href="javascript:void(0);"
+               @click.stop="openLink('${cellEditor.field}',row,linkRenders)">{{row.${cellEditor.field}}}</a>
+        <#elseif (cellEditor.renderType=='DISPLAY_PERCENT')>
+            <#if cellEditor.renderConf??>
+                <#if (cellEditor.renderConf.stylename=='circular')>
+                    <a-progress strokeColor="${cellEditor.renderConf.fgcolor}" class="aprogress" type="circle" :percent="row.${cellEditor.field}">
+                        <template #format="percent">
+                            <span>{{row.${cellEditor.field}}}%</span>
+                        </template>
+                    </a-progress>
+                <#else >
+                    <a-progress strokeColor="${cellEditor.renderConf.fgcolor}" :percent="row.${cellEditor.field}"/>
+                </#if>
+            </#if>
+        <#elseif (cellEditor.renderType=='LINK_FLOW')>
+            <template v-if="row['${cellEditor.field}_render']">
+                <flow-render :row="row" field="${cellEditor.field}_render" :showTitle="<#if cellEditor.renderConf.showTitle??>${cellEditor.renderConf.showTitle?c}<#else>false</#if>"
+                             :showBpmInstLink="<#if cellEditor.renderConf.showBpmInstLink??>${cellEditor.renderConf.showBpmInstLink?c}<#else>false</#if>"
+                             :showTask="<#if cellEditor.renderConf.showTask??>${cellEditor.renderConf.showTask?c}<#else>false</#if>"
+                             :showTaskHandler="<#if cellEditor.renderConf.showTaskHandler??>${cellEditor.renderConf.showTaskHandler?c}<#else>false</#if>"
+                             :showBpmInstInfo="showBpmInstInfo"
+                             :handleTask="handleTask" ></flow-render>
+            </template>
+        <#elseif (cellEditor.renderType=='ACTION' && cellEditor.renderConf?? && cellEditor.renderConf.btnList??)>
+            <RxGridAction :size="${cellEditor.renderConf.maxButton}">
+                <#list cellEditor.renderConf.btnList as btn>
+                    <#if cellEditor.renderConf.styleButton=2>
+                        <a-button type="link"
+                                  class="button-style-2" v-if="canActionShow('${btn.alias}',row)" @click.stop="${btn.btnClick}"
+                                  :title="${btn.btnLabel}">
+                            <my-icon :type='${btn.icon}.icon'>
+                            </my-icon>
+                            <#if btn.i18nJson>
+                                {{$i18(${btn.i18nJson},"国际化渲染")}}
+                            <#else>
+                                ${btn.btnLabel}
+                            </#if>
+                        </a-button>
+                    <#elseif (cellEditor.renderConf.styleButton=3 )>
+                        <#if btn.buttonStyle="danger">
+                            <a-button  class="button-style-3"
+                                      style='margin-right: 10px;' v-if="canActionShow('${btn.alias}',row)" @click.stop="${btn.btnClick}"
+                                      size='small' type="primary" danger>
+                                <#if btn.i18nJson>
+                                    {{$i18(${btn.i18nJson},"国际化渲染")}}
+                                <#else>
+                                    ${btn.btnLabel}
+                                </#if>
+                            </a-button>
+                        <#else>
+                            <a-button  class="button-style-3"
+                                      style='margin-right: 10px;' v-if="canActionShow('${btn.alias}',row)" @click.stop="${btn.btnClick}"
+                                      size='small' type="${btn.buttonStyle}">
+                                <#if btn.i18nJson>
+                                    {{$i18(${btn.i18nJson},"国际化渲染")}}
+                                <#else>
+                                    ${btn.btnLabel}
+                                </#if>
+                            </a-button>
+                        </#if>
+                    <#elseif (cellEditor.renderConf.styleButton=4 )>
+                        <#if btn.buttonStyle="danger">
+                            <a-button  class="button-style-4"
+                                      v-if="canActionShow('${btn.alias}',row)" style='margin-right: 10px;' @click.stop="${btn.btnClick}"
+                                      size='small' type="primary" danger>
+                                <my-icon :type='${btn.icon}.icon'>
+                                </my-icon>
+                                <#if btn.i18nJson>
+                                    {{$i18(${btn.i18nJson},"国际化渲染")}}
+                                <#else>
+                                    ${btn.btnLabel}
+                                </#if>
+                            </a-button>
+                        <#else>
+                            <a-button  class="button-style-4"
+                                      style='margin-right: 10px;' v-if="canActionShow('${btn.alias}',row)" @click.stop="${btn.btnClick}"
+                                      size='small' type="${btn.buttonStyle}">
+                                <my-icon :type='${btn.icon}.icon'>
+                                </my-icon>
+                                <#if btn.i18nJson>
+                                    {{$i18(${btn.i18nJson},"国际化渲染")}}
+                                <#else>
+                                    ${btn.btnLabel}
+                                </#if>
+                            </a-button>
+                        </#if>
+                    <#elseif (cellEditor.renderConf.styleButton=5 )>
+                        <a-button  type="link"
+                                  class="button-style-5" v-if="canActionShow('${btn.alias}',row)" @click.stop="${btn.btnClick}">
+                            <my-icon :type='${btn.icon}.icon'>
+                            </my-icon>
+                        </a-button>
+                    <#elseif (cellEditor.renderConf.styleButton=6 )>
+                        <#if btn.buttonStyle="danger">
+                            <a-button  class="button-style-4"
+                                      style='margin-right: 10px;' v-if="canActionShow('${btn.alias}',row)" @click.stop="${btn.btnClick}"
+                                      size='small' type="primary" danger>
+                                <my-icon :type='${btn.icon}.icon'>
+                                </my-icon>
+                            </a-button>
+                        <#else>
+                            <a-button  style='margin-right: 10px;'
+                                      class="button-style-4" v-if="canActionShow('${btn.alias}',row)" @click.stop="${btn.btnClick}"
+                                      size='small' type="${btn.buttonStyle}">
+                                <my-icon :type='${btn.icon}.icon'>
+                                </my-icon>
+                            </a-button>
+                        </#if>
+                    <#elseif (cellEditor.renderConf.styleButton=1 || !cellEditor.renderConf.styleButton)>
+                        <a-button  type="link"
+                                  v-if="canActionShow('${btn.alias}',row)" @click.stop="${btn.btnClick}"
+                                  :title="${btn.btnLabel}">
+                            <#if btn.i18nJson>
+                                {{$i18(${btn.i18nJson},"国际化渲染")}}
+                            <#else>
+                                ${btn.btnLabel}
+                            </#if>
+                        </a-button>
+                    </#if>
+                </#list>
+            </RxGridAction>
+        <#elseif (cellEditor.renderType=='i18Render')>
+            {{$i18(row.${cellEditor.field},"国际化渲染")}}
+        <#elseif (cellEditor.renderType=='STARTFLOW' && cellEditor.renderConf??)>
+            <span v-if="canStartFlow(row,'${cellEditor.renderConf.status}')"><a @click='openStartFlowDialog("${cellEditor.renderConf.alias}",row.${idField})' >启动</a></span>
+            <span v-else> 已启动 </span>
+        <#elseif (cellEditor.renderType=='SEARCH' )>
+            {{row['${cellEditor.field}_display'] || row.${cellEditor.field}}}
+        <#elseif (cellEditor.renderType=='PHASE')>
+            <#if cellEditor.renderConf??>
+                <phase-tag v-model:value="row.${cellEditor.field}" :renderSourceCache="renderSourceCache" @setRenderSourceCache="setRenderSourceCache"
+                           renderConfStr='${cellEditor.renderConfStr}'  ></phase-tag>
+            </#if>
+        <#elseif (typeAry?seq_contains(cellEditor.renderType)) >
+            <span v-html="row['${cellEditor.field}_display'] || row.${cellEditor.field}"></span>
+        </#if>
+
+    </#if>
+</#macro>
+
+<#--处理表尾显示-->
+<#macro handFooter fieldName isSummaryPage>
+    <template #${fieldName}Footer="e">
+        <div v-html="drawSummary(e,'${isSummaryPage}')"></div>
+    </template>
+</#macro>
+
+<#--处理列显示-->
+<#macro handCol cellEditor cellEditorIndex>
+    <#if cellEditor.type=='customTitle'>
+        <template #${cellEditor.field}="{column}">
+            ${cellEditor.html}
+        </template>
+    <#else>
+        <#if cellEditor.type=='control'>
+            <template #<#if formBoList.useCondSql=='WEBREQ' || formBoList.useCondSql=='INTERFACE'>${cellEditor.field}<#else>${cellEditor.field?upper_case}</#if>Edit="{row,rowIndex}">
+                <@handCtl cellEditor=cellEditor cellEditorIndex=cellEditorIndex/>
+            </template>
+        <#else>
+            <template #<#if formBoList.useCondSql=='WEBREQ' || formBoList.useCondSql=='INTERFACE'>${cellEditor.field}<#else>${cellEditor.field?upper_case}</#if>="{row,rowIndex}">
+                <#if cellEditor.linkConf??  >
+                    <a href="javascript:void(0);" @click.stop="openLink('${cellEditor.field}',row,linkDefs)">
+                        <#if cellEditor.renderConfStr?? || cellEditor.renderType=='IMG'><@handRender cellEditor=cellEditor/><#else>{{row.${cellEditor.field}}}</#if>
+                    </a>
+                <#else>
+                    <@handRender cellEditor=cellEditor/>
+                </#if>
+            </template>
+        </#if>
+    </#if>
+
+</#macro>
+
+<#--处理查询条件显示-->
+<#macro handSearch search search_index formBoList>
+    <#if (search.type=='query')>
+        <div class="x-list-search-item">
+            <a-form-item :label="i18NameParse('${search.idx_}','${search.fieldLabel}')">
+                <#if (!search.fc?? || search.fc=='textbox')>
+                    <a-input <#if search.emptytext??>placeholder="${search.emptytext}"</#if>
+                             style="width: 100%"
+                             @pressEnter="searchAll(close)"
+                             v-model:value="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']"/>
+                <#elseif (search.fc=='datepicker')>
+                    <#if search.format??>
+                        <#assign searchDateFormat=search.format>
+                    <#else>
+                        <#assign searchDateFormat='YYYY-MM-DD'>
+                    </#if>
+                    <a-date-picker  style="width:100%;" :locale="locale" :inputReadOnly="true"
+                                    <#if search.emptytext??>placeholder="${search.emptytext}"</#if>
+                                    v-model:value="params['queryField_${search.fieldName}']"
+                                    format="${searchDateFormat}"
+                            <#if searchDateFormat=='YYYY-MM-DD HH:mm:ss'>
+                                show-time
+                            </#if>
+                                    @change="searchDateChange($event,$event,{queryField:'<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}_D_${search.fieldOp}<#else>${search.fieldName}</#if>',format:'${searchDateFormat}'})"/>
+                <#elseif (search.fc=='month')>
+                    <a-date-picker style="width:100%;" picker="month" :locale="locale" :inputReadOnly="true" v-model:value="params['queryField_${search.fieldName}']" <#if search.emptytext??>placeholder="${search.emptytext}"</#if>  @change="searchMonthChange($event,$event,{queryField:'<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}'<#if search.format??>,format:'${search.format}'</#if>,autoFilter:'${search.autoFilter}',fieldOp:'${search.fieldOp}',dataType:'${search.dataType}'})" />                                                            <#elseif (search.fc=='rangepicker')>
+                    <#if search.format??>
+                        <#assign searchRangeFormat=search.format>
+                    <#else>
+                        <#assign searchRangeFormat='YYYY-MM-DD HH:mm:ss'>
+                    </#if>
+                    <a-range-picker  :locale="locale" :inputReadOnly="true"
+                                     ref="queryField_${search.fieldName}"  v-model:value="params['queryField_${search.fieldName}']" <#if search.emptytext??>placeholder="${search.emptytext}"</#if> format="${searchRangeFormat}"  @change="searchRangeDateChange($event,'${searchRangeFormat}',{tablePre:'<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>',queryField:'${search.fieldName}',autoFilter:'${search.autoFilter}'})" />
+                <#elseif (search.fc=='checkboxgroup')>
+                    <rx-checkbox-group ref="Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}" v-model="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']"
+                                       <#if (!search.from?? || search.from=='self')>:dataSource="selectOptions${search_index}" value-field="key" text-field="name"
+                                       <#elseif (search.from=='url')>url="${search.url}" value-field="${search.url_valuefield}" text-field="${search.url_textfield}"
+                                       <#elseif (search.from=='dic')>url="/api-system/system/core/sysDic/treeByKey?key=${search.dicKey}" value-field="value" text-field="name"
+                                       <#elseif (search.from=='sql')>url="/api-form/form/core/formCustomQuery/queryForJson_${search.sql}" data-field="data" value-field="${search.sql_valuefield}" text-field="${search.sql_textfield}"
+                                       @onChange="searchChange('${search.fieldName}','Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}')" ajaxType="post"
+                                       <#elseif (search.from=='grant')>url="/api-form/form/core/formEntityDataSetting/queryData_${search.grant}" data-field="data"
+                            </#if>/>
+                <#elseif (search.fc=='select')>
+                    <rx-select :isParent='!isheader' ref="Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}" v-model="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']"
+                               :multiValue="true" <#if search.emptytext??>placeholder="${search.emptytext}"</#if> :labelInValue="false" :multiSelect="<#if search.multiSelect??>${search.multiSelect?c}<#else>false</#if>"
+                            <#if (!search.from?? || search.from=='self')>:dataSource="selectOptions${search_index}" value-field="key" text-field="name"
+                            <#elseif (search.from=='url')>url="${search.url}" ajax-type="${search.url_method}" content-type="${search.url_contentType}" data-field="${search.url_datafield}"  value-field="${search.url_valuefield}" text-field="${search.url_textfield}"
+                            <#elseif (search.from=='dic')>url="/api-system/system/core/sysDic/treeByKey?key=${search.dicKey}" value-field="value" text-field="name"
+                            <#elseif (search.from=='sql')>url="/api-form/form/core/formCustomQuery/queryForJson_${search.sql}" data-field="data" value-field="${search.sql_valuefield}" text-field="${search.sql_textfield}"
+                                @focus="selectFocus('Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}',selectParams${search_index})" :loadDataOnstart="true"
+                                @onChange="searchChange('${search.fieldName}','Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}')" ajaxType="post"
+                            <#elseif (search.from=='grant')>url="/api-form/form/core/formEntityDataSetting/queryData_${search.grant}" data-field="data"
+                                @focus="selectFocus('Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}')" :loadDataOnstart="true"
+                            </#if>/>
+                <#elseif (search.fc=='treeselect')>
+                    <rx-tree-select-ctl ref="Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}" v-model="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']"
+                                        :multiValue="true" :labelInValue="false" :multiSelect="<#if search.multiSelect??>${search.multiSelect?c}<#else>false</#if>" :showSearch="<#if search.showSearch??>${search.showSearch?c}<#else>false</#if>"
+                                        <#if (!search.from?? || search.from=='self')>:dataSource="selectOptions${search_index}" value-field="key" text-field="name"  :is-parent="true"
+                                        <#elseif (search.from=='url')>url="${search.url}" value-field="${search.url_valuefield}" text-field="${search.url_textfield}" parent-field="${search.url_parentfield}"
+                                        <#elseif (search.from=='dic')>url="/api-system/system/core/sysDic/treeByKey?key=${search.dicKey}" value-field="value" text-field="name" :toTree="false"
+                                        <#elseif (search.from=='sql')>url="/api-form/form/core/formCustomQuery/queryForJson_${search.sql}" data-field="data" value-field="${search.sql_valuefield}" text-field="${search.sql_textfield}" parent-field="${search.sql_parentfield}"
+                                        @focus="selectFocus('Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}',selectParams${search_index})" :loadDataOnstart="true"
+                                        @onChange="searchChange('${search.fieldName}','Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}')" ajaxType="post"
+                                        <#elseif (search.from=='grant')>url="/api-form/form/core/formEntityDataSetting/queryData_${search.grant}" data-field="data"
+                                        @focus="selectFocus('Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}')" :loadDataOnstart="true"
+                            </#if>/>
+                <#elseif (search.fc=='dialog')>
+                    <rx-input-button v-model="params['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']"
+                                     :multiple="true" :config="{fieldName:'${search.fieldName}',queryField:'<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>',dialog:'<#if search.dialog??>${search.dialog}</#if>',dialog_name:'<#if search.dialog_name??>${search.dialog_name}</#if>',valueField:'<#if search.valueField??>${search.valueField}</#if>',textField:'<#if search.textField??>${search.textField}</#if>',single:!<#if search.multiSelect??>${search.multiSelect?c}<#else>true</#if>,gridInput:<#if search.params??>${util.toReplaceSingleQuotes(search.params)}</#if>}"
+                                     :singleValue="false"
+                                     @btnClick="onDialogShow"
+                                     @change="onDialogChange"/>
+                <#elseif (search.fc=='number')>
+                    <a-input-number <#if search.emptytext??>placeholder="${search.emptytext}"</#if>
+                                    style="width: 100%"
+                                    @pressEnter="searchAll(close)"
+                                    v-model:value="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']"/>
+                <#elseif (search.fc=='user')>
+                    <user-default-set :isParent="true" :nowrap="true" :multiSelect="<#if search.multiSelect??>${search.multiSelect?c}<#else>true</#if>"  v-model="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']" />
+                <#elseif (search.fc=='group')>
+                    <group-default-set :isParent="true" :nowrap="true" :multiSelect="<#if search.multiSelect??>${search.multiSelect?c}<#else>true</#if>"  v-model="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']" />
+                <#elseif (search.fc=='numberrange')>
+                    <div style=" display: flex; align-items: center;">
+                        <a-input-number v-model:value="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}_I<#else>${search.fieldName}</#if>_GE']"/>
+                        <div style="margin: 0px 10px">~</div>
+                        <a-input-number v-model:value="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}_I<#else>${search.fieldName}</#if>_LE']"/>
+                    </div>
+                </#if>
+            </a-form-item>
+        </div>
+    </#if>
+</#macro>
+
+<#--处理表头自定义筛选过滤字段-->
+<#macro handFilterSearch search search_index>
+    <template #${search.idx_}="{ $panel, column }">
+        <div class='filter-center' style="padding: 8px;<#if search.fc=='number'>width: 550px;<#elseif search.fc=='datepicker'>width: 550px;<#elseif search.fc=='dialog'>width: 350px;<#else>width: 250px;</#if>" >
+            <#if search.fc=='datepicker'>
+                <!--- 日期搜索-->
+                <datePicke-default-set ref="${search.idx_}" :filterId="'${search.idx_}'"
+                                       <#if search.fc?? && search.fc!="">:fc="'${search.fc}'"</#if>
+                        <#if search.fieldOp?? && search.fieldOp!="">:fieldOp="'${search.fieldOp}'"</#if>
+                                       style="width: 530px;"
+                        <#if search.autoFilter?? && search.autoFilter!="">:autoFilter="'${search.autoFilter}'"</#if>
+                        <#if search.tablePre?? && search.tablePre!="">:tablePre="'${search.tablePre}'"</#if>
+                        <#if search.fieldName?? && search.fieldName!="">:fieldName="'${search.fieldName}'"</#if>
+                        <#if search.dataType?? && search.dataType!="">:dataType="'${search.dataType}'"</#if>
+                                       @changeValFitleFun="changeValFitleFun" @changeValByFilterIdx="changeValByFilterIdx" :filterValJson="filterValJson"/>
+                <a-button type="primary" class="filter-button-form" @click="searchAll()" >{{$ti18('rxForm.okBtn','确定')}}</a-button>
+            <#elseif search.fc=='number'>
+                <!---数字框搜索-->
+                <number-default-set ref="${search.idx_}" :filterId="'${search.idx_}'"
+                                    <#if search.fc?? && search.fc!="">:fc="'${search.fc}'"</#if>
+                        <#if search.fieldOp?? && search.fieldOp!="">:fieldOp="'${search.fieldOp}'"</#if>
+                                    style="width: 530px;"
+                        <#if search.autoFilter?? && search.autoFilter!="">:autoFilter="'${search.autoFilter}'"</#if>
+                        <#if search.tablePre?? && search.tablePre!="">:tablePre="'${search.tablePre}'"</#if>
+                        <#if search.fieldName?? && search.fieldName!="">:fieldName="'${search.fieldName}'"</#if>
+                        <#if search.dataType?? && search.dataType!="">:dataType="'${search.dataType}'"</#if>
+                                    @changeValFitleFun="changeValFitleFun" @changeValByFilterIdx="changeValByFilterIdx" :filterValJson="filterValJson"/>
+                <a-button type="primary" class="filter-button" style='margin-right: 10px;' @click="searchAll()" >{{$ti18('rxForm.okBtn','确定')}}</a-button>
+            <#elseif search.fc=='textbox'>
+                <!--- 文本输入框www-->
+                <a-input ref="${search.idx_}" <#if search.emptytext??>placeholder="${search.emptytext}"</#if>
+                         style="width: 100%"
+                         @pressEnter="searchAll(close)"   @change="changeValByFilterIdx($event,'${search.idx_}')"
+                         v-model:value="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']"/>
+                <a-button type="primary" class="filter-button" @click="searchAll()" >{{$ti18('rxForm.okBtn','确定')}}</a-button>
+            <#elseif (search.fc=='checkboxgroup')>
+                <!--- 复选框www-->
+                <rx-checkbox-group ref="${search.idx_}" :filterId="'${search.idx_}'"  @changeValJsonByFilterIdx="changeValJsonByFilterIdx" :filterValJson="filterValJson"
+                                   v-model:value="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']"
+                                   <#if (!search.from?? || search.from=='self')>:dataSource="selectOptions${search_index}" value-field="key" text-field="name"
+                                   <#elseif (search.from=='url')>url="${search.url}" value-field="${search.url_valuefield}" text-field="${search.url_textfield}"
+                                   <#elseif (search.from=='dic')>url="/api-system/system/core/sysDic/treeByKey?key=${search.dicKey}" value-field="value" text-field="name"
+                                   <#elseif (search.from=='sql')>url="/api-form/form/core/formCustomQuery/queryForJson_${search.sql}" data-field="data" value-field="${search.sql_valuefield}" text-field="${search.sql_textfield}"
+                                   @onChange="searchChange('${search.fieldName}','Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}')" ajaxType="post"
+                                   <#elseif (search.from=='grant')>url="/api-form/form/core/formEntityDataSetting/queryData_${search.grant}" data-field="data"
+                        </#if>/>
+                <a-button type="primary" class="filter-button" @click="searchAll()" >{{$ti18('rxForm.okBtn','确定')}}</a-button>
+            <#elseif (search.fc=='select')>
+                <!--- 下拉框wwwww-->
+                <rx-select :isParent='true' ref="${search.idx_}"  :filterId="'${search.idx_}'" @changeValJsonByFilterIdx="changeValJsonByFilterIdx" :filterValJson="filterValJson"
+                           v-model="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']"
+                           :multiValue="true" <#if search.emptytext??>placeholder="${search.emptytext}"</#if> :labelInValue="false" :multiSelect="<#if search.multiSelect??>${search.multiSelect?c}<#else>false</#if>"
+                        <#if (!search.from?? || search.from=='self')>:dataSource="selectOptions${search_index}" value-field="key" text-field="name"
+                        <#elseif (search.from=='url')>url="${search.url}" ajax-type="${search.url_method}" content-type="${search.url_contentType}" data-field="${search.url_datafield}"  value-field="${search.url_valuefield}" text-field="${search.url_textfield}"
+                        <#elseif (search.from=='dic')>url="/api-system/system/core/sysDic/treeByKey?key=${search.dicKey}" value-field="value" text-field="name"
+                        <#elseif (search.from=='sql')>url="/api-form/form/core/formCustomQuery/queryForJson_${search.sql}" data-field="data" value-field="${search.sql_valuefield}" text-field="${search.sql_textfield}"
+                            @focus="selectFocus('Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}',selectParams${search_index})" :loadDataOnstart="true"
+                            @onChange="searchChange('${search.fieldName}','Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}')" ajaxType="post"
+                        <#elseif (search.from=='grant')>url="/api-form/form/core/formEntityDataSetting/queryData_${search.grant}" data-field="data"
+                            @focus="selectFocus('Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}')" :loadDataOnstart="true"
+                        </#if>/>
+                <a-button type="primary" class="filter-button" @click="searchAll()" >{{$ti18('rxForm.okBtn','确定')}}</a-button>
+            <#elseif (search.fc=='treeselect')>
+                <!--- 树型下拉框-->
+                <rx-tree-select-ctl ref="${search.idx_}" style="width: 100%;" :isParent="true" :filterId="'${search.idx_}'" @changeValJsonByFilterIdx="changeValJsonByFilterIdx" :filterValJson="filterValJson"
+                                    v-model="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']"
+                                    :multiValue="true" :labelInValue="false" :multiSelect="<#if search.multiSelect??>${search.multiSelect?c}<#else>false</#if>" :showSearch="<#if search.showSearch??>${search.showSearch?c}<#else>false</#if>"
+                                    <#if (!search.from?? || search.from=='self')>:dataSource="selectOptions${search_index}" value-field="key" text-field="name"  :is-parent="true"
+                                    <#elseif (search.from=='url')>url="${search.url}" value-field="${search.url_valuefield}" text-field="${search.url_textfield}" parent-field="${search.url_parentfield}"
+                                    <#elseif (search.from=='dic')>url="/api-system/system/core/sysDic/treeByKey?key=${search.dicKey}" value-field="value" text-field="name" :toTree="false"
+                                    <#elseif (search.from=='sql')>url="/api-form/form/core/formCustomQuery/queryForJson_${search.sql}" data-field="data" value-field="${search.sql_valuefield}" text-field="${search.sql_textfield}" parent-field="${search.sql_parentfield}"
+                                    @focus="selectFocus('Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}',selectParams${search_index})" :loadDataOnstart="true"
+                                    @onChange="searchChange('${search.fieldName}','Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}')" ajaxType="post"
+                                    <#elseif (search.from=='grant')>url="/api-form/form/core/formEntityDataSetting/queryData_${search.grant}" data-field="data"
+                                    @focus="selectFocus('Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}_</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}')" :loadDataOnstart="true"
+                        </#if>/>
+                <a-button type="primary" class="filter-button" @click="searchAll()">{{$ti18('rxForm.okBtn','确定')}}</a-button>
+            <#elseif (search.fc=='dialog')>
+                <!--- 自定义对话框www-->
+                <button-default-set ref="${search.idx_}"  :filterId="'${search.idx_}'"
+                                    <#if search.fc?? && search.fc!="">:fc="'${search.fc}'"</#if> :buttType="'tag'"
+                        <#if search.fieldOp?? && search.fieldOp!="">:fieldOp="'${search.fieldOp}'"</#if>
+                                    @changeValFitleFun="changeValFitleFun"
+                                    style="width: 330px"
+                                    :single="<#if search.multiSelect??>${search.multiSelect?c}<#else>true</#if>"
+                                    :queryKey="'<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>'"
+                                    :config="{fieldName:'${search.fieldName}',queryField:'<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>',dialog:'<#if search.dialog??>${search.dialog}</#if>',dialog_name:'<#if search.dialog_name??>${search.dialog_name}</#if>',valueField:'<#if search.valueField??>${search.valueField}</#if>',textField:'<#if search.textField??>${search.textField}</#if>',single:!<#if search.multiSelect??>${search.multiSelect?c}<#else>true</#if>,gridInput:<#if search.params??>${util.toReplaceSingleQuotes(search.params)}</#if>}"
+                                    @changeValByFilterIdx="changeValByFilterIdx" :filterValJson="filterValJson"
+                />
+                <a-button type="primary" class="filter-button" @click="searchAll()" >{{$ti18('rxForm.okBtn','确定')}}</a-button>
+            <#elseif (search.fc=='user')>
+                <!--- 用户www-->
+                <user-default-set ref="${search.idx_}" :filterId="'${search.idx_}'"  @changeValJsonByFilterIdx="changeValJsonByFilterIdx" :filterValJson="filterValJson"
+                                  <#if search.fc?? && search.fc!="">:fc="'${search.fc}'"</#if> <#if search.fieldOp?? && search.fieldOp!="">:fieldOp="'${search.fieldOp}'"</#if>
+                                  :multiSelect="<#if search.multiSelect??>${search.multiSelect?c}<#else>true</#if>"
+                                  v-model:value="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']" />
+                <a-button type="primary" class="filter-button" @click="searchAll()" >{{$ti18('rxForm.okBtn','确定')}}</a-button>
+            <#elseif (search.fc=='group')>
+                <!--- 部门wwww-->
+                <group-default-set ref="${search.idx_}" :filterId="'${search.idx_}'"  @changeValJsonByFilterIdx="changeValJsonByFilterIdx" :filterValJson="filterValJson"
+                                   <#if search.fc?? && search.fc!="">:fc="'${search.fc}'"</#if> <#if search.fieldOp?? && search.fieldOp!="">:fieldOp="'${search.fieldOp}'"</#if>
+                                   :multiSelect="<#if search.multiSelect??>${search.multiSelect?c}<#else>true</#if>"
+                                   v-model:value="urlConfig.queryParam['<#if search.autoFilter=='YES'>Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}<#else>${search.fieldName}</#if>']" />
+                <a-button type="primary" class="filter-button" @click="searchAll()" >{{$ti18('rxForm.okBtn','确定')}}</a-button>
+            </#if>
+        </div>
+    </template>
+</#macro>

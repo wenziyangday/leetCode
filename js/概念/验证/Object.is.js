@@ -4,6 +4,7 @@ console.log(+0 === -0);
 // false
 console.log(NaN === NaN);
 
+// true
 console.log(Object.is(NaN, NaN));
 
 // true

@@ -17,7 +17,77 @@
   });
 
   console.log(vue, Vue.observable({}));
+
+
+  const objs = {
+    a: 100,
+    b: 200
+  };
+
+  const vue1 = new Vue({
+    data: objs
+  });
+
+  const vue2 = new Vue({
+    data: objs
+  });
+
+  console.log(vue1.a, vue2.a);
+
+  objs.a = 400;
+  console.log(vue1.a, vue2.a);
+  vue1.a = 1000;
+  console.log(vue1.a, vue2.a);
+  vue2.a = 2000;
+  console.log(vue1.a, vue2.a);
+
+
+  function f() {
+    return {
+      a: 300,
+      b: 400,
+    }
+  }
+
+  const vueF1 = new Vue({
+    data: f,
+  });
+
+  const vueF2 = new Vue({
+    data: f,
+  });
+  console.log(vueF1.a, vueF2.a);
+  f().a = 3000;
+  console.log(vueF1.a, vueF2.a, f().a);
+  vueF1.a = 3000;
+  console.log(vueF1.a, vueF2.a);
+  vueF2.a = 3000;
+  console.log(vueF1.a, vueF2.a);
+
 </script>
+
+
+<ul id="v-for-obj">
+  <li v-for="(key, item) in obj" :key="item">
+    {{item}}---{{key}}
+  </li>
+</ul>
+
+<script>
+  new Vue({
+    el: '#v-for-obj',
+    data: function () {
+      return {
+        obj: {
+          title: 'How to do lists in Vue',
+          author: 'Jane Doe',
+          publishedAt: '2016-04-10'
+        }
+      }
+    }
+  })
+</script>
+
 
 </body>
 </html>

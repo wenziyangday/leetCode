@@ -1,0 +1,700 @@
+module.exports=[{
+    "root": "pages/riskTask",
+    "pages": [
+        //####################风险作业平台代码开始#########################
+		{
+			"path": "disposalMeasures/measuresDetails",
+			"style": {
+				"navigationBarTitleText": "处置措施添加",
+				"enablePullDownRefresh": false,
+                "app-plus": {
+					"popGesture": "none" //配置 此句代码 禁止ios手势退回
+				}
+			}
+		},
+		{
+			"path": "riskCreate/index",
+			"style": {
+				"navigationBarTitleText": "人工风险预警提报（零售）",
+				"enablePullDownRefresh": false,
+				"app-plus": {
+					"popGesture": "none" //配置 此句代码 禁止ios手势退回
+				}
+			}
+		},
+		{
+			"path": "riskWholesale/index",
+			"style": {
+				"navigationBarTitleText": "人工风险预警提报（批售）",
+				"enablePullDownRefresh": false,
+				"app-plus": {
+					"popGesture": "none" //配置 此句代码 禁止ios手势退回
+				}
+			}
+		},
+		{
+			"path": "riskCreate/LoanApplicationInfo",
+			"style": {
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "riskWholesale/riskSearch",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "riskModelRules/index",
+			"style": {
+				"navigationBarTitleText": "自动风险预警审批（模型规则）",
+				"enablePullDownRefresh": false,
+				"app-plus": {
+					"popGesture": "none" //配置 此句代码 禁止ios手势退回
+				}
+			}
+		},
+		{
+			"path": "riskModelRules/riskSearch",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "bCardRetail/index",
+			"style": {
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "gpsRisk/index",
+			"style": {
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "riskCreate/openFiles",
+			"style": {
+				"navigationBarTitleText": "文件查看",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "bCardRetail/tabPages/earlyWarningSingleDetail",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "gpsRisk/tabPages/earlyWarningSingleDetail",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "secondNetRetail/index",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "secondNetRetail/tabPages/earlyWarningSingleDetail",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "secondNetRetail/tabPages/singleSurveyFeedback",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "secondNetRetail/tabPages/investigationInfoDetail",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "riskCreate/openFiles",
+			"style": {
+				"navigationBarTitleText": "文件查看",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "riskCreate/riskWarningList",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "riskWholesale/riskReturn",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "riskModelRules/feedback",
+			"style": {
+				"navigationBarTitleText": "经销商反馈事项添加",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "riskModelRules/riskReturn",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "riskCreate/completePages",
+			"style": {
+				"navigationBarTitleText": "人工风险预警详情（零售）",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "riskModelRules/feedbackDetails",
+			"style": {
+				"navigationBarTitleText": "经销商反馈信息详情",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "disposalMeasures/measuresChange",
+			"style": {
+				"navigationBarTitleText": "处置措施变更",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "disposalMeasures/index",
+			"style": {
+				"navigationBarTitleText": "处置跟踪列表",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "disposalMeasures/measuresSearch",
+			"style": {
+				"navigationBarTitleText": "选择经销商名称",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "riskLevelChange/index",
+			"style": {
+				"navigationBarTitleText": "经销商风险等级调整",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "disposalMeasures/measuresOption",
+			"style": {
+				"navigationBarTitleText": "处置措施添加",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "riskLevelChange/add",
+			"style": {
+				"navigationBarTitleText": "经销商风险等级调整",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "riskLevelTodo/index",
+			"style": {
+				"navigationBarTitleText": "经销商风险等级调整待办",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "riskLevelChange/searchCust",
+			"style": {
+				"navigationBarTitleText": "经销商风险等级调整客户搜索",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "eventConfirm/index",
+			"style": {
+				"navigationBarTitleText": "事件认定及处置",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "eventConfirm/add",
+			"style": {
+				"navigationBarTitleText": "事件处置新增",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "eventConfirm/chooseCust",
+			"style": {
+				"navigationBarTitleText": "客户列表查询",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "invesRetail/tabPages/modify",
+			"style": {
+				"navigationBarTitleText": "变更处置措施",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "disposalMeasures/measuresReturn",
+			"style": {
+                "navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "disposalMeasures/measuresAdd",
+			"style": {
+                "navigationBarTitleText": "处置措施添加",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "invesRetail/tabPages/modify",
+			"style": {
+                "navigationBarTitleText": "变更处置措施",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "wholeRetailChain/dismeasures/addMeasures",
+			"style": {
+                "navigationBarTitleText": "添加处置措施",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "disposalMeasures/measuresHistory",
+			"style": {
+                "navigationBarTitleText": "处置措施变更历史",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "disProgress/index",
+			"style": {
+                "navigationBarTitleText": "处置进展添加",
+				"enablePullDownRefresh": false,
+                "app-plus": {
+					"popGesture": "none" //配置 此句代码 禁止ios手势退回
+				}
+			}
+		},
+		{
+			"path": "retailDisMeasureImpl/index",
+			"style": {
+                "navigationBarTitleText": "处置跟踪-零售(落实)",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "wholesaleAutoDecide/index",
+			"style": {
+                "navigationBarTitleText": "批售自动判定",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "afAppealTodo/index",
+			"style": {
+                "navigationBarTitleText": "af事件申诉待办",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "retailDisMeasureInvest/index",
+			"style": {
+                "navigationBarTitleText": "处置跟踪-零售(审核)",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "retailDisMeasureInvest2/index",
+			"style": {
+			    "navigationBarTitleText": "调查台账审批流程",
+				"navigationStyle": "custom"
+			}
+		},
+        {
+			"path": "wholeRetailChain/index",
+			"style": {
+				"navigationBarTitleText": "批零联动",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "riskLevelTodo/riskReturn",
+			"style": {
+				"navigationBarTitleText": "风险等级调整待办退回选择",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "retailDisMeasureImpl/addProgress",
+			"style": {
+				"navigationBarTitleText": "处置进展添加",
+				"navigationStyle": "custom"
+			}
+		},
+        {
+			"path": "measuresQuery/queryList",
+			"style": {
+				"navigationBarTitleText": "处置查询列表",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "wholesalesRetail/dismeasures/groupAdd",
+			"style": {
+				"navigationBarTitleText": "添加集团成员处置措施"
+			}
+		},
+		{
+			"path": "wholeRetailChain/dismeasures/groupAdd",
+			"style": {
+				"navigationBarTitleText": "添加集团成员处置措施"
+			}
+		},
+		{
+			"path": "wholeAndReatailLinkage/index",
+			"style": {
+				"navigationBarTitleText": "处置跟踪-批零联动"
+			}
+		},
+		{
+			"path": "wholeAndReatailLinkage/disposalMeasures/modify",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "wholeAndReatailLinkage/disposalMeasures/changeHistory",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "wholeAndReatailLinkage/disposalMeasures/review",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "wholeAndReatailLinkage/tabPages/taskInfobackselct",
+			"style": {
+				"navigationBarTitleText": "选择退回哪个节点",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "retailDisMeasureInvest2/tabPages/taskInfobackselct",
+			"style": {
+				"navigationBarTitleText": "选择退回哪个节点",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "publicPage/hisWarnInfo",
+			"style": {
+				"navigationBarTitleText": "历史预警信息查询",
+				"navigationBarBackgroundColor": "#FFFFFF",
+                "navigationStyle":"custom"
+			}
+		},
+		{
+			"path": "publicPage/groupAdd",
+			"style": {
+				"navigationBarTitleText": "添加集团成员处置措施",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "publicPage/disposalDetail",
+			"style": {
+				"navigationBarTitleText": "处置措施详情",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "secondWholesale/index",
+			"style": {
+				"navigationBarTitleText": "批售二网预警审批",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "invesRetail/index",
+			"style": {
+				"navigationBarTitleText": "专项排查(零售)",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "wholesalesRetail/index",
+			"style": {
+				"navigationBarTitleText": "专项排查(批售)",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "wholesalesRetail/dismeasures/addMeasures",
+			"style": {
+				"navigationBarTitleText": "添加处置措施",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "taskBack/index",
+			"style": {
+				"navigationBarTitleText": "任务反馈",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "invesRetail/tabPages/backLedger",
+			"style": {
+				"navigationBarTitleText": "回访台账",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "invesRetail/tabPages/addMeasures",
+			"style": {
+				"navigationBarTitleText": "添加处置措施",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "invesRetail/tabPages/measuresOption",
+			"style": {
+				"navigationBarTitleText": "选择处置措施",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "invesRetail/tabPages/measuresHistory",
+			"style": {
+				"navigationBarTitleText": "处置措施变更历史",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "invesRetail/tabPages/measuresDetail",
+			"style": {
+				"navigationBarTitleText": "处置措施详情",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "secondWholesale/tabPages/opinionMore",
+			"style": {
+				"navigationBarTitleText": "处置措施详情",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "invesRetail/tabPages/measuresChange",
+			"style": {
+				"navigationBarTitleText": "变更处置措施",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "invesLackdata/tabPages/ledgerBack",
+			"style": {
+				"navigationBarTitleText": "回访台账",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "invesLackdata/index",
+			"style": {
+				"navigationBarTitleText": "任务反馈",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "secondWholesale/tabPages/alertSumi",
+			"style": {
+				"navigationBarTitleText": "批售预警信息汇总",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "secondWholesale/tabPages/adddisOpinion",
+			"style": {
+				"navigationBarTitleText": "添加处置措施",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "secondWholesale/tabPages/addmemberOpinion",
+			"style": {
+				"navigationBarTitleText": "添加集团成员处置措施",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "secondWholesale/tabPages/dismeasuresChange",
+			"style": {
+				"navigationBarTitleText": "变更处置措施",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "invesRetail/tabPages/taskInfobackselct",
+			"style": {
+				"navigationBarTitleText": "选择退回哪个节点",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "wholesalesRetail/index",
+			"style": {
+				"navigationBarTitleText": "批售专项排查",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+		{
+			"path": "secondNetRetail/alarmSignalOpration/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "retailDisMeasureInvest2/disposalMeasures/add",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "wholeAndReatailLinkage/disposalMeasures/add",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "retailDisMeasureInvest2/disposalMeasures/review",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "WSDMTimeoutStatistics/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "WSDMTimeoutStatistics/wsdmList",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "dealerRiskClassificationStatistics/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "dealerRiskClassificationStatistics/reportClassificationList",
+			"style": {
+			    "navigationBarTitleText": "经销商风险列表"
+			}
+		},
+		{
+			"path": "earlyWarningOvertimeAndRetuenStatistics/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "earlyWarningOvertimeAndRetuenStatistics/earlyWarningList",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "wholesalesRetail/dismeasures/modify",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "wholeRetailChain/dismeasures/modify",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "wholesalesRetail/dismeasures/measuresHistory",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "dealersWarningStatistics/index",
+			"style": {
+				"navigationBarTitleText": "经销商预警统计表"
+			}
+		},
+		{
+			"path": "retailDisMeasureInvest2/taskBack/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "publicPage/opinionSelect",
+			"style": {
+				"navigationBarTitleText": "调查意见",
+				"navigationBarBackgroundColor": "#FFFFFF"
+			}
+		},
+    ]
+}]

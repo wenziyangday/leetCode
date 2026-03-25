@@ -11,3 +11,24 @@ js规定每一个函数都有一个prototype（原型对象）[原型对象]
 
 constructor:
   构造函数属于被实例化的特定类对象
+
+
+foo.__proto__ === Foo.prototype
+foo.construct === Foo
+
+Foo.prototype.__proto__ === Object.prototype
+
+Object.prototype.__proto__ === null
+
+Object.create 基于现有对象作为原型，创建一个对象
+
+js中如何实现继承
+  class 类型 extends
+  构造函数类型：
+    1）原型链继承（原型式继承）
+    2）构造函数继承
+    3）组合继承
+    4）实例继承
+    5）拷贝继承
+    6）寄生继承
+

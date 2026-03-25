@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+/Users/vincent.wen/.nvm/versions/node/v22.11.0/bin/node /Users/vincent.wen/Documents/Vincent/leetCode/js/template.js
+
+
+<table style="width: 100%;border-collapse: collapse;border: 1px solid #DBDBDB;margin-top: 25px;font-size: 14px;">
+
+  <tr style="line-height: 35px;">
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      人事业务组织
+    </td>
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      HRORGUNIT
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      发起人
+    </td>
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      APPLIER
+    </td>
+
+  </tr>
+
+  <tr style="line-height: 35px;">
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      发起人部门
+    </td>
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      APPLIERDEPARTMENT
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      人事业务组织编码
+    </td>
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      HRORGUNITKEY
+    </td>
+
+  </tr>
+
+  <tr style="line-height: 35px;">
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      流程说明
+    </td>
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      PROCESSDESCRIPTION
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      模板
+    </td>
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      TEMPLATEDOC
+    </td>
+
+  </tr>
+
+  <tr style="line-height: 35px;">
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      单据编号
+    </td>
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      DOCUMENTCODE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      流程结束时间
+    </td>
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      DATE_2RFL4
+    </td>
+
+  </tr>
+
+  <tr style="line-height: 35px;">
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      子流程id_内控联系人津贴提报方案
+    </td>
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      INPUT_X2BCD
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      子流程id_合规津贴提报方案
+    </td>
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      INPUT_3ZIIN
+    </td>
+
+  </tr>
+
+  <tr style="line-height: 35px;">
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      流程对象
+    </td>
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      USER_LJI59
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      流程所属行政组织
+    </td>
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      GROUP_V2Y8I
+    </td>
+
+  </tr>
+
+  <tr style="line-height: 35px;">
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      流程所属业务组织
+    </td>
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      GROUP_27KI7
+    </td>
+
+  </tr>
+
+</table>
+<br/>
+
+
+
+<div style="padding: 20px 0 10px; font-weight: bold; font-size: 16px;">新增岗位信息明细</div>
+<table style="width: 100%;border-collapse: collapse;border: 1px solid #DBDBDB;font-size: 14px;">
+  <tr style="padding-left:0.5em;line-height: 35px;border: 1px solid #DBDBDB">
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报类型
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报人员姓名
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报人员工号
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报人员所在部门
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报岗位类型
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报督导部门
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报督导部门类型
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      督导开始日期
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      督导结束日期
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      附件_申报表和承诺书
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      备注
+    </td>
+
+  </tr>
+  <tr style="padding-left:0.5em;line-height: 35px;border: 1px solid #DBDBDB">
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      DECLARATIONTYPE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      PERSON
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      EMPNUMBER
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      DISPLAYNAME
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      POSITIONTYPE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      APPLYSUPERDEPARTMENT
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      DEPARTMENTTYPE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      BEGINDATE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      ENDDATE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      DECLARATIONDOC
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      REMARK
+    </td>
+
+  </tr>
+</table>
+
+<div style="padding: 20px 0 10px; font-weight: bold; font-size: 16px;">撤销岗位信息明细</div>
+<table style="width: 100%;border-collapse: collapse;border: 1px solid #DBDBDB;font-size: 14px;">
+  <tr style="padding-left:0.5em;line-height: 35px;border: 1px solid #DBDBDB">
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报类型
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报人员姓名
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报人员工号
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报人员所在部门
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      撤销任职记录
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      撤销岗位类型
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      撤销督导部门
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      撤销督导部门类型
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      督导开始日期
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      督导结束日期
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      备注
+    </td>
+
+  </tr>
+  <tr style="padding-left:0.5em;line-height: 35px;border: 1px solid #DBDBDB">
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      DECLARATIONTYPE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      PERSON
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      EMPNUMBER
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      DISPLAYNAME
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      COMPOSITIONINFOBILL
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      POSITIONTYPE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      APPLYSUPERDEPARTMENT
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      DEPARTMENTTYPE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      BEGINDATE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      ENDDATE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      REMARK
+    </td>
+
+  </tr>
+</table>
+
+<div style="padding: 20px 0 10px; font-weight: bold; font-size: 16px;">合规津贴申报明细</div>
+<table style="width: 100%;border-collapse: collapse;border: 1px solid #DBDBDB;font-size: 14px;">
+  <tr style="padding-left:0.5em;line-height: 35px;border: 1px solid #DBDBDB">
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报人员姓名
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报人员工号
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报人员所在部门
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      申报人员岗位
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      当前shr中的提报单id
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      当前shr中的提报单类型
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      新合规津贴标准
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      津贴发放开始日期
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      H_01_002内控联系人津贴
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      H_01_003专兼职合规津贴
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      考核成本中心
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      备注
+    </td>
+
+  </tr>
+  <tr style="padding-left:0.5em;line-height: 35px;border: 1px solid #DBDBDB">
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      PERSON
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      EMPNUMBER
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      DEPARTMENT
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      POSITIONTYPE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      PRESENTALLOWANCEID
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      REPORTTYPE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      NEWCOMPLIANCE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      STARTDATE
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      H_01_002
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      H_01_003
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      COSTCENTER
+    </td>
+
+    <td style="padding-left:0.5em;border: 1px solid #DBDBDB">
+      REMARK
+    </td>
+
+  </tr>
+</table>
+
+
+
+Process finished with exit code 0
+
+
+
+</body>
+</html>

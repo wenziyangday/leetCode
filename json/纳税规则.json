@@ -1,0 +1,1360 @@
+[
+  {
+    "type": "subTable",
+    "name": {
+      "zh-CN": "纳税规则变更明细",
+      "en-US": "sub table"
+    },
+    "key": "subTable_sq2l7",
+    "field": "Salary_CalculationChangeEntry",
+    "children": [
+      {
+        "title": {
+          "zh-CN": "原上报人"
+        },
+        "field": "oldReporter",
+        "ctlType": "user",
+        "colWidth": {
+          "size": "120px",
+          "symbol": "minWidth"
+        },
+        "key": "rkqslr",
+        "fixed": "",
+        "colHideConfig": {
+          "isHide": false,
+          "hideCondition": ""
+        },
+        "valMode": "single",
+        "controlConfig": {
+          "type": "user",
+          "name": {
+            "zh-CN": "原上报人"
+          },
+          "key": "rkqslr",
+          "field": "oldReporter",
+          "isForm": true,
+          "control": {
+            "readOnlyConfig": {
+              "readOnly": true,
+              "condition": ""
+            },
+            "conditionConfig": {
+              "isShow": true,
+              "condition": "",
+              "hideMethod": "if"
+            },
+            "helpConfig": {
+              "showHelp": "",
+              "helpContent": ""
+            },
+            "showTitle": true,
+            "isAnchor": false,
+            "type": "text",
+            "length": 200,
+            "customQuery": [],
+            "valMode": "double",
+            "controlStyle": {
+              "controlWidthType": "control",
+              "widthType": "default",
+              "width": "100%"
+            },
+            "permissionProcessConfig": [],
+            "userDataRange": "enable"
+          },
+          "on": {},
+          "options": {
+            "curUser": false,
+            "single": false,
+            "orgGroupType": "",
+            "orgGroupConfig": "",
+            "styleType": "card",
+            "showUserNo": true
+          },
+          "style": {
+            "width": "100%"
+          },
+          "rules": [
+            {
+              "required": false,
+              "message": "用户控件必填!"
+            },
+            {
+              "max": 200,
+              "message": "超出最大长度!"
+            }
+          ],
+          "subTable": "Salary_CalculationChangeEntry",
+          "mobileStyle": {},
+          "titleStyle": {}
+        },
+        "sort": 26,
+        "_[SIGNIDTM]_": "oldReporter_[SIGNIDTM]_rkqslr"
+      },
+      {
+        "title": {
+          "zh-CN": "上报人"
+        },
+        "field": "reporter",
+        "ctlType": "user",
+        "colWidth": {
+          "size": "120px",
+          "symbol": "minWidth"
+        },
+        "key": "znaaoq",
+        "fixed": "",
+        "colHideConfig": {
+          "isHide": false,
+          "hideCondition": ""
+        },
+        "controlConfig": {
+          "type": "user",
+          "name": {
+            "zh-CN": "上报人"
+          },
+          "key": "znaaoq",
+          "field": "reporter",
+          "isForm": true,
+          "control": {
+            "readOnlyConfig": {
+              "readOnly": false,
+              "condition": ""
+            },
+            "conditionConfig": {
+              "isShow": true,
+              "condition": "",
+              "hideMethod": "if"
+            },
+            "helpConfig": {
+              "showHelp": "",
+              "helpContent": ""
+            },
+            "showTitle": true,
+            "isAnchor": false,
+            "type": "text",
+            "length": 200,
+            "customQuery": [
+              {
+                "name": "根据user_id_从Paas系统返回sHR用户ID部门职务",
+                "event": [
+                  "change"
+                ],
+                "customQuery": "{\"label\":\"根据user_id_从Paas系统返回sHR用户ID部门职务\",\"value\":\"sHRID\"}",
+                "gridReturn": [
+                  {
+                    "doValType": "data",
+                    "controlKey": "8alizd",
+                    "returnLabel": "",
+                    "returnField": "",
+                    "bindField": "sbrshrId",
+                    "valMode": "single",
+                    "ctlType": "input",
+                    "idx_": "6fjugn",
+                    "returnValue": "HR_ID_"
+                  }
+                ],
+                "gridInput": [
+                  {
+                    "doValType": "data",
+                    "controlKey": "",
+                    "fieldName": "用户ID",
+                    "field": "USER_ID_",
+                    "bindVal": "reporter",
+                    "idx_": "Dy7RRi4",
+                    "mappingMode": "mapping",
+                    "valMode": "double",
+                    "table": "sub__Salary_CalculationChangeEntry",
+                    "ctlType": "user"
+                  }
+                ],
+                "gridName": "sub__Salary_CalculationChangeEntry",
+                "superaddition": false,
+                "uniqueField": "",
+                "preCondition": {
+                  "bindVal": ""
+                },
+                "returnField": "上报人shrId",
+                "idx_": "row_225"
+              }
+            ],
+            "valMode": "double",
+            "controlStyle": {
+              "controlWidthType": "control",
+              "widthType": "default",
+              "width": "100%"
+            },
+            "permissionProcessConfig": [],
+            "userDataRange": "enable"
+          },
+          "on": {},
+          "options": {
+            "curUser": false,
+            "single": true,
+            "orgGroupConfig": "",
+            "styleType": "card",
+            "showUserNo": false,
+            "defaultType": "curUser",
+            "defaultToChange": true
+          },
+          "style": {
+            "width": "100%"
+          },
+          "rules": [
+            {
+              "required": true,
+              "message": "用户控件必填!"
+            },
+            {
+              "max": 200,
+              "message": "超出最大长度!"
+            }
+          ],
+          "subTable": "Salary_CalculationChangeEntry",
+          "titleStyle": {},
+          "mobileStyle": {}
+        },
+        "valMode": "single",
+        "sort": 27,
+        "_[SIGNIDTM]_": "reporter_[SIGNIDTM]_znaaoq"
+      },
+      {
+        "title": {
+          "zh-CN": "上报人shrId"
+        },
+        "field": "sbrshrId",
+        "ctlType": "input",
+        "colWidth": {
+          "size": "120px",
+          "symbol": "minWidth"
+        },
+        "key": "8alizd",
+        "fixed": "",
+        "layout": "horizontal",
+        "colHideConfig": {
+          "isHide": false,
+          "hideCondition": ""
+        },
+        "sort": 28,
+        "controlConfig": {
+          "type": "input",
+          "name": {
+            "zh-CN": "上报人shrId"
+          },
+          "key": "8alizd",
+          "field": "sbrshrId",
+          "isForm": true,
+          "control": {
+            "readOnlyConfig": {
+              "readOnly": false,
+              "condition": ""
+            },
+            "permissionProcessConfig": [],
+            "conditionConfig": {
+              "isShow": true,
+              "condition": "",
+              "hideMethod": "show"
+            },
+            "helpConfig": {
+              "showHelp": "",
+              "helpContent": ""
+            },
+            "showTitle": true,
+            "isAnchor": false,
+            "args": {},
+            "controlStyle": {
+              "controlWidthType": "control",
+              "widthType": "default",
+              "width": ""
+            },
+            "type": "text",
+            "length": 50,
+            "formulaValue": "",
+            "formulaCondition": "",
+            "customQuery": [],
+            "valMode": "single"
+          },
+          "on": {},
+          "options": {
+            "allowClear": true,
+            "addonAfterConfig": {},
+            "addonBeforeConfig": {},
+            "controlTipConfig": {},
+            "placeholder": {
+              "zh-CN": "请输入",
+              "en-US": ""
+            },
+            "defaultValue": "",
+            "valueSource": "",
+            "sourceConfig": "",
+            "link": false,
+            "linkConfig": "",
+            "isPassword": false,
+            "qrCode": false,
+            "uniqueValue": false
+          },
+          "style": {
+            "width": "100%"
+          },
+          "mobileStyle": {},
+          "rules": [
+            {
+              "required": false,
+              "message": "输入框必填!",
+              "condition": ""
+            },
+            {
+              "max": 50,
+              "message": "超出最大长度!"
+            },
+            {
+              "uniqueValue": false,
+              "message": "唯一性校验不通过!"
+            }
+          ],
+          "subTable": "Salary_CalculationChangeEntry"
+        }
+      },
+      {
+        "title": {
+          "zh-CN": "s-HR系统id"
+        },
+        "field": "id",
+        "ctlType": "input",
+        "colWidth": {
+          "size": "120px",
+          "symbol": "minWidth"
+        },
+        "key": "qpfav7",
+        "fixed": "",
+        "colHideConfig": {
+          "isHide": false,
+          "hideCondition": ""
+        },
+        "controlConfig": {
+          "type": "input",
+          "name": {
+            "zh-CN": "s-HR系统id"
+          },
+          "key": "qpfav7",
+          "field": "id",
+          "isForm": true,
+          "control": {
+            "readOnlyConfig": {
+              "readOnly": true,
+              "condition": ""
+            },
+            "conditionConfig": {
+              "isShow": true,
+              "condition": "",
+              "hideMethod": "if"
+            },
+            "helpConfig": {
+              "showHelp": "",
+              "helpContent": ""
+            },
+            "showTitle": true,
+            "isAnchor": false,
+            "type": "text",
+            "length": 50,
+            "formulaValue": "",
+            "formulaCondition": "",
+            "customQuery": [],
+            "valMode": "single",
+            "controlStyle": {
+              "controlWidthType": "control",
+              "widthType": "default",
+              "width": "100%"
+            },
+            "permissionProcessConfig": []
+          },
+          "on": {},
+          "options": {
+            "allowClear": true,
+            "addonAfterConfig": {},
+            "addonBeforeConfig": {},
+            "controlTipConfig": {},
+            "placeholder": {
+              "zh-CN": "",
+              "en-US": ""
+            },
+            "defaultValue": "",
+            "valueSource": "input",
+            "sourceConfig": "",
+            "link": false,
+            "linkConfig": "",
+            "isPassword": false,
+            "qrCode": false
+          },
+          "style": {
+            "width": "100%"
+          },
+          "rules": [
+            {
+              "required": false,
+              "message": "输入框必填!",
+              "condition": ""
+            },
+            {
+              "max": 50,
+              "message": "超出最大长度!"
+            }
+          ],
+          "subTable": "Salary_CalculationChangeEntry",
+          "titleStyle": {}
+        },
+        "sort": 29,
+        "_[SIGNIDTM]_": "id_[SIGNIDTM]_qpfav7"
+      },
+      {
+        "title": {
+          "zh-CN": "描述"
+        },
+        "field": "Des",
+        "ctlType": "textarea",
+        "colWidth": {
+          "size": "120px",
+          "symbol": "minWidth"
+        },
+        "key": "y2tjpu",
+        "fixed": "",
+        "layout": "horizontal",
+        "colHideConfig": {
+          "isHide": false,
+          "hideCondition": ""
+        },
+        "sort": 30,
+        "valMode": "single",
+        "controlConfig": {
+          "type": "textarea",
+          "name": {
+            "zh-CN": "描述"
+          },
+          "key": "y2tjpu",
+          "field": "Des",
+          "isForm": true,
+          "control": {
+            "readOnlyConfig": {
+              "readOnly": false,
+              "condition": ""
+            },
+            "permissionProcessConfig": [],
+            "conditionConfig": {
+              "isShow": true,
+              "condition": "",
+              "hideMethod": "show"
+            },
+            "helpConfig": {
+              "showHelp": "",
+              "helpContent": ""
+            },
+            "showTitle": true,
+            "isAnchor": false,
+            "args": {},
+            "controlStyle": {
+              "controlWidthType": "control",
+              "widthType": "default",
+              "width": ""
+            },
+            "type": "text",
+            "length": 1000,
+            "valMode": "single"
+          },
+          "on": {},
+          "options": {
+            "defaultValue": "",
+            "placeholder": {
+              "zh-CN": "请输入",
+              "en-US": ""
+            },
+            "allowClear": false,
+            "autosize": false,
+            "showCount": false,
+            "maxlength": 0,
+            "rows": [
+              2,
+              5
+            ]
+          },
+          "style": {
+            "width": "100%"
+          },
+          "mobileStyle": {},
+          "rules": [
+            {
+              "required": false,
+              "message": "多行文本控件必填!"
+            },
+            {
+              "max": 1000,
+              "message": "字段超出最大长度!"
+            }
+          ],
+          "subTable": "Salary_CalculationChangeEntry"
+        }
+      }
+    ],
+    "dialogConfig": [
+      {
+        "type": "flex",
+        "controlType": "page",
+        "designStyle": {
+          "display": "inline-block",
+          "width": "100%",
+          "minHeight": "60px",
+          "backgroundColor": "#f5f5f5"
+        },
+        "name": {
+          "zh-CN": "弹性布局",
+          "en-US": "Flex Layout"
+        },
+        "key": "flex_eaf39",
+        "control": {
+          "conditionConfig": {
+            "isShow": true,
+            "condition": "",
+            "hideMethod": "if"
+          },
+          "helpConfig": {
+            "showHelp": "",
+            "helpContent": ""
+          },
+          "showTitle": false,
+          "isAnchor": false,
+          "gapType": "custom",
+          "customGapSize": 0
+        },
+        "on": {},
+        "options": {
+          "vertical": false,
+          "wrap": "nowrap",
+          "justify": "normal",
+          "align": "normal",
+          "gap": ""
+        },
+        "children": [
+          {
+            "type": "grid",
+            "controlType": "page",
+            "designStyle": {
+              "display": "inline-block",
+              "minWidth": "100%",
+              "minHeight": "60px"
+            },
+            "name": {
+              "zh-CN": "栅格布局",
+              "en-US": "Grid Layout"
+            },
+            "key": "grid_l9ead",
+            "control": {
+              "conditionConfig": {
+                "isShow": true,
+                "condition": "",
+                "hideMethod": "if"
+              },
+              "helpConfig": {
+                "showHelp": "",
+                "helpContent": ""
+              },
+              "showTitle": false,
+              "isAnchor": false,
+              "isResponsive": false,
+              "gutter": [
+                36,
+                8
+              ],
+              "controlStyle": {
+                "controlWidthType": "control",
+                "widthType": "default",
+                "width": "100%"
+              },
+              "permissionProcessConfig": []
+            },
+            "on": {},
+            "options": {
+              "isFold": false,
+              "defaultFold": "open",
+              "foldIcon": true,
+              "foldIconPlace": "start",
+              "flexType": "adaptation",
+              "hideHeader": false,
+              "hideHeaderBorderBottom": false
+            },
+            "children": [
+              {
+                "key": "01tya6",
+                "colspan": 12,
+                "children": [
+                  {
+                    "type": "select",
+                    "name": {
+                      "zh-CN": "原T月工资申报所得月"
+                    },
+                    "key": "xfwlna",
+                    "field": "oldEarningMonth",
+                    "isForm": true,
+                    "control": {
+                      "readOnlyConfig": {
+                        "readOnly": true,
+                        "condition": ""
+                      },
+                      "conditionConfig": {
+                        "isShow": true,
+                        "condition": "",
+                        "hideMethod": "if"
+                      },
+                      "helpConfig": {
+                        "showHelp": "",
+                        "helpContent": ""
+                      },
+                      "showTitle": true,
+                      "isAnchor": false,
+                      "type": "text",
+                      "length": 50,
+                      "customQuery": []
+                    },
+                    "on": {},
+                    "options": {
+                      "allowClear": true,
+                      "placeholder": {
+                        "zh-CN": "",
+                        "en-US": ""
+                      },
+                      "valMode": "single",
+                      "mode": "default",
+                      "showSearch": false,
+                      "valueSource": "dic",
+                      "sourceConfig": {
+                        "dicKey": "Tygzsbsdy",
+                        "dicName": "T月工资申报所得月"
+                      },
+                      "relativeType": "body",
+                      "zIndex": "4000",
+                      "filterOptions": ""
+                    },
+                    "style": {
+                      "width": "100%"
+                    },
+                    "rules": [
+                      {
+                        "required": false,
+                        "message": "下拉选择器必填!"
+                      },
+                      {
+                        "max": 50,
+                        "message": "超出最大长度!"
+                      }
+                    ],
+                    "subTable": "CalculationChangeEntry"
+                  }
+                ],
+                "responsiveStyle": {
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 12,
+                  "lg": 12,
+                  "xl": 12,
+                  "xxl": 12
+                }
+              },
+              {
+                "key": "bwplev",
+                "colspan": 12,
+                "children": [
+                  {
+                    "type": "user",
+                    "name": {
+                      "zh-CN": "上报人"
+                    },
+                    "key": "znaaoq",
+                    "field": "reporter",
+                    "isForm": true,
+                    "control": {
+                      "readOnlyConfig": {
+                        "readOnly": false,
+                        "condition": ""
+                      },
+                      "conditionConfig": {
+                        "isShow": true,
+                        "condition": "",
+                        "hideMethod": "if"
+                      },
+                      "helpConfig": {
+                        "showHelp": "",
+                        "helpContent": ""
+                      },
+                      "showTitle": true,
+                      "isAnchor": false,
+                      "type": "text",
+                      "length": 200,
+                      "customQuery": [
+                        {
+                          "name": "根据user_id_从Paas系统返回sHR用户ID部门职务",
+                          "event": [
+                            "change"
+                          ],
+                          "customQuery": "{\"label\":\"根据user_id_从Paas系统返回sHR用户ID部门职务\",\"value\":\"sHRID\"}",
+                          "gridReturn": [
+                            {
+                              "doValType": "data",
+                              "controlKey": "8alizd",
+                              "returnLabel": "",
+                              "returnField": "",
+                              "bindField": "sbrshrId",
+                              "valMode": "single",
+                              "ctlType": "input",
+                              "idx_": "6fjugn",
+                              "returnValue": "HR_ID_"
+                            }
+                          ],
+                          "gridInput": [
+                            {
+                              "doValType": "data",
+                              "controlKey": "",
+                              "fieldName": "用户ID",
+                              "field": "USER_ID_",
+                              "bindVal": "reporter",
+                              "idx_": "Dy7RRi4",
+                              "mappingMode": "mapping",
+                              "valMode": "double",
+                              "table": "sub__Salary_CalculationChangeEntry",
+                              "ctlType": "user"
+                            }
+                          ],
+                          "gridName": "sub__Salary_CalculationChangeEntry",
+                          "superaddition": false,
+                          "uniqueField": "",
+                          "preCondition": {
+                            "bindVal": ""
+                          },
+                          "returnField": "上报人shrId",
+                          "idx_": "row_225"
+                        }
+                      ],
+                      "valMode": "double",
+                      "controlStyle": {
+                        "controlWidthType": "control",
+                        "widthType": "default",
+                        "width": "100%"
+                      },
+                      "permissionProcessConfig": [],
+                      "userDataRange": "enable"
+                    },
+                    "on": {},
+                    "options": {
+                      "curUser": false,
+                      "single": true,
+                      "orgGroupConfig": "",
+                      "styleType": "card",
+                      "showUserNo": false,
+                      "defaultType": "curUser",
+                      "defaultToChange": true
+                    },
+                    "style": {
+                      "width": "100%"
+                    },
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "用户控件必填!"
+                      },
+                      {
+                        "max": 200,
+                        "message": "超出最大长度!"
+                      }
+                    ],
+                    "subTable": "Salary_CalculationChangeEntry",
+                    "titleStyle": {},
+                    "mobileStyle": {}
+                  }
+                ],
+                "responsiveStyle": {
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 12,
+                  "lg": 12,
+                  "xl": 12,
+                  "xxl": 12
+                }
+              },
+              {
+                "key": "yboo9v",
+                "colspan": 12,
+                "children": [
+                  {
+                    "type": "user",
+                    "name": {
+                      "zh-CN": "原上报人"
+                    },
+                    "key": "rkqslr",
+                    "field": "oldReporter",
+                    "isForm": true,
+                    "control": {
+                      "readOnlyConfig": {
+                        "readOnly": true,
+                        "condition": ""
+                      },
+                      "conditionConfig": {
+                        "isShow": true,
+                        "condition": "",
+                        "hideMethod": "if"
+                      },
+                      "helpConfig": {
+                        "showHelp": "",
+                        "helpContent": ""
+                      },
+                      "showTitle": true,
+                      "isAnchor": false,
+                      "type": "text",
+                      "length": 200,
+                      "customQuery": [],
+                      "valMode": "double",
+                      "controlStyle": {
+                        "controlWidthType": "control",
+                        "widthType": "default",
+                        "width": "100%"
+                      },
+                      "permissionProcessConfig": [],
+                      "userDataRange": "enable"
+                    },
+                    "on": {},
+                    "options": {
+                      "curUser": false,
+                      "single": false,
+                      "orgGroupType": "",
+                      "orgGroupConfig": "",
+                      "styleType": "card",
+                      "showUserNo": true
+                    },
+                    "style": {
+                      "width": "100%"
+                    },
+                    "rules": [
+                      {
+                        "required": false,
+                        "message": "用户控件必填!"
+                      },
+                      {
+                        "max": 200,
+                        "message": "超出最大长度!"
+                      }
+                    ],
+                    "subTable": "Salary_CalculationChangeEntry",
+                    "mobileStyle": {},
+                    "titleStyle": {}
+                  }
+                ],
+                "responsiveStyle": {
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 12,
+                  "lg": 12,
+                  "xl": 12,
+                  "xxl": 12
+                }
+              },
+              {
+                "key": "oc085i",
+                "colspan": 12,
+                "children": [
+                  {
+                    "type": "input",
+                    "name": {
+                      "zh-CN": "上报人shrId"
+                    },
+                    "key": "8alizd",
+                    "field": "sbrshrId",
+                    "isForm": true,
+                    "control": {
+                      "readOnlyConfig": {
+                        "readOnly": false,
+                        "condition": ""
+                      },
+                      "permissionProcessConfig": [],
+                      "conditionConfig": {
+                        "isShow": true,
+                        "condition": "",
+                        "hideMethod": "show"
+                      },
+                      "helpConfig": {
+                        "showHelp": "",
+                        "helpContent": ""
+                      },
+                      "showTitle": true,
+                      "isAnchor": false,
+                      "args": {},
+                      "controlStyle": {
+                        "controlWidthType": "control",
+                        "widthType": "default",
+                        "width": ""
+                      },
+                      "type": "text",
+                      "length": 50,
+                      "formulaValue": "",
+                      "formulaCondition": "",
+                      "customQuery": [],
+                      "valMode": "single"
+                    },
+                    "on": {},
+                    "options": {
+                      "allowClear": true,
+                      "addonAfterConfig": {},
+                      "addonBeforeConfig": {},
+                      "controlTipConfig": {},
+                      "placeholder": {
+                        "zh-CN": "请输入",
+                        "en-US": ""
+                      },
+                      "defaultValue": "",
+                      "valueSource": "",
+                      "sourceConfig": "",
+                      "link": false,
+                      "linkConfig": "",
+                      "isPassword": false,
+                      "qrCode": false,
+                      "uniqueValue": false
+                    },
+                    "style": {
+                      "width": "100%"
+                    },
+                    "mobileStyle": {},
+                    "rules": [
+                      {
+                        "required": false,
+                        "message": "输入框必填!",
+                        "condition": ""
+                      },
+                      {
+                        "max": 50,
+                        "message": "超出最大长度!"
+                      },
+                      {
+                        "uniqueValue": false,
+                        "message": "唯一性校验不通过!"
+                      }
+                    ],
+                    "subTable": "Salary_CalculationChangeEntry"
+                  },
+                  {
+                    "type": "textarea",
+                    "name": {
+                      "zh-CN": "描述"
+                    },
+                    "key": "y2tjpu",
+                    "field": "Des",
+                    "isForm": true,
+                    "control": {
+                      "readOnlyConfig": {
+                        "readOnly": false,
+                        "condition": ""
+                      },
+                      "permissionProcessConfig": [],
+                      "conditionConfig": {
+                        "isShow": true,
+                        "condition": "",
+                        "hideMethod": "show"
+                      },
+                      "helpConfig": {
+                        "showHelp": "",
+                        "helpContent": ""
+                      },
+                      "showTitle": true,
+                      "isAnchor": false,
+                      "args": {},
+                      "controlStyle": {
+                        "controlWidthType": "control",
+                        "widthType": "default",
+                        "width": ""
+                      },
+                      "type": "text",
+                      "length": 1000,
+                      "valMode": "single"
+                    },
+                    "on": {},
+                    "options": {
+                      "defaultValue": "",
+                      "placeholder": {
+                        "zh-CN": "请输入",
+                        "en-US": ""
+                      },
+                      "allowClear": false,
+                      "autosize": false,
+                      "showCount": false,
+                      "maxlength": 0,
+                      "rows": [
+                        2,
+                        5
+                      ]
+                    },
+                    "style": {
+                      "width": "100%"
+                    },
+                    "mobileStyle": {},
+                    "rules": [
+                      {
+                        "required": false,
+                        "message": "多行文本控件必填!"
+                      },
+                      {
+                        "max": 1000,
+                        "message": "字段超出最大长度!"
+                      }
+                    ],
+                    "subTable": "Salary_CalculationChangeEntry"
+                  }
+                ],
+                "responsiveStyle": {
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 12,
+                  "lg": 12,
+                  "xl": 12,
+                  "xxl": 12
+                }
+              }
+            ],
+            "style": {
+              "width": "100%",
+              "flexGrow": 1,
+              "flexShrink": 1
+            },
+            "rules": [],
+            "flexChildren": true,
+            "titleStyle": {
+              "layout": "horizontal",
+              "prefix": "icon",
+              "writingMode": "horizontal-tb",
+              "icon": {
+                "iconType": "icon-park",
+                "passIcon": true,
+                "name": "PatternCircle",
+                "size": 24,
+                "fill": "#333"
+              }
+            }
+          }
+        ],
+        "style": {
+          "width": "100%"
+        },
+        "rules": []
+      }
+    ],
+    "buttonConfig": {
+      "buttonShowType": "part",
+      "buttonData": [
+        {
+          "key": "add",
+          "type": "default",
+          "name": {
+            "zh-CN": "添加"
+          },
+          "method": "add",
+          "btnConfig": "",
+          "icon": "icon-linebrush"
+        },
+        {
+          "key": "delete",
+          "type": "default",
+          "name": {
+            "zh-CN": "删除"
+          },
+          "method": "delete",
+          "btnConfig": "",
+          "icon": "icon-linebrush"
+        },
+        {
+          "key": "upMove",
+          "type": "default",
+          "name": {
+            "zh-CN": "上移"
+          },
+          "method": "upMove",
+          "btnConfig": "",
+          "icon": "icon-linebrush"
+        },
+        {
+          "key": "downMove",
+          "type": "default",
+          "name": {
+            "zh-CN": "下移"
+          },
+          "method": "downMove",
+          "btnConfig": "",
+          "icon": "icon-linebrush"
+        },
+        {
+          "key": "fullScreen",
+          "type": "default",
+          "name": {
+            "zh-CN": "全屏"
+          },
+          "method": "fullScreen",
+          "btnConfig": "",
+          "icon": "icon-linebrush"
+        },
+        {
+          "key": "edit",
+          "type": "default",
+          "name": {
+            "zh-CN": "编辑"
+          },
+          "method": "edit",
+          "btnConfig": "",
+          "icon": "icon-linebrush"
+        },
+        {
+          "key": "mdhxtn",
+          "type": "excelImport",
+          "name": {
+            "zh-CN": "Excel导入"
+          },
+          "method": "excelImport",
+          "btnConfig": {
+            "sheetNo": 1,
+            "beginRow": 2,
+            "fileId": "",
+            "fileName": "",
+            "fields": [
+              {
+                "comment": "纳税规则",
+                "field": "rule",
+                "type": "text",
+                "startColumn": 1,
+                "valMode": "single",
+                "ctlType": "buttonEdit",
+                "single": false,
+                "isSingle": true
+              },
+              {
+                "comment": "上报人",
+                "field": "reporter",
+                "type": "text",
+                "startColumn": 2,
+                "valMode": "single",
+                "ctlType": "user",
+                "single": false
+              },
+              {
+                "comment": "报税单位",
+                "field": "taxUnit",
+                "type": "text",
+                "startColumn": 3,
+                "valMode": "single",
+                "ctlType": "select",
+                "single": false
+              },
+              {
+                "comment": "增值税月起征点（含）",
+                "field": "startingPoint",
+                "type": "number",
+                "startColumn": 4,
+                "valMode": "single",
+                "ctlType": "number",
+                "single": false
+              },
+              {
+                "comment": "增值税佣金收入比例",
+                "field": "incomTaxRate",
+                "type": "number",
+                "startColumn": 5,
+                "valMode": "single",
+                "ctlType": "number",
+                "single": false
+              },
+              {
+                "comment": "城建税（增值税*比例）",
+                "field": "urbanTax",
+                "type": "number",
+                "startColumn": 6,
+                "valMode": "single",
+                "ctlType": "number",
+                "single": false
+              },
+              {
+                "comment": "教育费附加（增值税*比例）",
+                "field": "educationalSurtax",
+                "type": "number",
+                "startColumn": 7,
+                "valMode": "single",
+                "ctlType": "number",
+                "single": false
+              },
+              {
+                "comment": "地方教育费附加（增值税*比例）",
+                "field": "localEducationalSurtax",
+                "type": "number",
+                "startColumn": 8,
+                "valMode": "single",
+                "ctlType": "number",
+                "single": false
+              },
+              {
+                "comment": "其他费（增值税*比例）",
+                "field": "otherFees",
+                "type": "number",
+                "startColumn": 9,
+                "valMode": "single",
+                "ctlType": "number",
+                "single": false
+              },
+              {
+                "comment": "其他费（佣金收入*比例）",
+                "field": "otherFees2",
+                "type": "number",
+                "startColumn": 10,
+                "valMode": "single",
+                "ctlType": "number",
+                "single": false
+              },
+              {
+                "comment": "个税计算方法",
+                "field": "calculationMethod",
+                "type": "text",
+                "startColumn": 11,
+                "valMode": "single",
+                "ctlType": "select",
+                "single": false
+              },
+              {
+                "comment": "是否通过个税软件申报",
+                "field": "isSoftware",
+                "type": "text",
+                "startColumn": 12,
+                "valMode": "single",
+                "ctlType": "select",
+                "single": false
+              },
+              {
+                "comment": "T月工资申报所得月",
+                "field": "earningMonth",
+                "type": "text",
+                "startColumn": 13,
+                "valMode": "single",
+                "ctlType": "select",
+                "single": false
+              }
+            ]
+          },
+          "icon": "icon-linebrush"
+        }
+      ]
+    },
+    "rowButtonConfig": {
+      "name": {
+        "zh-CN": "操作列",
+        "en-US": "Action Column"
+      },
+      "width": "120px",
+      "showType": "font",
+      "fixed": "right",
+      "rowButtonData": []
+    },
+    "isForm": false,
+    "control": {
+      "readOnlyConfig": {
+        "readOnly": false,
+        "condition": ""
+      },
+      "conditionConfig": {
+        "isShow": true,
+        "condition": "",
+        "hideMethod": "if"
+      },
+      "helpConfig": {
+        "showHelp": "",
+        "helpContent": ""
+      },
+      "showTitle": true,
+      "isAnchor": false,
+      "type": "block",
+      "fieldType": "text",
+      "length": 200,
+      "selectConfig": {
+        "type": "",
+        "width": "60",
+        "trigger": "cell",
+        "checkMethod": ""
+      },
+      "rowConfig": {
+        "mode": "default",
+        "trigger": "click",
+        "method": ""
+      },
+      "seqConfig": {
+        "hasSeq": true,
+        "seqWidth": "60",
+        "seqMethod": ""
+      },
+      "isCalc": false,
+      "calcConfig": [],
+      "hasPage": false,
+      "pageConfig": {
+        "pageSizes": "10,20,30,40,50"
+      },
+      "controlStyle": {
+        "controlWidthType": "control",
+        "widthType": "default",
+        "width": "100%"
+      },
+      "permissionProcessConfig": [],
+      "delBlankCustomValue": ""
+    },
+    "on": {},
+    "options": {
+      "flexType": "adaptation"
+    },
+    "style": {
+      "width": "100%",
+      "height": "auto",
+      "flexGrow": 1,
+      "flexShrink": 1,
+      "fontSize": "16px",
+      "fontWeight": "bold"
+    },
+    "rules": [
+      {
+        "required": false,
+        "message": "子表必填!"
+      }
+    ],
+    "flexChildren": true,
+    "titleStyle": {
+      "fontSize": "20px",
+      "fontWeight": 500,
+      "prefix": "icon",
+      "layout": "horizontal",
+      "writingMode": "horizontal-tb",
+      "icon": {
+        "iconType": "icon-park",
+        "passIcon": true,
+        "name": "PatternCircle",
+        "size": 24,
+        "fill": "#333"
+      }
+    },
+    "mobileStyle": {},
+    "dialogConfigWindow": {
+      "width": "700px",
+      "height": "500px",
+      "isWinMaxHeight": false,
+      "max": false,
+      "zIndex": 1000,
+      "mask": true,
+      "maskClosable": false,
+      "title": "",
+      "showtitle": true,
+      "showfooter": true,
+      "closable": true,
+      "keyboard": true,
+      "showFullScreen": true,
+      "footerAlign": "flex-end",
+      "btnSize": "default",
+      "okText": "确认",
+      "cancelText": "取消",
+      "okType": "primary",
+      "layout": "vertical",
+      "onCancelAfter": null,
+      "onOkAfter": null
+    },
+    "_[SIGNIDTM]_": "Salary_CalculationChangeEntry_[SIGNIDTM]_subTable_sq2l7"
+  }
+]

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前端代码编辑器</title>
+
+  <!-- CodeMirror 核心样式 -->
+  <link rel="stylesheet" href="./codemirror/5.65.2/codemirror.min.css">
+
+  <!-- 主题样式 -->
+  <link rel="stylesheet" href="./codemirror/5.65.2/theme/dracula.min.css">
+  <link rel="stylesheet" href="./codemirror/5.65.2/theme/eclipse.min.css">
+  <link rel="stylesheet" href="./codemirror/5.65.2/theme/material.min.css">
+
+  <style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		}
+
+		body {
+			background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+			min-height: 100vh;
+			color: #333;
+		}
+
+		.container {
+			box-sizing: border-box;
+			width: 100vw;
+			height: 100vh;
+			margin: 0 auto;
+			padding: 20px;
+		}
+
+		header {
+			text-align: center;
+			margin-bottom: 30px;
+		}
+
+		h1 {
+			font-size: 2.5rem;
+			margin-bottom: 10px;
+			color: #2c3e50;
+		}
+
+		.description {
+			font-size: 1.1rem;
+			color: #7f8c8d;
+			max-width: 800px;
+			margin: 0 auto;
+		}
+
+		.editor-container {
+			height: 100%;
+			background: white;
+			border-radius: 10px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+			overflow-y: auto;
+		}
+
+		.controls {
+			position: sticky;
+			top: 0px;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 15px;
+			padding: 20px;
+			background: #f8f9fa;
+			border-bottom: 1px solid #e9ecef;
+			z-index: 10;
+		}
+
+		.control-group {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		label {
+			font-weight: 500;
+			color: #495057;
+		}
+
+		select, button {
+			padding: 8px 12px;
+			border: 1px solid #ced4da;
+			border-radius: 5px;
+			background: white;
+			color: #495057;
+			font-size: 0.9rem;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		select:hover, button:hover {
+			border-color: #6c757d;
+		}
+
+		button {
+			background: #4a6ee0;
+			color: white;
+			border: none;
+			padding: 8px 16px;
+		}
+
+		button:hover {
+			background: #3a5ecc;
+			transform: translateY(-2px);
+		}
+
+		.editor-wrapper {
+		}
+
+		.CodeMirror {
+			height: auto;
+			min-height: 350px;
+			border-radius: 5px;
+			font-size: 14px;
+			line-height: 1.5;
+		}
+
+		.output {
+			margin-top: 30px;
+			background: white;
+			border-radius: 10px;
+			padding: 20px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+		}
+
+		.output h2 {
+			margin-bottom: 15px;
+			color: #2c3e50;
+		}
+
+		#editor-content {
+			background: #f8f9fa;
+			padding: 15px;
+			border-radius: 5px;
+			font-family: monospace;
+			white-space: pre-wrap;
+			/*max-height: 200px;*/
+			overflow-y: auto;
+		}
+
+		.CodeMirror {
+			min-height: auto;
+		}
+
+		@media (max-width: 768px) {
+			.controls {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+		}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="editor-container">
+    <div class="controls">
+      <div class="control-group">
+        <label for="theme-select">主题:</label>
+        <select id="theme-select">
+          <option value="default">默认</option>
+          <option value="dracula">Dracula</option>
+          <option value="eclipse">Eclipse</option>
+          <option value="material">Material</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="mode-select">语言模式:</label>
+        <select id="mode-select">
+          <option value="javascript">JavaScript</option>
+          <option value="htmlmixed">HTML</option>
+          <option value="css">CSS</option>
+          <option value="xml">XML</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <button id="clear-btn">清空编辑器</button>
+        <button id="get-content-btn">获取内容</button>
+      </div>
+    </div>
+
+    <div class="editor-wrapper">
+      <textarea id="code-editor"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- CodeMirror 核心脚本 -->
+<script src="./codemirror/5.65.2/codemirror.min.js"></script>
+
+<!-- 语言模式脚本 -->
+<script src="./codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+<script src="./codemirror/5.65.2/mode/xml/xml.min.js"></script>
+<script src="./codemirror/5.65.2/mode/css/css.min.js"></script>
+<script src="./codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+
+<script>
+	// 初始化编辑器
+	const editor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
+		mode: 'javascript',
+		theme: 'default',
+		lineNumbers: true,
+		indentUnit: 4,
+		indentWithTabs: true,
+		smartIndent: true,
+		lineWrapping: true,
+		matchBrackets: true,
+		autofocus: true,
+		extraKeys: {
+			"Ctrl-Space": "autocomplete",
+			"Ctrl-/": "toggleComment",
+			"Tab": "indentMore"
+		}
+	});
+
+	// 设置初始内容
+	editor.setValue(`// 欢迎使用CodeMirror编辑器
+
+// 尝试编辑这段代码并查看实时变化
+`);
+
+	// 主题切换
+	document.getElementById('theme-select').addEventListener('change', function () {
+		editor.setOption('theme', this.value);
+	});
+
+	// 语言模式切换
+	document.getElementById('mode-select').addEventListener('change', function () {
+		editor.setOption('mode', this.value);
+	});
+
+	// 清空编辑器
+	document.getElementById('clear-btn').addEventListener('click', function () {
+		if (confirm('确定要清空编辑器内容吗？')) {
+			editor.setValue('');
+			document.getElementById('editor-content').textContent = '// 编辑器内容已清空';
+		}
+	});
+
+	// 获取编辑器内容
+	document.getElementById('get-content-btn').addEventListener('click', function () {
+		const content = editor.getValue();
+		document.getElementById('editor-content').textContent = content;
+	});
+
+	// 监听编辑器变化
+	editor.on('change', function () {
+		// 可以在这里添加实时预览等功能
+	});
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Detail Schedule - Winter 2026</title>
+  <style>
+		body { font-family: "Arial", sans-serif; background-color: #ffffff; margin: 0; padding: 20px; font-size: 13px; }
+
+		/* 顶部 Logo 栏 (De Anza 风格: 褐红色) */
+		.header { border-bottom: 2px solid #B0B0B0; padding-bottom: 10px; margin-bottom: 20px; }
+		.logo-text { font-size: 24px; font-weight: bold; color: #7A0019; /* De Anza Maroon */ }
+		.sub-header { font-size: 16px; color: #555; margin-top: 5px; }
+
+		/* 学生信息区 */
+		.info-box { margin-bottom: 20px; line-height: 1.6; }
+		.info-label { font-weight: bold; color: #333; display: inline-block; width: 120px; }
+		.term-highlight { font-weight: bold; color: #000; font-size: 14px; }
+
+		/* 表格样式 (模仿老式教务系统) */
+		table { width: 100%; border-collapse: collapse; border: 1px solid #999; }
+		th { background-color: #D3D3D3; color: #000; text-align: left; padding: 8px; font-size: 12px; border: 1px solid #999; }
+		td { border: 1px solid #999; padding: 8px; color: #333; font-size: 12px; }
+
+		/* 注册状态强调 */
+		.status-active { font-weight: bold; color: #006400; /* Green */ }
+
+		/* 底部 */
+		.footer { margin-top: 30px; font-size: 11px; color: #666; border-top: 1px solid #ccc; padding-top: 10px; }
+  </style>
+</head>
+<body>
+
+<!-- 头部 -->
+<div class="header">
+  <div class="logo-text">De Anza College</div>
+  <div class="sub-header">MyPortal - Student Detail Schedule</div>
+</div>
+
+<!-- 个人信息 (请在这里修改你的名字) -->
+<div class="info-box">
+  <!-- ↓↓↓ 把下面的 ZHANG SAN 改成你的拼音，大写 ↓↓↓ -->
+  <div><span class="info-label">Student Name:</span> VINCENT WEN</div>
+  <!-- ↓↓↓ ID 随便编，不用改 ↓↓↓ -->
+  <div><span class="info-label">Student ID:</span> 20958421</div>
+  <div><span class="info-label">Term:</span> <span class="term-highlight">Winter 2026</span></div>
+  <div><span class="info-label">Major:</span> Computer Science</div>
+</div>
+
+<!-- 课程表 -->
+<table>
+  <thead>
+  <tr>
+    <th style="width: 8%;">CRN</th>
+    <th style="width: 12%;">Course</th>
+    <th style="width: 30%;">Title</th>
+    <th style="width: 10%;">Campus</th>
+    <th style="width: 8%;">Credits</th>
+    <th style="width: 20%;">Status</th>
+    <th style="width: 12%;">Date</th>
+  </tr>
+  </thead>
+  <tbody>
+  <!-- 第一门课 -->
+  <tr>
+    <td>32401</td>
+    <td>CIS 22A</td>
+    <td>Beg. Prog. Method C++</td>
+    <td>Main</td>
+    <td>4.50</td>
+    <!-- 状态：已注册 -->
+    <td class="status-active">**Web Registered**<br><span style="font-weight:normal; font-size:11px;">on Jan 05, 2026</span></td>
+    <td>01/05 - 03/27</td>
+  </tr>
+  <!-- 第二门课 -->
+  <tr>
+    <td>34109</td>
+    <td>EWRT 1A</td>
+    <td>Composition & Reading</td>
+    <td>Main</td>
+    <td>5.00</td>
+    <td class="status-active">**Web Registered**<br><span style="font-weight:normal; font-size:11px;">on Jan 05, 2026</span></td>
+    <td>01/05 - 03/27</td>
+  </tr>
+  <!-- 第三门课 -->
+  <tr>
+    <td>30992</td>
+    <td>MATH 10</td>
+    <td>Introductory Statistics</td>
+    <td>Online</td>
+    <td>5.00</td>
+    <td class="status-active">**Web Registered**<br><span style="font-weight:normal; font-size:11px;">on Jan 06, 2026</span></td>
+    <td>01/05 - 03/27</td>
+  </tr>
+  </tbody>
+</table>
+
+<div class="footer">
+  Total Credit Hours: 14.50<br>
+  Date Generated: Jan 08, 2026 03:45 PM PST
+</div>
+
+</body>
+</html>

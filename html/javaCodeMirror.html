@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>java编辑器</title>
+
+  <!-- CodeMirror 核心样式 -->
+  <link rel="stylesheet" href="./codemirror/5.65.2/codemirror.min.css">
+
+  <!-- 主题样式 -->
+  <link rel="stylesheet" href="./codemirror/5.65.2/theme/dracula.min.css">
+  <link rel="stylesheet" href="./codemirror/5.65.2/theme/eclipse.min.css">
+  <link rel="stylesheet" href="./codemirror/5.65.2/theme/material.min.css">
+  <link rel="stylesheet" href="./codemirror/5.65.2/theme/monokai.min.css">
+
+  <style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		}
+
+		body {
+			background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+			min-height: 100vh;
+			color: #fff;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.container {
+			box-sizing: border-box;
+			width: 100vw;
+			height: 100vh;
+			margin: 0 auto;
+			padding: 20px;
+		}
+
+		header {
+			text-align: center;
+			margin-bottom: 30px;
+			padding: 20px;
+			background: rgba(255, 255, 255, 0.1);
+			border-radius: 10px;
+			backdrop-filter: blur(10px);
+		}
+
+		h1 {
+			font-size: 2.8rem;
+			margin-bottom: 10px;
+			background: linear-gradient(90deg, #ff8a00, #e52e71);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+		}
+
+		.description {
+			font-size: 1.2rem;
+			color: #c3cfe2;
+			max-width: 800px;
+			margin: 0 auto;
+			line-height: 1.6;
+		}
+
+		.editor-container {
+			height: 100%;
+			background: white;
+			border-radius: 10px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+			overflow-y: auto;
+		}
+
+		.controls {
+			position: sticky;
+			top: 0px;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 15px;
+			padding: 20px;
+			background: #f8f9fa;
+			border-bottom: 1px solid #e9ecef;
+			z-index: 10;
+		}
+
+		.control-group {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		label {
+			font-weight: 500;
+			color: #495057;
+		}
+
+		select, button {
+			padding: 8px 12px;
+			border: 1px solid #ced4da;
+			border-radius: 5px;
+			background: white;
+			color: #495057;
+			font-size: 0.9rem;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		select:hover, button:hover {
+			border-color: #6c757d;
+		}
+
+		button {
+			background: #4a6ee0;
+			color: white;
+			border: none;
+			padding: 8px 16px;
+		}
+
+		button:hover {
+			background: #3a5ecc;
+			transform: translateY(-2px);
+		}
+
+		.CodeMirror {
+			height: auto;
+			min-height: 400px;
+			border-radius: 8px;
+			font-size: 15px;
+			line-height: 1.6;
+		}
+
+		.output {
+			margin-top: 30px;
+			background: rgba(20, 30, 48, 0.8);
+			border-radius: 15px;
+			padding: 20px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+			backdrop-filter: blur(10px);
+			border: 1px solid rgba(255, 255, 255, 0.1);
+		}
+
+		.output h2 {
+			margin-bottom: 15px;
+			color: #4a6ee0;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		#editor-content {
+			background: rgba(30, 41, 59, 0.9);
+			padding: 15px;
+			border-radius: 8px;
+			font-family: 'Fira Code', monospace;
+			white-space: pre-wrap;
+			max-height: 200px;
+			overflow-y: auto;
+			color: #cbd5e1;
+			line-height: 1.5;
+		}
+
+		.CodeMirror {
+			min-height: auto;
+		}
+
+		.button-icon {
+			width: 16px;
+			height: 16px;
+		}
+
+		@media (max-width: 768px) {
+			.controls {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			h1 {
+				font-size: 2.2rem;
+			}
+
+			.description {
+				font-size: 1rem;
+			}
+		}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="editor-container">
+    <div class="controls">
+      <div class="control-group">
+        <label for="theme-select">主题:</label>
+        <select id="theme-select">
+          <option value="default">默认</option>
+          <option value="dracula">Dracula</option>
+          <option value="eclipse">Eclipse</option>
+          <option value="material">Material</option>
+          <option value="monokai">Monokai</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <button id="clear-btn">
+          清空编辑器
+        </button>
+      </div>
+
+      <div class="control-group">
+        <button id="get-content-btn">
+          获取内容
+        </button>
+      </div>
+    </div>
+
+    <div class="editor-wrapper">
+                <textarea id="code-editor">// Java代码示例
+public class HelloWorld {
+    public static void main(String[] args) {
+        // 输出欢迎信息
+        System.out.println("Hello, CodeMirror Java编辑器!");
+
+        // 计算斐波那契数列
+        int n = 10;
+        System.out.println("斐波那契数列前 " + n + " 项:");
+        for (int i = 0; i < n; i++) {
+            System.out.print(fibonacci(i) + " ");
+        }
+    }
+
+    /**
+     * 计算斐波那契数列
+     * @param n 第n项
+     * @return 斐波那契数列第n项的值
+     */
+    public static int fibonacci(int n) {
+        if (n <= 1) {
+            return n;
+        }
+        return fibonacci(n-1) + fibonacci(n-2);
+    }
+}</textarea>
+    </div>
+  </div>
+</div>
+
+<!-- CodeMirror 核心脚本 -->
+<script src="./codemirror/5.65.2/codemirror.min.js"></script>
+
+<!-- Java语言模式脚本 -->
+<script src="./codemirror/5.65.2/mode/clike/clike.min.js"></script>
+
+<!-- 插件脚本 -->
+<script src="./codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+<script src="./codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+<script src="./codemirror/5.65.2/addon/fold/foldcode.min.js"></script>
+<script src="./codemirror/5.65.2/addon/fold/foldgutter.min.js"></script>
+<script src="./codemirror/5.65.2/addon/fold/brace-fold.min.js"></script>
+<script src="./codemirror/5.65.2/addon/fold/comment-fold.min.js"></script>
+
+<script>
+	// 初始化编辑器
+	const editor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
+		mode: 'text/x-java',
+		theme: 'default',
+		lineNumbers: true,
+		indentUnit: 4,
+		indentWithTabs: false,
+		smartIndent: true,
+		lineWrapping: true,
+		matchBrackets: true,
+		autoCloseBrackets: true,
+		foldGutter: true,
+		gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+		extraKeys: {
+			"Ctrl-Space": "autocomplete",
+			"Ctrl-/": "toggleComment",
+			"Tab": "indentMore"
+		}
+	});
+
+	// 主题切换
+	document.getElementById('theme-select').addEventListener('change', function() {
+		editor.setOption('theme', this.value);
+	});
+
+	// 清空编辑器
+	document.getElementById('clear-btn').addEventListener('click', function() {
+		if (confirm('确定要清空编辑器内容吗？')) {
+			editor.setValue('// 输入您的Java代码');
+			document.getElementById('editor-content').textContent = '// 运行结果将显示在这里';
+		}
+	});
+
+	// 运行代码（模拟）
+	document.getElementById('run-btn').addEventListener('click', function() {
+		const content = editor.getValue();
+		document.getElementById('editor-content').textContent =
+			"运行结果:\nHello, CodeMirror Java编辑器!\n斐波那契数列前 10 项:\n0 1 1 2 3 5 8 13 21 34 \n\n(注: 这是在浏览器中模拟的运行结果)";
+	});
+
+	// 获取编辑器内容
+	document.getElementById('get-content-btn').addEventListener('click', function() {
+		const content = editor.getValue();
+		document.getElementById('editor-content').textContent = content;
+	});
+
+	// 设置编辑器大小随窗口调整
+	window.addEventListener('resize', function() {
+		editor.refresh();
+	});
+</script>
+</body>
+</html>

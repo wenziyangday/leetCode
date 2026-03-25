@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+	  .accordion {
+		  --anim-time: 0.4s;
+		  width: 400px; /* 容器宽度可自定义 */
+	  }
+
+	  .content-wrapper {
+		  display: grid;
+		  grid-template-rows: 0fr; /* 初始状态折叠 */
+		  transition: grid-template-rows var(--anim-time) ease-out;
+	  }
+
+	  .accordion:focus-within .content-wrapper,
+	  .accordion:hover .content-wrapper {
+		  grid-template-rows: 1fr; /* 展开状态 */
+	  }
+
+	  .content {
+		  overflow: hidden;
+		  min-height: 0; /* 关键属性 */
+	  }
+
+	  /* 交互视觉增强 */
+	  .trigger {
+		  transition: transform var(--anim-time);
+		  cursor: pointer;
+	  }
+
+	  .accordion:hover .trigger {
+		  transform: rotate(90deg);
+	  }
+
+  </style>
+</head>
+<body>
+<div class="accordion">
+  <button class="trigger">📂 点击展开</button>
+  <div class="content-wrapper">
+    <div class="content">
+      <p>折叠内容（支持动态高度）</p>
+      <img src="any-image.jpg" alt="示例图片">
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>树形结构叶子节点属性转换工具</title>
+  <style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		}
+		body {
+			background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+			min-height: 100vh;
+			padding: 20px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		.container {
+			width: 100%;
+			max-width: 1200px;
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+		}
+		h1 {
+			color: #2c3e50;
+			text-align: center;
+			margin-bottom: 10px;
+		}
+		.description {
+			text-align: center;
+			color: #7f8c8d;
+			margin-bottom: 20px;
+		}
+		.panels {
+			display: flex;
+			gap: 20px;
+			flex-wrap: wrap;
+		}
+		.panel {
+			flex: 1;
+			min-width: 300px;
+			background: white;
+			border-radius: 10px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			padding: 20px;
+			display: flex;
+			flex-direction: column;
+		}
+		.panel h2 {
+			color: #3498db;
+			margin-bottom: 15px;
+			padding-bottom: 10px;
+			border-bottom: 2px solid #f1f1f1;
+		}
+		textarea {
+			width: 100%;
+			flex: 1;
+			padding: 15px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+			resize: none;
+			font-family: monospace;
+			font-size: 14px;
+		}
+		button {
+			background: #3498db;
+			color: white;
+			border: none;
+			padding: 12px 20px;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 16px;
+			margin-top: 15px;
+			transition: background 0.3s;
+		}
+		button:hover {
+			background: #2980b9;
+		}
+		.output {
+			margin-top: 15px;
+			padding: 15px;
+			background: #f8f9fa;
+			border-radius: 5px;
+			border: 1px solid #eee;
+			max-height: 300px;
+			overflow-y: auto;
+		}
+		pre {
+			white-space: pre-wrap;
+			word-break: break-all;
+		}
+		.example {
+			font-size: 14px;
+			color: #7f8c8d;
+			margin-top: 5px;
+		}
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>树形结构叶子节点属性转换工具</h1>
+  <p class="description">将树形结构中的所有叶子节点提取出来，并将每一层的数据作为属性添加到叶子节点中</p>
+
+  <div class="panels">
+    <div class="panel">
+      <h2>输入树形结构 (JSON)</h2>
+      <textarea id="input" placeholder="请输入树形结构JSON...">[
+  {
+    "name": "1",
+    "value": "root",
+    "children": [
+      {
+        "name": "1-1",
+        "value": "first level"
+      },
+      {
+        "name": "1-2",
+        "value": "first level 2",
+        "children": [
+          {
+            "name": "1-2-1",
+            "value": "second level"
+          }
+        ]
+      }
+    ]
+  }
+]</textarea>
+      <button id="transformBtn">转换</button>
+    </div>
+
+    <div class="panel">
+      <h2>转换结果</h2>
+      <div class="output">
+        <pre id="output">转换结果将显示在这里...</pre>
+      </div>
+      <p class="example">示例: 叶子节点将包含类似 p-0, p-1 等属性表示父级层级数据</p>
+    </div>
+  </div>
+</div>
+
+<script>
+	document.getElementById('transformBtn').addEventListener('click', function() {
+		const inputText = document.getElementById('input').value;
+		let inputData;
+
+		try {
+			inputData = JSON.parse(inputText);
+		} catch (e) {
+			alert('输入的不是有效的JSON格式！');
+			console.error(e);
+			return;
+		}
+
+		try {
+			const result = transformTreeToLeaves(inputData);
+			document.getElementById('output').textContent = JSON.stringify(result, null, 2);
+		} catch (e) {
+			alert('转换过程中出现错误：' + e.message);
+			console.error(e);
+		}
+	});
+
+	function transformTreeToLeaves(data) {
+		const leaves = [];
+
+		function traverse(node, path = []) {
+			if (node.children && node.children.length > 0) {
+				// 非叶子节点，继续遍历
+				const newNode = {...node};
+				// 移除children属性，避免在路径中重复包含
+				delete newNode.children;
+
+				node.children.forEach(child => {
+					traverse(child, [...path, newNode]);
+				});
+			} else {
+				// 叶子节点
+				const leaf = {...node};
+
+				// 添加路径中的父节点作为属性
+				path.forEach((parent, index) => {
+					leaf[`p-${index}`] = parent;
+				});
+
+				leaves.push(leaf);
+			}
+		}
+
+		// 处理可能是数组的情况
+		if (Array.isArray(data)) {
+			data.forEach(node => traverse(node));
+		} else {
+			traverse(data);
+		}
+
+		return leaves;
+	}
+</script>
+</body>
+</html>

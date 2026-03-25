@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <style>
+		div {
+			background-image: none;
+			background-repeat: no-repeat;
+			background-size: 1px 100%, 100% 1px;
+			background-position: 100% 0, 100% 100%;
+			position: relative;
+		}
+		.box {
+			height: 30px;
+			padding: 0 10px;
+			display: flex;
+			align-items: center;
+		}
+		input {
+		  outline: none;
+			border: none;
+			height: 26px;
+		}
+		.dv1 {
+			pointer-events: none;
+			background-position: initial;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+		.box,
+		.box .dv1 {
+			background-image: linear-gradient(-90deg, #279bd0, #279bd0),
+			linear-gradient(-180deg, #279bd0, #279bd0);
+		}
+  </style>
+</head>
+<body>
+<div class="box">
+  <div class="dv1"></div>
+  <input type="text" placeholder="123" />
+</div>
+</body>
+</html>

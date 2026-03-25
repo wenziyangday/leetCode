@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>root</title>
+  <style>
+		:root {
+			--color: #000fff;
+			--border: red;
+			--bg: #E11D14;
+			--bgd2: #E23D29;
+			--100: #123456;
+		}
+
+
+		.color {
+			color: var(--color);
+			background: var(--border);
+			/* T1/15px */
+			font-family: PingFang SC;
+			font-size: 15px;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 20px; /* 133.333% */
+		}
+
+		.color1 {
+			background: var(--bg);
+		}
+
+		.color2 {
+			background: var(--bgd2);
+		}
+
+		.item {
+			margin-bottom: 20px;
+		}
+
+		.color3 {
+			background: var(--100, #E23D29);
+		}
+  </style>
+</head>
+<body>
+<div class="item color1">这是一个有颜色的文字</div>
+<div class="item color2">这是一个有颜色的文字</div>
+<div class="item color3">这是一个有颜色的文字</div>
+</body>
+</html>

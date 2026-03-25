@@ -1,0 +1,401 @@
+<template>
+  <#assign query="">
+  <#if params??&&(params?size>0)>
+  <#assign query="?">
+  <#assign  keys=params?keys/>
+  <#list keys as key>
+  <#if (key_index==0)>
+  <#assign query=query + key +"=" + params[key] >
+  <#else>
+  <#assign query=query +"&" +key +"=" + params[key] >
+</#if>
+</#list>
+</#if>
+<rx-layout :buttonHidden="buttonHidden" style="padding: 10px" class="list-layout-box ">
+  <template #middle>
+    <rx-fit>
+      <template #head>
+        <rx-search-list :showSearchList='showSearchList' @click="handSearchClick" :searchCommonActive='searchCommonActive'></rx-search-list>
+        <rx-list-group :groupViewOptions='groupViewOptions' @groupViewSelectChange='groupViewSelectChange'></rx-list-group>
+      </template>
+      <template #middle>
+        <rx-fit v-model="fitSearch" :searchBox="isheader?'head':'middle'" :mousedownShow="false">
+          <template #head>
+            <div class="list-toolbar" :class="{'list-toolbar-empty':topButtonColumns.length === 0}">
+              <!--button-->
+              <rx-buttons :btns="restButtons" :btnSize="12"
+                          :custom="true" :btnRight="btnRight" :size="8"  :hasAllRight="hasAllRight"
+              ></rx-buttons>
+              <!--button-->
+              <span class="search-btn-box">
+            <span v-if="formBoList.dataStyle=='tree'">
+              <a-checkbox v-model:checked="allowCascade">{{i18List('cascadeSelect','级联选择')}}</a-checkbox>
+            </span>
+            <rx-list-layout
+                :list-layout="listLayout"
+                :list-layout-json="listLayoutJson"
+                @listLayoutChange="listLayoutChange"
+            ></rx-list-layout>
+            <span v-if="groupViewJson.length>0">
+              <rx-list-group
+                  :group-view="groupView"
+                  :group-view-select="groupViewSelect"
+                  :group-view-json="groupViewJson"
+                  :group-view-select-options="groupViewSelectOptions"
+                  @groupViewChange="groupViewChange"
+                  @groupViewSelectChange="groupViewSelectChange"
+              ></rx-list-group>
+            </span>
+             <rx-buttons :btns="fixedButtons" :btnSize="12"
+                          :custom="true" :btnRight="btnRight" :size="8"  :hasAllRight="hasAllRight"
+                          :isOnlyIcon="true" :isCircle="true" :defaultDropdown="defaultDropdown"
+              ></rx-buttons>
+              <!--搜索-->
+              <a-button  shape="circle" v-if="!isheader && formBoList.isShowSearch=='YES'" class="circle-btn" @click="searchShow" @mousedown.stop ><SearchOutlined /></a-button>
+              <!--视图管理-->
+              <a-button  shape="circle" v-if="formBoList.isShowView=='YES'"  class="circle-btn" @click="openViewVisiBle">
+                 <SettingOutlined />
+              </a-button>
+              <!--字段显隐-->
+              <a-button shape="circle" v-if="formBoList.isFieldShow=='YES' && listLayout=='table'" class="circle-btn" @click="openFieldVisiBle">
+                <SettingOutlined />
+              </a-button>
+          </span>
+            </div>
+          </template>
+              <template #search>
+                <!--search-->
+                    <a-form class="x-list-a-form" :layout="islayout?'vertical':'horizontal'">
+                      <div class="x-list-search-box">
+        <div class="x-list-search-item">
+            <a-form-item :label="i18NameParse('ujhjjcf484316','姓名')">
+                    <a-input
+                             style="width: 100%"
+                             @pressEnter="searchAll(close)"
+                             v-model:value="urlConfig.queryParam['Q_NAME_S_LK']"/>
+            </a-form-item>
+        </div>
+        <div class="x-list-search-item">
+            <a-form-item :label="i18NameParse('apfvxvl959243','手机号码')">
+                    <a-input
+                             style="width: 100%"
+                             @pressEnter="searchAll(close)"
+                             v-model:value="urlConfig.queryParam['Q_INTERNATIONALCODE_S_EQ']"/>
+            </a-form-item>
+        </div>
+                        <template v-if="advanced">
+                        </template>
+                            <div class="x-list-search-item x-list-search-submit" v-if="isheader">
+                  	<span class="x-list-search-submit-buttons">
+                    	<a-button type="primary" @click="searchAll"><SearchOutlined />{{$ti18('rxList.searchBtn','查询')}}</a-button>
+                    	<a-button style="margin-left: 4px" @click="resetSearch" >{{$ti18('rxList.resetBtn','重置')}}</a-button>
+                  	</span>
+                            </div>
+                      </div>
+                    </a-form>
+                <!--search-->
+              </template>
+          <template #middle>
+            <div style="height:100%;display: flex;overflow: auto;">
+              <div style='flex:1;display: flex;flex-direction: column;overflow: auto;'>
+                <!---开启搜索过滤1--begin-->
+                <!---开启搜索过滤1--end-->
+                <!--table-->
+                <div style="flex: 1;overflow: auto;">
+                  <rx-grid ref="table"
+                           :row-class-name="listTableRowClassName"
+                           :cell-class-name="listTableCellClassName"
+                           v-if="listLayout=='table'"
+                           :hasSeq="false"
+                           v-model:checkRowKeys="selectedRows"
+                           :columns="columns"
+                           :height="formBoList.heightAuto == 'YES'? 'auto' : '100%'"
+                           :selectConfig="{align: 'center',type:formBoList.multiSelect?'checkbox':'radio',checkStrictly:formBoList.dataStyle=='tree' && !allowCascade}"
+                           :pageConfig="pageConfig"
+                           :hasPage="true"
+                           :field="formBoList.idField"
+                           url="/api-form/form/core/formBoList/new_ATS_candidates_list/getData"
+                           :urlConfig="urlConfig"
+                           @selectMethod="selectMethod"
+                           @cellClick="cellClick"
+                           @cellDblClick="rowDblClick"
+                           @refreshSearch="getListDataFun"
+                           :rowEditConfig="{autoClear:false}"
+                           :loadDataOnstart="loadDataOnstart"
+                           :showColumns="showColumns"
+                           :defaultShowColumns="defaultShowColumns"
+                           :expandConfig="expandConfig"
+                           @urlData='handleUrlData'
+                           :isLess='true'
+                            :show-overflow="false"
+                  >
+            <template #NAME="{row,rowIndex}">
+
+            <user-rendering :attribute='row.NAME_render'></user-rendering>
+
+            </template>
+
+            <template #WORKYEARS="{row,rowIndex}">
+
+            {{row['WORKYEARS_display'] || row.WORKYEARS}}
+
+            </template>
+
+            <template #JOBSTARTDATE="{row,rowIndex}">
+
+            <span v-html="row['JOBSTARTDATE_display'] || row.JOBSTARTDATE"></span>
+
+            </template>
+
+            <template #FIRSTSECURITYWORK="{row,rowIndex}">
+
+            <span v-html="row['FIRSTSECURITYWORK_display'] || row.FIRSTSECURITYWORK"></span>
+
+            </template>
+
+            <template #INTERNSHIPSTARTDATE="{row,rowIndex}">
+
+            <span v-html="row['INTERNSHIPSTARTDATE_display'] || row.INTERNSHIPSTARTDATE"></span>
+
+            </template>
+
+            <template #EXPECTEDENDDATE="{row,rowIndex}">
+
+            <span v-html="row['EXPECTEDENDDATE_display'] || row.EXPECTEDENDDATE"></span>
+
+            </template>
+
+            <template #ARRIVALDATE="{row,rowIndex}">
+
+            <span v-html="row['ARRIVALDATE_display'] || row.ARRIVALDATE"></span>
+
+            </template>
+
+            <template #CREATE_TIME_="{row,rowIndex}">
+
+            <span v-html="row['CREATE_TIME__display'] || row.CREATE_TIME_"></span>
+
+            </template>
+
+            <template #UPDATE_TIME_="{row,rowIndex}">
+
+            <span v-html="row['UPDATE_TIME__display'] || row.UPDATE_TIME_"></span>
+
+            </template>
+
+                    <!---开启搜索过滤2--begin-->
+                    <!---开启搜索过滤2--end-->
+                  </rx-grid>
+                  <!--table-->
+                  <!--layout-->
+                  <rx-list-layout-view v-else
+                                       :type="listLayout"
+                                       :config="listLayoutJson[listLayout].config"
+                                       :loadDataOnstart="loadDataOnstart"
+                                       :defaultPageSize="50"
+                                       :idField="formBoList.idField"
+                                       :showPage="'YES'=='YES'"
+                                       data-field="result.data"
+                                       :columns="columns"
+                                       url="/api-form/form/core/formBoList/new_ATS_candidates_list/getData"
+                                       ref="layoutTable"
+                                       @selectChange="selectChange"
+                                       @rowDblClick="rowDblClick"
+                                       @rowClick="rowClick"
+                                       :getCheckboxProps="getCheckboxPropsFun"
+                                       :queryParam="queryParam"
+                                       :allowRowSelect="true"
+                                       :multiSelect="formBoList.multiSelect"
+                                       @getListData="getListData"
+                  >
+                  </rx-list-layout-view>
+                </div>
+                <!--layout-->
+              </div>
+              <div v-if="(formBoList.multiSelect==true && formBoList.isPage=='YES' && formBoList.isDialog=='YES')" class="list-dialog-layout" showButton="true">
+                <div class="list-dialog-header">
+                  <div class="list-dialog-header-text">已选（{{selectedRows.length}}）</div>
+                  <div class="list-dialog-del-all" @click.stop="cleanListDialogSelectAll"><rx-icon-show icon="icon-linea-shanchuqingchu"/>清空</div>
+                </div>
+                <a-table size="small" :rowKey="formBoList.idField"  v-bind="selectedTable">
+                  <template #bodyCell="{ text, column, index, record }">
+                    <template v-if="column.dataIndex === 'action'">
+                      <span class="list-dialog-del-btn" @click="handleDeleteSelected(record,index)"><rx-icon-show icon='icon-lineVue3_delete'/></span>
+                    </template>
+                  </template>
+                </a-table>
+              </div>
+            </div>
+          </template>
+        </rx-fit>
+      </template>
+    </rx-fit>
+  </template>
+</rx-layout>
+</template>
+
+<!--script-->
+<script>
+  export default {
+    name: "new_ATS_candidates_list",
+    data() {
+      return {
+        buttonHidden:['head'],
+        alias:"new_ATS_candidates_list<#if pmtAlias??>_${pmtAlias}</#if>",
+        columns:[{"field":"index","width":50,"title":"序号","type":"seq"},{"headerAlign":"left","slots":{"default":"NAME"},"field":"NAME","minWidth":100,"sortable":false,"title":this.i18NameParse('mdhwzft272505','姓名')},{"headerAlign":"left","field":"DISPLAYNAME_NAME","minWidth":100,"sortable":false,"title":this.i18NameParse('patafae289957','拟录用部门')},{"headerAlign":"left","field":"TOEMPCOMPANY_NAME","minWidth":100,"sortable":false,"title":this.i18NameParse('lwlgaal289957','拟入职公司')},{"headerAlign":"left","field":"POSITION_NAME","minWidth":100,"sortable":false,"title":this.i18NameParse('jqeemhs290818','拟录用岗位')},{"headerAlign":"left","field":"WORKPLACE","minWidth":100,"sortable":false,"title":this.i18NameParse('kbuhicl272506','现居住地址')},{"headerAlign":"left","slots":{"default":"WORKYEARS"},"field":"WORKYEARS","minWidth":100,"sortable":false,"title":this.i18NameParse('skzrkmu272506','工作年限')},{"headerAlign":"left","slots":{"default":"JOBSTARTDATE"},"field":"JOBSTARTDATE","minWidth":100,"sortable":false,"title":this.i18NameParse('ezsumqv272506','参加工作时间')},{"headerAlign":"left","slots":{"default":"FIRSTSECURITYWORK"},"field":"FIRSTSECURITYWORK","minWidth":100,"sortable":false,"title":this.i18NameParse('abtkbpj272506','首次证券从业时间')},{"headerAlign":"left","slots":{"default":"INTERNSHIPSTARTDATE"},"field":"INTERNSHIPSTARTDATE","minWidth":100,"sortable":false,"title":this.i18NameParse('whkfcbo272506','实习开始日期')},{"headerAlign":"left","slots":{"default":"EXPECTEDENDDATE"},"field":"EXPECTEDENDDATE","minWidth":100,"sortable":false,"title":this.i18NameParse('siatvvf272506','预计实习结束日期')},{"headerAlign":"left","slots":{"default":"ARRIVALDATE"},"field":"ARRIVALDATE","minWidth":100,"sortable":false,"title":this.i18NameParse('cqigoml272506','到岗时间')},{"headerAlign":"left","field":"ID_","minWidth":100,"sortable":false,"title":this.i18NameParse('xtkckdi516747','主键')},{"headerAlign":"left","field":"INST_ID_","minWidth":100,"sortable":false,"title":this.i18NameParse('dctqhxn870821','流程实例ID')},{"headerAlign":"left","field":"INST_STATUS_","minWidth":100,"sortable":false,"title":this.i18NameParse('rydmfda870821','状态')},{"headerAlign":"left","slots":{"default":"CREATE_TIME_"},"field":"CREATE_TIME_","minWidth":100,"sortable":false,"title":this.i18NameParse('hgiznea910544','创建时间')},{"headerAlign":"left","slots":{"default":"UPDATE_TIME_"},"field":"UPDATE_TIME_","minWidth":100,"sortable":false,"title":this.i18NameParse('wtewloh910544','更新时间')}],
+        expandConfig:{
+        },
+        urlConfig:{
+          ajaxType:'post',
+          contentType:'json',
+          queryParam:{},
+          dataField:'result.data',
+          totalField:'result.totalCount'
+        },
+        pageConfig:{
+          pageSize:50,
+          pageSizes:[10,20,30,40,50]
+        },
+        loadDataOnstart:true,
+        //rx-fit,搜索栏放在头部或者 弹框 ；
+        isheader:true,
+        islayout:false,
+        searches:[],
+        topButtonColumns:[{"btnName":"ATS_candidates_list_Add","needConfig":true,"btnPreCond":"","i18nJson":"{\"zh-CN\":\"新增\",\"en-US\":\"New\",\"ja-JP\":\"\"}","isLeaf":true,"btnLabel":this.i18NameParse('orttyrd545763','新增'),"btnIcon":"{\"iconType\":\"icon-park\",\"name\":\"add\",\"theme\":\"outline\",\"fill\":\"#333\",\"strokeLinejoin\":\"round\",\"strokeLinecap\":\"round\",\"strokeWidth\":4}","toolId":1,"btnClick":"onAdd","idx_":"orttyrd545763","btnShow":"","serial":1,"btnStyle":"primary","preDef":true,"toolPid":0,"btnType":"listMethod","config":{"isMax":"YES","width":800,"height":600}},{"btnName":"ATS_candidates_list_Edit","needConfig":true,"btnPreCond":"","i18nJson":"{\"zh-CN\":\"编辑\",\"en-US\":\"Edit\",\"ja-JP\":\"編集\"}","isLeaf":true,"btnLabel":this.i18NameParse('ptrtcdw545790','编辑'),"btnIcon":"{\"iconType\":\"icon-park\",\"name\":\"edit\",\"theme\":\"outline\",\"fill\":\"#333\",\"strokeLinejoin\":\"round\",\"strokeLinecap\":\"round\",\"strokeWidth\":4}","toolId":2,"btnClick":"onEdit","idx_":"ptrtcdw545790","btnShow":"","serial":2,"btnStyle":"default","preDef":true,"toolPid":0,"isSetedPreCondition":false,"btnType":"listMethod","config":{"isMax":"YES","width":800,"height":600}},{"btnName":"ATS_candidates_list_Remove","needConfig":false,"btnPreCond":"","i18nJson":"{\"zh-CN\":\"删除\",\"en-US\":\"Delete\",\"ja-JP\":\"削除＃サクジョ＃\"}","isLeaf":true,"btnLabel":this.i18NameParse('lclytyv545790','删除'),"btnIcon":"{\"iconType\":\"icon-park\",\"name\":\"delete\",\"theme\":\"outline\",\"fill\":\"#333\",\"strokeLinejoin\":\"round\",\"strokeLinecap\":\"round\",\"strokeWidth\":4}","toolId":3,"btnClick":"onRemove","idx_":"lclytyv545790","btnShow":"","serial":3,"btnStyle":"default","preDef":true,"toolPid":0,"btnType":"listMethod","config":""},{"btnName":"ATS_candidates_list_Refresh","needConfig":false,"btnPreCond":"","i18nJson":"{\"zh-CN\":\"刷新\",\"en-US\":\"Refresh\",\"ja-JP\":\"\"}","isLeaf":true,"btnLabel":this.i18NameParse('ygvfjty545790','刷新'),"btnIcon":"{\"iconType\":\"icon-park\",\"name\":\"refresh\",\"theme\":\"outline\",\"fill\":\"#333\",\"strokeLinejoin\":\"round\",\"strokeLinecap\":\"round\",\"strokeWidth\":4}","toolId":6,"btnClick":"onRefresh","idx_":"ygvfjty545790","btnShow":"","serial":4,"btnStyle":"default","preDef":true,"toolPid":0,"btnType":"listMethod","config":""},{"btnName":"ATS_candidates_list_Export","needConfig":false,"btnPreCond":"","i18nJson":"{\"zh-CN\":\"导出EXCEL\",\"en-US\":\"Export To Excel\",\"ja-JP\":\"エクスポートEXCEL\"}","isLeaf":true,"btnLabel":this.i18NameParse('pcebygh545790','导出EXCEL'),"btnIcon":"{\"iconType\":\"icon-park\",\"name\":\"export\",\"theme\":\"outline\",\"fill\":\"#333\",\"strokeLinejoin\":\"round\",\"strokeLinecap\":\"round\",\"strokeWidth\":4}","toolId":8,"btnClick":"onXLSExportShow","idx_":"pcebygh545790","btnShow":"","serial":5,"btnStyle":"default","preDef":true,"toolPid":0,"btnType":"listMethod","config":""},{"btnName":"ATS_candidates_list_ExportConfig","needConfig":false,"btnPreCond":"","i18nJson":"{\"zh-CN\":\"配置导出模板\",\"en-US\":\"Configure Export Template\",\"ja-JP\":\"エクスポートテンプレートの構成\"}","isLeaf":true,"btnLabel":this.i18NameParse('wexbyez545790','配置导出模板'),"btnIcon":"{\"iconType\":\"icon-park\",\"name\":\"import-and-export\",\"theme\":\"outline\",\"fill\":\"#333\",\"strokeLinejoin\":\"round\",\"strokeLinecap\":\"round\",\"strokeWidth\":4}","toolId":15,"btnClick":"onXLSExport","idx_":"wexbyez545790","btnShow":"","serial":6,"btnStyle":"default","preDef":true,"toolPid":0,"btnType":"listMethod","config":""},{"btnName":"ATS_candidates_list_fullScreen","needConfig":false,"btnPreCond":"","i18nJson":"{\"zh-CN\":\"全屏\"}","isLeaf":true,"btnLabel":this.i18NameParse('cuboqxp545790','全屏'),"btnIcon":"{\"type\":\"jpaasIcon\",\"icon\":\"iconmodal-fullscreen\"}","toolId":16,"btnClick":"toggleFullScreen","idx_":"cuboqxp545790","btnShow":"","serial":7,"btnStyle":"default","preDef":true,"toolPid":0,"btnType":"listMethod","config":""},{"btnName":"ATS_candidates_list_openCustomForm1","needConfig":true,"btnType_name":"打开表单","isSetedBtn":true,"btnPreCond":"","i18nJson":"{\"zh-CN\":\"候选人下推到合规审核事项\"}","btnLabel":this.i18NameParse('phsgsrq697765','候选人下推到合规审核事项'),"btnIcon":"","toolId":102,"btnClick":"openCustomForm","idx_":"phsgsrq697765","btnShow":"","serial":8,"btnStyle":"default","preDef":true,"toolPid":0,"btnType":"openCustomForm","config":{"formConver":"{\"text\":\"候选人→到合规审核事项\",\"value\":\"1844694012318031874\"}","selectRange":["selectRow","curPage","allPage"],"isMax":"YES","width":800,"oriFormSource":"selectRow","callbackMethod":"","height":600}},{"btnName":"ATS_candidates_list_openCustomForm","needConfig":true,"btnType_name":"打开表单","isSetedBtn":true,"btnPreCond":"{\"mode\":\"hard\",\"validMsg\":\"// import com.alibaba.fastjson.JSONObject;\\r\\n// import com.tuling.common.utils.SpringUtil;\\r\\n// import com.tuling.db.CommonDao;\\r\\n// import java.lang.Boolean;\\r\\n\\r\\n\\r\\n// for(int i=0;i<rows.size();i++){\\r\\n//    JSONObject  row=rows[i];\\r\\n//    // 根据候选人id判断不存在现在已经在流程中的合规审核事项、\\r\\n//    String id = row.ID_;\\r\\n//    String querySql = \\\"select inst_status_ from tpaas_lowcode.w_ATS_FirstComplianceBill where candidateId = '\\\"+id+\\\"'\\\";\\r\\n\\r\\n//    CommonDao dao = SpringUtil.getBean(CommonDao.class);\\r\\n//    List result = dao.query(querySql);\\r\\n\\r\\n//    if (result == null || result.size() == 0){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\",没有下推合规审核事项\\\";\\r\\n//    }\\r\\n\\r\\n//    Boolean canPush = true;\\r\\n//    for (int j = 0; j < result.size(); j++) {\\r\\n//       Map<String, Object> map = (Map<String, Object>) result.get(j);\\r\\n//       String status = (String) map.get(\\\"INST_STATUS_\\\");\\r\\n//       if (\\\"RUNNING\\\".equals(status)){\\r\\n//          canPush = false;\\r\\n//       }\\r\\n//    }\\r\\n//    if(canPush){\\r\\n//      continue;\\r\\n//    }\\r\\n\\r\\n//     // 候选人中的合规审核事项的每个字段都不为空才能下推录用定薪\\r\\n//     // 通过的考试科目组合\\r\\n//     if(row.PASSEXAMSUBJECT == null || row.PASSEXAMSUBJECT == \\\"\\\"){\\r\\n//        return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【通过的考试科目组合】为空，禁止下推\\\";\\r\\n//     }\\r\\n//     // 必过科目\\r\\n//    if(row.MANDATORYCOURSE == null || row.MANDATORYCOURSE == \\\"\\\"){\\r\\n//        return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【必过科目】为空，禁止下推\\\";\\r\\n//     }\\r\\n//    // 任意一门\\r\\n//    if(row.ANYSUBJECT == null || row.ANYSUBJECT == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 是否通过证券从业资格\\r\\n//    if(row.ISSECURITY == null || row.ISSECURITY == \\\"\\\"){\\r\\n//       return  \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【是否通过证券从业资格】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 基金从业资格考试成绩截图\\r\\n//    if(row.FUNDDOC == null || row.FUNDDOC == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【基金从业资格考试成绩截图】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    row.ISPASSFUND\\r\\n//    // 是否通过基金从业资格\\r\\n//    if(row.ISPASSFUND == null || row.ISPASSFUND == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【是否通过基金从业资格】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    row.SECURITYDOC\\r\\n//    // 证券从业资格考试成绩截图\\r\\n//    if(row.SECURITYDOC == null || row.SECURITYDOC == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【证券从业资格考试成绩截图】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    row.SELECT_KOJP7\\r\\n//    // 是否持有本人名下证券账户\\r\\n//    if(row.SELECT_KOJP7 == null || row.SELECT_KOJP7 == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【是否持有本人名下证券账户】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 股票代码(上海)\\r\\n//    if(row.SHSTOCKCODE == null || row.SHSTOCKCODE == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【股票代码(上海)】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 股票代码深圳\\r\\n//    if(row.SZSTOCKCODE == null || row.SZSTOCKCODE == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【股票代码深圳】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 有无股权性质的证券(包括股票、存托凭证、股票期权、权证、可转换债券、可交易债券等)仅保留证券账户情况)\\r\\n//    if(row.ISNATUREEQUITY == null || row.ISNATUREEQUITY == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【有无股权性质的证券(包括股票、存托凭证、股票期权、权证、可转换债券、可交易债券等)仅保留证券账户情况)】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 是否持有无法交易的证券\\r\\n//    if(row.ISUNABLETRADESTOCK == null || row.ISUNABLETRADESTOCK == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【是否持有无法交易的证券】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 无法交易证券是否流通\\r\\n//    if(row.ISCIRCULATING == null || row.ISCIRCULATING == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【无法交易证券是否流通】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 请填写无法交易证券名称及相关代码\\r\\n//    if(row.UNABLETRADESTOCKNAME == null || row.UNABLETRADESTOCKNAME == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【请填写无法交易证券名称及相关代码】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 是否已完成兼职信息(包合担任公司法人等)的沟通报备\\r\\n//    if(row.ISPARTTIMEJOBREPORT == null || row.ISPARTTIMEJOBREPORT == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【是否已完成兼职信息(包合担任公司法人等)的沟通报备】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 兼职情况说明(具体兼职内容）\\r\\n//    if(row.PARTTIMEJOBDES == null || row.PARTTIMEJOBDES == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【兼职情况说明(具体兼职内容）】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 是否存在即将到期的高额负债(房贷车贷除\\r\\n//    if(row.ISHIGHDEBT == null || row.ISHIGHDEBT == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【是否存在即将到期的高额负债(房贷车贷除外）】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 负债情况说明(到期时间、金额等)\\r\\n//    if(row.HIGHDEBTDES == null || row.HIGHDEBTDES == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【负债情况说明(到期时间、金额等)】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 是否存在参与场外配资情况(包含借入或借战)\\r\\n//    if(row.ISPARTOFFSITEFFUND == null || row.ISPARTOFFSITEFFUND == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【是否存在参与场外配资情况(包含借入或借战)】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 场外配资情况说明(参与形式等)\\r\\n//    if(row.PARTOFFSITEFFUNDDES == null || row.PARTOFFSITEFFUNDDES == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【场外配资情况说明(参与形式等)】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 执业声誉报告中是有否违法失信、负面信息\\r\\n//    if(row.ISNEGATIVEINFO == null || row.ISNEGATIVEINFO == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【执业声誉报告中是有否违法失信、负面信息】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 如有，请说明，并在附件中上传投资任职情况查询报告\\r\\n//    if(row.NEGATIVEINFODEC == null || row.NEGATIVEINFODEC == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【如有，请说明，并在附件中上传投资任职情况查询报告】为空，禁止下推\\\";\\r\\n//    }\\r\\n//    // 执业声誉报告\\r\\n//    if(row.REPUTATIONDOC == null || row.REPUTATIONDOC == \\\"\\\"){\\r\\n//       return \\\"姓名：\\\"+row.NAME_NAME+\\\"，存在进行中的合规审核事项流程且【执业声誉报告】为空，禁止下推\\\";\\r\\n//    }\\r\\n\\r\\n// }\\r\\n// return true;\",\"javaCode\":\"// import com.alibaba.fastjson.JSONObject;\\r\\n// import com.tuling.common.utils.SpringUtil;\\r\\n// import com.tuling.db.CommonDao;\\r\\n// import java.lang.Boolean;\\r\\n\\r\\n\\r\\n// for(int i=0;i<rows.size();i++){\\r\\n//    JSONObject  row=rows[i];\\r\\n//    // 根据候选人id判断不存在现在已经在流程中的合规审核事项、\\r\\n//    String id = row.ID_;\\r\\n//    String querySql = \\\"select inst_status_ from tpaas_lowcode.w_ATS_FirstComplianceBill where candidateId = '\\\"+id+\\\"'\\\";\\r\\n\\r\\n//    CommonDao dao = SpringUtil.getBean(CommonDao.class);\\r\\n//    List result = dao.query(querySql);\\r\\n\\r\\n//    if (result == null || result.size() == 0){\\r\\n//       return false;\\r\\n//    }\\r\\n\\r\\n//    Boolean canPush = true;\\r\\n//    for (int j = 0; j < result.size(); j++) {\\r\\n//       Map<String, Object> map = (Map<String, Object>) result.get(j);\\r\\n//       String status = (String) map.get(\\\"INST_STATUS_\\\");\\r\\n//       if (\\\"RUNNING\\\".equals(status)){\\r\\n//          canPush = false;\\r\\n//       }\\r\\n//    }\\r\\n//    if(canPush){\\r\\n//      continue;\\r\\n//    }\\r\\n\\r\\n//     // 候选人中的合规审核事项的每个字段都不为空才能下推录用定薪\\r\\n//     // 通过的考试科目组合\\r\\n//     if(row.PASSEXAMSUBJECT == null || row.PASSEXAMSUBJECT == \\\"\\\"){\\r\\n//        return false;\\r\\n//     }\\r\\n//     // 必过科目\\r\\n//    if(row.MANDATORYCOURSE == null || row.MANDATORYCOURSE == \\\"\\\"){\\r\\n//        return false;\\r\\n//     }\\r\\n//    // 任意一门\\r\\n//    if(row.ANYSUBJECT == null || row.ANYSUBJECT == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 是否通过证券从业资格\\r\\n//    if(row.ISSECURITY == null || row.ISSECURITY == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 基金从业资格考试成绩截图\\r\\n//    if(row.FUNDDOC == null || row.FUNDDOC == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    row.ISPASSFUND\\r\\n//    // 是否通过基金从业资格\\r\\n//    if(row.ISPASSFUND == null || row.ISPASSFUND == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    row.SECURITYDOC\\r\\n//    // 证券从业资格考试成绩截图\\r\\n//    if(row.SECURITYDOC == null || row.SECURITYDOC == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    row.SELECT_KOJP7\\r\\n//    // 是否持有本人名下证券账户\\r\\n//    if(row.SELECT_KOJP7 == null || row.SELECT_KOJP7 == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 股票代码(上海)\\r\\n//    if(row.SHSTOCKCODE == null || row.SHSTOCKCODE == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 股票代码深圳\\r\\n//    if(row.SZSTOCKCODE == null || row.SZSTOCKCODE == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 有无股权性质的证券(包括股票、存托凭证、股票期权、权证、可转换债券、可交易债券等)仅保留证券账户情况)\\r\\n//    if(row.ISNATUREEQUITY == null || row.ISNATUREEQUITY == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 是否持有无法交易的证券\\r\\n//    if(row.ISUNABLETRADESTOCK == null || row.ISUNABLETRADESTOCK == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 无法交易证券是否流通\\r\\n//    if(row.ISCIRCULATING == null || row.ISCIRCULATING == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 请填写无法交易证券名称及相关代码\\r\\n//    if(row.UNABLETRADESTOCKNAME == null || row.UNABLETRADESTOCKNAME == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 是否已完成兼职信息(包合担任公司法人等)的沟通报备\\r\\n//    if(row.ISPARTTIMEJOBREPORT == null || row.ISPARTTIMEJOBREPORT == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 兼职情况说明(具体兼职内容）\\r\\n//    if(row.PARTTIMEJOBDES == null || row.PARTTIMEJOBDES == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 是否存在即将到期的高额负债(房贷车贷除\\r\\n//    if(row.ISHIGHDEBT == null || row.ISHIGHDEBT == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 负债情况说明(到期时间、金额等)\\r\\n//    if(row.HIGHDEBTDES == null || row.HIGHDEBTDES == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 是否存在参与场外配资情况(包含借入或借战)\\r\\n//    if(row.ISPARTOFFSITEFFUND == null || row.ISPARTOFFSITEFFUND == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 场外配资情况说明(参与形式等)\\r\\n//    if(row.PARTOFFSITEFFUNDDES == null || row.PARTOFFSITEFFUNDDES == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 执业声誉报告中是有否违法失信、负面信息\\r\\n//    if(row.ISNEGATIVEINFO == null || row.ISNEGATIVEINFO == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 如有，请说明，并在附件中上传投资任职情况查询报告\\r\\n//    if(row.NEGATIVEINFODEC == null || row.NEGATIVEINFODEC == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n//    // 执业声誉报告\\r\\n//    if(row.REPUTATIONDOC == null || row.REPUTATIONDOC == \\\"\\\"){\\r\\n//       return false;\\r\\n//    }\\r\\n\\r\\n// }\\r\\n// return true;\"}","i18nJson":"{\"zh-CN\":\"候选人下推到录用定薪\"}","btnLabel":this.i18NameParse('ctbdewl631712','候选人下推到录用定薪'),"btnIcon":"","toolId":101,"btnClick":"openCustomForm","idx_":"ctbdewl631712","btnShow":"","serial":9,"btnStyle":"default","preDef":true,"toolPid":0,"isSetedPreCondition":true,"btnType":"openCustomForm","config":{"formOption":"open","formConver":"{\"text\":\"候选人→录用定薪\",\"value\":\"1844717044826669057\"}","selectRange":["selectRow","curPage","allPage"],"isMax":"YES","width":800,"oriFormSource":"selectRow","readOnly":false,"height":600}},{"btnName":"ATS_candidates_list_openCustomForm2","needConfig":true,"btnType_name":"打开表单","isSetedBtn":true,"btnPreCond":"","i18nJson":"{\"zh-CN\":\"候选人下推到预入职\"}","btnLabel":this.i18NameParse('kpcaezp193638','候选人下推到预入职'),"btnIcon":"","toolId":103,"btnClick":"openCustomForm","idx_":"kpcaezp193638","btnShow":"","serial":10,"btnStyle":"default","preDef":true,"toolPid":0,"btnType":"openCustomForm","config":{"formOption":"open","formConver":"{\"text\":\"候选人->预入职\",\"value\":\"1845695810688356354\"}","selectRange":["selectRow","curPage","allPage"],"isMax":"YES","width":800,"oriFormSource":"selectRow","readOnly":false,"height":600}},{"btnName":"ATS_candidates_list_openCustomForm3","needConfig":true,"btnType_name":"打开表单","isSetedBtn":true,"btnPreCond":"","i18nJson":"{\"zh-CN\":\"候选人下推到预入职档案（模版）\"}","btnLabel":this.i18NameParse('xdohvml481321','候选人下推到预入职档案（模版）'),"btnIcon":"","toolId":104,"btnClick":"openCustomForm","idx_":"xdohvml481321","btnShow":"","serial":11,"btnStyle":"default","preDef":true,"toolPid":0,"btnType":"openCustomForm","config":{"formOption":"open","formConver":"{\"text\":\"候选人->预入职档案\",\"value\":\"1845768733985878018\"}","selectRange":["selectRow","curPage","allPage"],"isMax":"YES","width":800,"oriFormSource":"selectRow","readOnly":false,"height":600}},{"btnName":"new_ATS_candidates_list_Detail","needConfig":true,"btnPreCond":"","i18nJson":"{\"zh-CN\":\"明细\",\"en-US\":\"Detail\",\"ja-JP\":\"\"}","isLeaf":true,"btnLabel":this.i18NameParse('drqmslz153080','明细'),"btnIcon":"{\"type\":\"jpaasIcon\",\"icon\":\"iconmore1\"}","toolId":4,"btnClick":"onDetail","idx_":"drqmslz153080","btnShow":"","serial":12,"btnStyle":"default","preDef":true,"toolPid":0,"btnType":"listMethod","config":{"isMax":"YES","width":800,"height":600}},{"btnName":"new_ATS_candidates_list_PrintQrCode","needConfig":false,"btnPreCond":"","i18nJson":"{\"zh-CN\":\"打印二维码\",\"en-US\":\"Print QR Code\",\"ja-JP\":\"2次元コードの印刷\"}","isLeaf":true,"btnLabel":this.i18NameParse('rvgjuko153080','打印二维码'),"btnIcon":"{\"type\":\"jpaasIcon\",\"icon\":\"iconorder\"}","toolId":14,"btnClick":"onPrintQrCode","idx_":"rvgjuko153080","btnShow":"","serial":13,"btnStyle":"default","preDef":true,"toolPid":0,"btnType":"listMethod","config":""},{"btnName":"new_ATS_candidates_list_Import","needConfig":false,"btnPreCond":"","i18nJson":"{\"zh-CN\":\"导入\",\"en-US\":\"Import\",\"ja-JP\":\"\"}","isLeaf":true,"btnLabel":this.i18NameParse('nzjmttf153080','导入'),"btnIcon":"{\"type\":\"jpaasIcon\",\"icon\":\"icondaoru\"}","toolId":9,"btnClick":"onImport","idx_":"nzjmttf153080","btnShow":"","serial":14,"btnStyle":"default","preDef":true,"toolPid":0,"btnType":"listMethod","config":""}],
+
+        <!---开启搜索过滤3--begin-->
+        <!---开启搜索过滤3--end-->
+        temVar:{},
+        flowData:[],
+        formBoList:{
+          isPage: 'YES',
+          multiSelect:
+              <#if params ?? && params.single ?? && params.single == "false" >
+          ${(params.single=="true")?string('false','true')},
+          <#elseif params ?? && params.single == "true" >
+      false,
+          <#else>
+      ${formBoList.multiSelect},
+    </#if>
+      formAlias: 'ATS_candidates',
+          formAddAlias: 'ATS_candidates',
+          formDetailAlias: 'ATS_candidates',
+          rowEdit: 'NO',
+          isMax: 'YES',
+          width: 780,
+          height: 480,
+          isShade: 'YES',
+          tableStyle:5,
+          lineHeight:50,
+          isShowView: 'YES',
+          heightAuto:'YES',
+          isShowSearch: 'YES',
+          isFieldShow: 'NO',
+          id: '1864931893573681154',
+          appId: '1781325137178607617',
+          name: '新候选人列表',
+          dataStyle: 'list',
+          idField: 'ID_',
+          textField: '',
+          parentField: '',
+          publishConf: [],
+          instColumnConfig: [],
+          key: 'new_ATS_candidates_list',
+          isDialog:'NO',
+          isTreeDlg:'NO',
+          isConfig:'NO',
+          busSolution:''
+    },
+      //默认查询条件参数
+      tmpQueryParams: {
+      },
+      queryId:'<#if params?? && params.queryId??>${params.queryId}</#if>',
+          showColumns:<#if showColumns??>${showColumns}<#else>[]</#if>,
+        defaultShowColumns:<#if defaultShowColumns??>${defaultShowColumns}<#else>[]</#if>,
+        rowButtons:[],
+            btnRight:<#if btnRight??>${btnRight}<#else>[]</#if>,
+        hasAllRight:'<#if hasAllRight??>${hasAllRight}</#if>',
+            pmtDatas:<#if pmtDatas??>${pmtDatas}<#else>{}</#if>,
+      groupViewJson:[{"from":"dic","fieldExt":"","fieldName":"FOLK","fieldLabel":"民族","searchSetting":"","idx_":"jaqdjge026104","serial":1,"dataType":"string","dataType_name":"字符","isSeted":true,"distinct_type":"","displayDicKey_name":"{\"text\":\"民族\",\"value\":\"mza\"}","displayDicKey":"mza","sql":"","props":"[]","sql_name":"","sqlFields":[],"bindField":"FOLK","dicKey_name":"{\"text\":\"民族\",\"value\":\"mza\"}","dicKey":"mza"},{"from":"dic","fieldExt":"","fieldName":"GENDER","fieldLabel":"性别","searchSetting":"","idx_":"bavmqiw059591","serial":2,"dataType":"string","dataType_name":"字符","isSeted":true,"distinct_type":"","bindField":"GENDER","displayDicKey_name":"{\"text\":\"性别\",\"value\":\"gender\"}","displayDicKey":"gender","dicKey_name":"{\"text\":\"性别\",\"value\":\"gender\"}","dicKey":"gender","sql":"","props":"[]","sql_name":"","sqlFields":[]},{"from":"dic","fieldExt":"","fieldName":"REGRESIDENCE","fieldLabel":"户籍类型","searchSetting":"","idx_":"tlvcgsl060155","serial":3,"dataType":"string","dataType_name":"字符","isSeted":true,"distinct_type":"","dicKey_name":"{\"text\":\"户籍类型\",\"value\":\"hjlx\"}","dicKey":"hjlx","sql":"","props":"[]","sql_name":"","sqlFields":[]},{"from":"dic","fieldExt":"","fieldName":"CREDENTIALSTYPE","fieldLabel":"证件类型","searchSetting":"","idx_":"tthkscl060416","serial":4,"dataType":"string","dataType_name":"字符","isSeted":true,"distinct_type":"","dicKey_name":"{\"text\":\"证件类型\",\"value\":\"credentialsType\"}","dicKey":"credentialsType","sql":"","props":"[]","sql_name":"","sqlFields":[]}],
+          listLayoutJson:{"openBoard":{"name":"看板视图","status":false,"config":""}},
+          linkRenders:    {}
+,
+      linkDefs:    {}
+,
+      fileRenders:    {}
+,
+      //已选择列表
+      selectedTable:{
+        pagination: false,
+            scroll: {y:580},
+        columns : [
+          ...[{"field":"index","width":50,"title":"序号","type":"seq"},{"headerAlign":"left","field":"ID_","minWidth":100,"title":"<func>this.i18NameParse('null','主键')</func>"},{"headerAlign":"left","field":"REF_ID_","minWidth":100,"title":"<func>this.i18NameParse('null','外键')</func>"},{"headerAlign":"left","field":"PARENT_ID_","minWidth":100,"title":"<func>this.i18NameParse('null','父ID')</func>"},{"headerAlign":"left","field":"UPDATE_VERSION_","minWidth":100,"title":"<func>this.i18NameParse('null','版本号')</func>"},{"headerAlign":"left","field":"NAME","minWidth":100,"title":"<func>this.i18NameParse('null','姓名ID')</func>"},{"headerAlign":"left","field":"GENDER","minWidth":100,"title":"<func>this.i18NameParse('null','性别')</func>"},{"headerAlign":"left","field":"BIRTHDAY","minWidth":100,"title":"<func>this.i18NameParse('null','出生日期')</func>"},{"headerAlign":"left","field":"INTERNATIONALCODE","minWidth":100,"title":"<func>this.i18NameParse('null','手机号码')</func>"},{"headerAlign":"left","field":"INTERNATIONALCODE_NAME","minWidth":100,"title":"<func>this.i18NameParse('null','手机号码')</func>"},{"headerAlign":"left","field":"PRIVATEEMAIL","minWidth":100,"title":"<func>this.i18NameParse('null','个人邮箱')</func>"},{"headerAlign":"left","field":"HOMEPHONE","minWidth":100,"title":"<func>this.i18NameParse('null','固定电话')</func>"},{"headerAlign":"left","field":"NATIONALITY","minWidth":100,"title":"<func>this.i18NameParse('null','国籍/地区')</func>"},{"headerAlign":"left","field":"FOLK","minWidth":100,"title":"<func>this.i18NameParse('null','民族')</func>"},{"headerAlign":"left","field":"HEIGHT","minWidth":100,"title":"<func>this.i18NameParse('null','身高(CM)')</func>"},{"headerAlign":"left","field":"WEIGHT","minWidth":100,"title":"<func>this.i18NameParse('null','体重(KG)')</func>"},{"headerAlign":"left","field":"ISFRESHGRADUATES","minWidth":100,"title":"<func>this.i18NameParse('null','是否为应届毕业生')</func>"},{"headerAlign":"left","field":"NATIVEPLACE","minWidth":100,"title":"<func>this.i18NameParse('null','籍贯')</func>"},{"headerAlign":"left","field":"REGRESIDENCE","minWidth":100,"title":"<func>this.i18NameParse('null','户籍类型')</func>"},{"headerAlign":"left","field":"HJADDRESS","minWidth":100,"title":"<func>this.i18NameParse('null','户籍地址')</func>"},{"headerAlign":"left","field":"WORKPLACE","minWidth":100,"title":"<func>this.i18NameParse('null','现居住地址')</func>"},{"headerAlign":"left","field":"CREDENTIALSTYPE","minWidth":100,"title":"<func>this.i18NameParse('null','证件类型')</func>"},{"headerAlign":"left","field":"IDCARDNO","minWidth":100,"title":"<func>this.i18NameParse('null','证件号码')</func>"},{"headerAlign":"left","field":"DOCUMENTENDDATE","minWidth":100,"title":"<func>this.i18NameParse('null','证件到期日')</func>"},{"headerAlign":"left","field":"POLITICALFACE","minWidth":100,"title":"<func>this.i18NameParse('null','政治面貌')</func>"},{"headerAlign":"left","field":"WORKYEARS","minWidth":100,"title":"<func>this.i18NameParse('null','工作年限')</func>"},{"headerAlign":"left","slots":{"default":"JOBSTARTDATE"},"field":"JOBSTARTDATE","minWidth":100,"title":"<func>this.i18NameParse('null','参加工作时间')</func>"},{"headerAlign":"left","slots":{"default":"FIRSTSECURITYWORK"},"field":"FIRSTSECURITYWORK","minWidth":100,"title":"<func>this.i18NameParse('null','首次证券从业时间')</func>"},{"headerAlign":"left","field":"HOMEPLACE","minWidth":100,"title":"<func>this.i18NameParse('null','出生国家/地区')</func>"},{"headerAlign":"left","field":"FIRSTENTRYDATE","minWidth":100,"title":"<func>this.i18NameParse('null','首次入境日期')</func>"},{"headerAlign":"left","field":"EXPECTDEPARTUREDATE","minWidth":100,"title":"<func>this.i18NameParse('null','预计离境日期')</func>"},{"headerAlign":"left","field":"EXPECTEDGRADUATEDATE","minWidth":100,"title":"<func>this.i18NameParse('null','预计毕业时间')</func>"},{"headerAlign":"left","slots":{"default":"INTERNSHIPSTARTDATE"},"field":"INTERNSHIPSTARTDATE","minWidth":100,"title":"<func>this.i18NameParse('null','实习开始日期')</func>"},{"headerAlign":"left","slots":{"default":"EXPECTEDENDDATE"},"field":"EXPECTEDENDDATE","minWidth":100,"title":"<func>this.i18NameParse('null','预计实习结束日期')</func>"},{"headerAlign":"left","field":"CHANNEL","minWidth":100,"title":"<func>this.i18NameParse('null','您是通过以下渠道获知此次招聘信息的(可多选)')</func>"},{"headerAlign":"left","field":"EXPECTINTERPLACE","minWidth":100,"title":"<func>this.i18NameParse('null','期望面试地')</func>"},{"headerAlign":"left","field":"WORKCITY","minWidth":100,"title":"<func>this.i18NameParse('null','期望工作城市')</func>"},{"headerAlign":"left","field":"BEITEMAMOUNTS","minWidth":100,"title":"<func>this.i18NameParse('null','现有福利项目及金额')</func>"},{"headerAlign":"left","field":"NOWPRETAXTOTALFIXSALARY","minWidth":100,"title":"<func>this.i18NameParse('null','现有税前总薪酬(元/年)')</func>"},{"headerAlign":"left","field":"EXPECTPRETAXTOTALFIXSALARY","minWidth":100,"title":"<func>this.i18NameParse('null','期望税前总薪酬(元/年)')</func>"},{"headerAlign":"left","field":"HISPERFORMANCE","minWidth":100,"title":"<func>this.i18NameParse('null','简述与应聘岗位相关的历史业绩')</func>"},{"headerAlign":"left","field":"WORKASSUMPTION","minWidth":100,"title":"<func>this.i18NameParse('null','根据你的理解，简要地写出你对应聘岗位的工作设想')</func>"},{"headerAlign":"left","field":"CAPABILITYITEM","minWidth":100,"title":"<func>this.i18NameParse('null','请选出你认为自己较为、出色的几项能力')</func>"},{"headerAlign":"left","field":"SKILLSPECIALTIES","minWidth":100,"title":"<func>this.i18NameParse('null','技能与特长')</func>"},{"headerAlign":"left","field":"CHARACTERCHARACTERISTIC","minWidth":100,"title":"<func>this.i18NameParse('null','性格特征')</func>"},{"headerAlign":"left","field":"ADVANTAGE","minWidth":100,"title":"<func>this.i18NameParse('null','优势')</func>"},{"headerAlign":"left","field":"INSUFFICIENT","minWidth":100,"title":"<func>this.i18NameParse('null','不足')</func>"},{"headerAlign":"left","field":"ISPPAYSOCSEC","minWidth":100,"title":"<func>this.i18NameParse('null','社保是否缴纳')</func>"},{"headerAlign":"left","field":"INDIVPROFUNDACC","minWidth":100,"title":"<func>this.i18NameParse('null','个人公积金社保账号')</func>"},{"headerAlign":"left","field":"PERSONSOCSECACC","minWidth":100,"title":"<func>this.i18NameParse('null','个人社保账号')</func>"},{"headerAlign":"left","field":"PARTICIPATINGCITY","minWidth":100,"title":"<func>this.i18NameParse('null','社保、公积金参保城市ID')</func>"},{"headerAlign":"left","field":"PARTICIPATINGCITY_NAME","minWidth":100,"title":"<func>this.i18NameParse('null','社保、公积金参保城市')</func>"},{"headerAlign":"left","field":"SOCSECSTOPPAYMON","minWidth":100,"title":"<func>this.i18NameParse('null','上家公司社保停缴月份')</func>"},{"headerAlign":"left","field":"PROFUNDSTOPPAYMON","minWidth":100,"title":"<func>this.i18NameParse('null','上家公司公积金停缴月份')</func>"},{"headerAlign":"left","field":"IDCARDDOC","minWidth":100,"title":"<func>this.i18NameParse('null','证件照')</func>"},{"headerAlign":"left","field":"HOUSEHOLDREGISTERDOC","minWidth":100,"title":"<func>this.i18NameParse('null','户籍证明')</func>"},{"headerAlign":"left","field":"RESIGNATIONDOC","minWidth":100,"title":"<func>this.i18NameParse('null','离职证明/退工单')</func>"},{"headerAlign":"left","field":"SOCIALINSURANCEDOC","minWidth":100,"title":"<func>this.i18NameParse('null','上家单位社保缴存记录')</func>"},{"headerAlign":"left","field":"NOCRIMINALRECORD","minWidth":100,"title":"<func>this.i18NameParse('null','无犯罪记录证明')</func>"},{"headerAlign":"left","field":"PERSONALCREDITREPORT","minWidth":100,"title":"<func>this.i18NameParse('null','个人征信报告')</func>"},{"headerAlign":"left","field":"PHYSICALEXAMREPORT","minWidth":100,"title":"<func>this.i18NameParse('null','三个月内体检报告')</func>"},{"headerAlign":"left","field":"PARTTIMESHAREHOLDINGDOC","minWidth":100,"title":"<func>this.i18NameParse('null','兼职持股自查结果截图')</func>"},{"headerAlign":"left","field":"PROFESSIONALREPUTATIONDOC","minWidth":100,"title":"<func>this.i18NameParse('null','执业声誉报告')</func>"},{"headerAlign":"left","field":"INST_ID_","minWidth":100,"title":"<func>this.i18NameParse('null','流程实例ID')</func>"},{"headerAlign":"left","field":"INST_STATUS_","minWidth":100,"title":"<func>this.i18NameParse('null','状态')</func>"},{"headerAlign":"left","field":"TENANT_ID_","minWidth":100,"title":"<func>this.i18NameParse('null','租户ID')</func>"},{"headerAlign":"left","slots":{"default":"CREATE_TIME_"},"field":"CREATE_TIME_","minWidth":100,"title":"<func>this.i18NameParse('null','创建时间')</func>"},{"headerAlign":"left","field":"CREATE_BY_","minWidth":100,"title":"<func>this.i18NameParse('null','创建人ID')</func>"},{"headerAlign":"left","field":"UPDATE_BY_","minWidth":100,"title":"<func>this.i18NameParse('null','更新人')</func>"},{"headerAlign":"left","slots":{"default":"UPDATE_TIME_"},"field":"UPDATE_TIME_","minWidth":100,"title":"<func>this.i18NameParse('null','更新时间')</func>"},{"headerAlign":"left","field":"CREATE_DEP_ID_","minWidth":100,"title":"<func>this.i18NameParse('null','组ID')</func>"},{"headerAlign":"left","field":"COMPANY_ID_","minWidth":100,"title":"<func>this.i18NameParse('null','公司ID')</func>"},{"headerAlign":"left","field":"USER_INFO_","minWidth":100,"title":"<func>this.i18NameParse('null','用户信息')</func>"},{"headerAlign":"left","field":"DELETED_","minWidth":100,"title":"<func>this.i18NameParse('null','逻辑删除')</func>"},{"headerAlign":"left","field":"ISHIGHEST","minWidth":100,"title":"<func>this.i18NameParse('null','是否最高学历')</func>"},{"headerAlign":"left","field":"ISHIGHESTDEGREE","minWidth":100,"title":"<func>this.i18NameParse('null','是否最高学位')</func>"},{"headerAlign":"left","field":"SELECT_KOJP7","minWidth":100,"title":"<func>this.i18NameParse('null','是否持有本人名下证券账户')</func>"},{"headerAlign":"left","field":"INPUT_GJM7H","minWidth":100,"title":"<func>this.i18NameParse('null','股东代码(上海) (若无则填\"无\")')</func>"},{"headerAlign":"left","field":"INPUT_UQSGE","minWidth":100,"title":"<func>this.i18NameParse('null','股东代码(深圳) (若无则埴\"无\")')</func>"},{"headerAlign":"left","field":"SELECT_A97YW","minWidth":100,"title":"<func>this.i18NameParse('null','有无股权性质的证券(包括股票、存托凭证、 股票期权、权证、可转换债卷、可交易债券等)仅保留证券账户情况')</func>"},{"headerAlign":"left","field":"SELECT_ZHPJN","minWidth":100,"title":"<func>this.i18NameParse('null','是否持有无法交易的证券')</func>"},{"headerAlign":"left","field":"INPUT_D5WZQ","minWidth":100,"title":"<func>this.i18NameParse('null','请填写无法交易证券名称及相关代码(若无则填*无)')</func>"},{"headerAlign":"left","field":"SELECT_Y4YZC","minWidth":100,"title":"<func>this.i18NameParse('null','无法交易证券是否流通')</func>"},{"headerAlign":"left","field":"SELECT_O29UC","minWidth":100,"title":"<func>this.i18NameParse('null','是否已完成兼职信息(包含担任公司法人等)的沟通报备')</func>"},{"headerAlign":"left","field":"TEXTAREA_M3XFE","minWidth":100,"title":"<func>this.i18NameParse('null','兼职情况说明(具体兼职内容) (若无则填\"无\")')</func>"},{"headerAlign":"left","field":"SELECT_CI24E","minWidth":100,"title":"<func>this.i18NameParse('null','是否存在即将到期的高额负债(房贷车贷除外)')</func>"},{"headerAlign":"left","field":"TEXTAREA_AZL9O","minWidth":100,"title":"<func>this.i18NameParse('null','负债情况说明(到期时间、金额等) (若无则填’无\")')</func>"},{"headerAlign":"left","field":"SELECT_S9NNY","minWidth":100,"title":"<func>this.i18NameParse('null','是否存在参与场外配资情况(包含借入或借出)')</func>"},{"headerAlign":"left","field":"TEXTAREA_08VL9","minWidth":100,"title":"<func>this.i18NameParse('null','场外配资情况说明(参与形式等) (若无则填”无\")')</func>"},{"headerAlign":"left","field":"NAME_NAME","minWidth":100,"title":"<func>this.i18NameParse('null','姓名')</func>"},{"headerAlign":"left","field":"USER_YC0RZ","minWidth":100,"title":"<func>this.i18NameParse('null','薪酬填写人ID')</func>"},{"headerAlign":"left","field":"USER_YC0RZ_NAME","minWidth":100,"title":"<func>this.i18NameParse('null','薪酬填写人')</func>"},{"headerAlign":"left","field":"MERITPAY","minWidth":100,"title":"<func>this.i18NameParse('null','绩效工资')</func>"},{"headerAlign":"left","field":"PROAALLOWANCE","minWidth":100,"title":"<func>this.i18NameParse('null','保代津贴')</func>"},{"headerAlign":"left","field":"REGISTRATIONDATE","minWidth":100,"title":"<func>this.i18NameParse('null','拟报到日期')</func>"},{"headerAlign":"left","field":"PASSPORTNO","minWidth":100,"title":"<func>this.i18NameParse('null','证件号码')</func>"},{"headerAlign":"left","field":"ISSECURITY","minWidth":100,"title":"<func>this.i18NameParse('null','是否通过证券从业资格')</func>"},{"headerAlign":"left","field":"ISSILENTPERIOD","minWidth":100,"title":"<func>this.i18NameParse('null','是否处于公务员静默期')</func>"},{"headerAlign":"left","field":"ISFUNDSILENTPERIOD","minWidth":100,"title":"<func>this.i18NameParse('null','是否属于投资经理或基金经理静默期(离任未满6个月)限制人员')</func>"},{"headerAlign":"left","field":"ISPARTTIMEJOB","minWidth":100,"title":"<func>this.i18NameParse('null','是否有兼职')</func>"},{"headerAlign":"left","field":"ISCSRCRESIGNATIONS","minWidth":100,"title":"<func>this.i18NameParse('null','是否证监会系统离职人员')</func>"},{"headerAlign":"left","field":"ISNEGATIVEINFO","minWidth":100,"title":"<func>this.i18NameParse('null','执业声誉报告中是有否违法失信、负面信息')</func>"},{"headerAlign":"left","field":"REPUTATIONDOC","minWidth":100,"title":"<func>this.i18NameParse('null','执业声誉报告')</func>"},{"headerAlign":"left","field":"ISCRIMINALRECORD","minWidth":100,"title":"<func>this.i18NameParse('null','是否有刑事犯罪、其他犯罪记录')</func>"},{"headerAlign":"left","field":"ISRELATIVES","minWidth":100,"title":"<func>this.i18NameParse('null','是否有近亲属及利害关系人在本公司任职')</func>"},{"headerAlign":"left","field":"RELATIVESINFO","minWidth":100,"title":"<func>this.i18NameParse('null','如有，请说明（近亲属及利害关系人姓名、关系、所在部门、岗位）')</func>"},{"headerAlign":"left","field":"FIRSTATTACHMENT","minWidth":100,"title":"<func>this.i18NameParse('null','第一次上传的体检报告')</func>"},{"headerAlign":"left","field":"SECONDATTACHMENT","minWidth":100,"title":"<func>this.i18NameParse('null','第二次上传的体检报告')</func>"},{"headerAlign":"left","field":"CONSENSUSDECISION","minWidth":100,"title":"<func>this.i18NameParse('null','合议结论')</func>"},{"headerAlign":"left","field":"CONSENSUSEXPLANATION","minWidth":100,"title":"<func>this.i18NameParse('null','合议结论说明')</func>"},{"headerAlign":"left","field":"PANELEXPLANATION","minWidth":100,"title":"<func>this.i18NameParse('null','合议结论说明')</func>"},{"headerAlign":"left","field":"UPLOAD_KGBFB","minWidth":100,"title":"<func>this.i18NameParse('null','附件')</func>"},{"headerAlign":"left","field":"ISPASSFUND","minWidth":100,"title":"<func>this.i18NameParse('null','是否通过基金从业资格')</func>"},{"headerAlign":"left","field":"SHSTOCKCODE","minWidth":100,"title":"<func>this.i18NameParse('null','股票代码（上海）')</func>"},{"headerAlign":"left","field":"SZSTOCKCODE","minWidth":100,"title":"<func>this.i18NameParse('null','股票代码（深圳）')</func>"},{"headerAlign":"left","field":"ISUNABLETRADESTOCK","minWidth":100,"title":"<func>this.i18NameParse('null','是否持有无法交易的证券')</func>"},{"headerAlign":"left","field":"ISCIRCULATING","minWidth":100,"title":"<func>this.i18NameParse('null','无法交易证券是否流通')</func>"},{"headerAlign":"left","field":"UNABLETRADESTOCKNAME","minWidth":100,"title":"<func>this.i18NameParse('null','请埴写无法交易证券名称及相关代码')</func>"},{"headerAlign":"left","field":"ISPARTTIMEJOBREPORT","minWidth":100,"title":"<func>this.i18NameParse('null','是否已完成兼职信息(包含担任公司法人等)的沟通报备')</func>"},{"headerAlign":"left","field":"PARTTIMEJOBDES","minWidth":100,"title":"<func>this.i18NameParse('null','兼职情况说明(具体兼职内容)')</func>"},{"headerAlign":"left","field":"PARTTIMEJOBDOC","minWidth":100,"title":"<func>this.i18NameParse('null','兼职持股自查结果截图')</func>"},{"headerAlign":"left","field":"ISHIGHDEBT","minWidth":100,"title":"<func>this.i18NameParse('null','是否存在即将到期的高额负债(房贷车贷除外)')</func>"},{"headerAlign":"left","field":"HIGHDEBTDES","minWidth":100,"title":"<func>this.i18NameParse('null','负债情况说明(到期时间、金额等)')</func>"},{"headerAlign":"left","field":"ISPARTOFFSITEFFUND","minWidth":100,"title":"<func>this.i18NameParse('null','是否存在参与场外配资情况(包含借入或借出)')</func>"},{"headerAlign":"left","field":"PARTOFFSITEFFUNDDES","minWidth":100,"title":"<func>this.i18NameParse('null','场外配资情况说明(参与形式等)')</func>"},{"headerAlign":"left","field":"ISUNLISTCOMPANYEQUITY","minWidth":100,"title":"<func>this.i18NameParse('null','是否持有非上市公司股权')</func>"},{"headerAlign":"left","field":"ISVIOLATEINTEGRITY","minWidth":100,"title":"<func>this.i18NameParse('null','是否有违反证券期货经营机构廉洁从业规定的行为')</func>"},{"headerAlign":"left","field":"ISNONCOMPETE","minWidth":100,"title":"<func>this.i18NameParse('null','是否存在竟业限制、脱密期限制、其他从业限制情况?')</func>"},{"headerAlign":"left","field":"ISPUNISHEMP","minWidth":100,"title":"<func>this.i18NameParse('null','是否属于其他相关处分处罚人员(包括但不限于行政处罚、刑事处罚、单位内部处分或处罚)')</func>"},{"headerAlign":"left","field":"ISDISHONESTRECORD","minWidth":100,"title":"<func>this.i18NameParse('null','是否有因违反证券/基金/期货法律法规或自律规则被取消考试成绩或不诚信记录')</func>"},{"headerAlign":"left","field":"ISACCEPTINVESTIGATION","minWidth":100,"title":"<func>this.i18NameParse('null','是否有证/保/银监会、证券/基金/期货协会、证券/期货交易所等机构的金融违规记录或正在接受调查')</func>"},{"headerAlign":"left","field":"ISRESIGNATIONSILENTPERIOD","minWidth":100,"title":"<func>this.i18NameParse('null','是否处于证监会系统离职人员静默期')</func>"},{"headerAlign":"left","field":"NEGATIVEINFODEC","minWidth":100,"title":"<func>this.i18NameParse('null','如有，请说明，并在附件中上传投资任职情况查询报告')</func>"},{"headerAlign":"left","field":"MARITALSTATUS","minWidth":100,"title":"<func>this.i18NameParse('null','婚姻状况')</func>"},{"headerAlign":"left","field":"HRORGUNIT","minWidth":100,"title":"<func>this.i18NameParse('null','招聘业务组织ID')</func>"},{"headerAlign":"left","field":"HRORGUNIT_NAME","minWidth":100,"title":"<func>this.i18NameParse('null','招聘业务组织')</func>"},{"headerAlign":"left","field":"DISPLAYNAME","minWidth":100,"title":"<func>this.i18NameParse('null','拟录用部门ID')</func>"},{"headerAlign":"left","field":"DISPLAYNAME_NAME","minWidth":100,"title":"<func>this.i18NameParse('null','拟录用部门')</func>"},{"headerAlign":"left","field":"POSITION","minWidth":100,"title":"<func>this.i18NameParse('null','拟录用岗位')</func>"},{"headerAlign":"left","field":"AGE","minWidth":100,"title":"<func>this.i18NameParse('null','年龄')</func>"},{"headerAlign":"left","field":"INTERNSALARYCALCUMETHOD","minWidth":100,"title":"<func>this.i18NameParse('null','实习津贴计算方式')</func>"},{"headerAlign":"left","field":"INTERNALLOWSTANDARD","minWidth":100,"title":"<func>this.i18NameParse('null','实习津贴标准（含午餐补贴）（单位：元）')</func>"},{"headerAlign":"left","field":"TUTORDEPARTMENT","minWidth":100,"title":"<func>this.i18NameParse('null','导师所在部门ID')</func>"},{"headerAlign":"left","field":"TUTORDEPARTMENT_NAME","minWidth":100,"title":"<func>this.i18NameParse('null','导师所在部门')</func>"},{"headerAlign":"left","field":"TUTORNAME","minWidth":100,"title":"<func>this.i18NameParse('null','导师姓名ID')</func>"},{"headerAlign":"left","field":"TUTORNAME_NAME","minWidth":100,"title":"<func>this.i18NameParse('null','导师姓名')</func>"},{"headerAlign":"left","field":"TUTORNUMBER","minWidth":100,"title":"<func>this.i18NameParse('null','导师工号')</func>"},{"headerAlign":"left","field":"INVESTIGATOR","minWidth":100,"title":"<func>this.i18NameParse('null','背景调查人ID')</func>"},{"headerAlign":"left","field":"INVESTIGATOR_NAME","minWidth":100,"title":"<func>this.i18NameParse('null','背景调查人')</func>"},{"headerAlign":"left","field":"INVESTIGATIONRISK","minWidth":100,"title":"<func>this.i18NameParse('null','背调风险等级')</func>"},{"headerAlign":"left","field":"BACKGROUNDSOURCE","minWidth":100,"title":"<func>this.i18NameParse('null','背景来源')</func>"},{"headerAlign":"left","field":"ISCANCELEMPLOYMENT","minWidth":100,"title":"<func>this.i18NameParse('null','是否取消录用')</func>"},{"headerAlign":"left","field":"INVESTRISKEXPLAIN","minWidth":100,"title":"<func>this.i18NameParse('null','背调风险等级情况说明')</func>"},{"headerAlign":"left","field":"BEISENRESUMEATTACHMENT","minWidth":100,"title":"<func>this.i18NameParse('null','北森简历附件')</func>"},{"headerAlign":"left","field":"PERSONALSCREENINGDOC","minWidth":100,"title":"<func>this.i18NameParse('null','背景调查授权书')</func>"},{"headerAlign":"left","field":"ISCREATEUSER","minWidth":100,"title":"<func>this.i18NameParse('null','是否创建用户')</func>"},{"headerAlign":"left","field":"USERNAME","minWidth":100,"title":"<func>this.i18NameParse('null','候选人姓名')</func>"},{"headerAlign":"left","field":"RECRUITMENTCHANNELS","minWidth":100,"title":"<func>this.i18NameParse('null','RECRUITMENTCHANNELS')</func>"},{"headerAlign":"left","field":"手机号码","minWidth":100,"title":"<func>this.i18NameParse('null','手机号码')</func>"},{"headerAlign":"left","field":"ISHOLDOWNSECURITIESACC","minWidth":100,"title":"<func>this.i18NameParse('null','是否持有本人名下证券账户')</func>"},{"headerAlign":"left","field":"ISNATUREEQUITY","minWidth":100,"title":"<func>this.i18NameParse('null','有无股权性质的证券(包括股票、存托凭证、股票期权、权证、可转换债券、可交易债券等)仅保留证券账户情况')</func>"},{"headerAlign":"left","field":"ISMONEYVIOLATIONLAW","minWidth":100,"title":"<func>this.i18NameParse('null','是否有违反反洗钱法律、法规相关行为')</func>"},{"headerAlign":"left","field":"ISSPOUSEFUTURESOPTIONS","minWidth":100,"title":"<func>this.i18NameParse('null','本人及配偶目前是否从事期货、期权交易')</func>"},{"headerAlign":"left","field":"ISSPOUSESECURITIESACC","minWidth":100,"title":"<func>this.i18NameParse('null','本人及配偶是否有含期权交易权限的证券交易账户')</func>"},{"headerAlign":"left","field":"SECURITIESINFO","minWidth":100,"title":"<func>this.i18NameParse('null','如有，请说明(期货交易账户)(若无则“无”)')</func>"},{"headerAlign":"left","field":"ISSPOUSEFUTURES","minWidth":100,"title":"<func>this.i18NameParse('null','本人及配偶是否有期货交易账户')</func>"},{"headerAlign":"left","field":"FUTURESINFO","minWidth":100,"title":"<func>this.i18NameParse('null','如有，请说明(期权交易账户)')</func>"},{"headerAlign":"left","field":"UNTILNAME","minWidth":100,"title":"<func>this.i18NameParse('null','离职前在证监会系统任职单位')</func>"},{"headerAlign":"left","field":"IDCARDATTACHMENT","minWidth":100,"title":"<func>this.i18NameParse('null','身份证')</func>"},{"headerAlign":"left","field":"DIPLOMADOC","minWidth":100,"title":"<func>this.i18NameParse('null','学位证(从本科至最高学历)')</func>"},{"headerAlign":"left","field":"GRADUATCERTIFICATEDOC","minWidth":100,"title":"<func>this.i18NameParse('null','毕业证（从本科至最高学历）')</func>"},{"headerAlign":"left","field":"STUDENTIDDOC","minWidth":100,"title":"<func>this.i18NameParse('null','学生证')</func>"},{"headerAlign":"left","field":"CHESICCDOC","minWidth":100,"title":"<func>this.i18NameParse('null','学信网学历证书电子注册备案表、学位认证报告')</func>"},{"headerAlign":"left","field":"HOUSEHOLDCERTIFICATEDOC","minWidth":100,"title":"<func>this.i18NameParse('null','户籍证明:户口本地址页、本人页')</func>"},{"headerAlign":"left","field":"DEBITCARDDOC","minWidth":100,"title":"<func>this.i18NameParse('null','银行借记卡( 本人名下)')</func>"},{"headerAlign":"left","field":"LEAVCERTIFICATEDOC","minWidth":100,"title":"<func>this.i18NameParse('null','离职证明/退工单(应届生上传成绩单)')</func>"},{"headerAlign":"left","field":"ELECTAXSYSTEMDOC","minWidth":100,"title":"<func>this.i18NameParse('null','上家单位社保缴存记录')</func>"},{"headerAlign":"left","field":"UNETREGISTRATIONDOC","minWidth":100,"title":"<func>this.i18NameParse('null','劳动手册个人信息页/就业失业登记证(上海户籍需提供)')</func>"},{"headerAlign":"left","field":"PCCDOC","minWidth":100,"title":"<func>this.i18NameParse('null','无犯罪记录证明(IT人员必 须提供)')</func>"},{"headerAlign":"left","field":"PCRDOC","minWidth":100,"title":"<func>this.i18NameParse('null','个人征信报告 (IT人员必须 提供)')</func>"},{"headerAlign":"left","field":"OSTADOC","minWidth":100,"title":"<func>this.i18NameParse('null','技能、职称相关证明')</func>"},{"headerAlign":"left","field":"EXAMREPORTDOC","minWidth":100,"title":"<func>this.i18NameParse('null','三个月内体检报告')</func>"},{"headerAlign":"left","field":"CANCELCERDOC","minWidth":100,"title":"<func>this.i18NameParse('null','本人及配偶期货销户证明及期权关闭账户证明')</func>"},{"headerAlign":"left","field":"REVENUEFLOWDOC","minWidth":100,"title":"<func>this.i18NameParse('null','近半年银行卡工资收入流水')</func>"},{"headerAlign":"left","field":"POWERATTORNEY","minWidth":100,"title":"<func>this.i18NameParse('null','本人承诺声明')</func>"},{"headerAlign":"left","field":"NUMBER","minWidth":100,"title":"<func>this.i18NameParse('null','单据编号')</func>"},{"headerAlign":"left","field":"EMPLOYEETYPE","minWidth":100,"title":"<func>this.i18NameParse('null','用工关系')</func>"},{"headerAlign":"left","field":"LABCONTRACTFIRSTPARTY","minWidth":100,"title":"<func>this.i18NameParse('null','劳动合同主体')</func>"},{"headerAlign":"left","field":"CONTRACTTERM","minWidth":100,"title":"<func>this.i18NameParse('null','劳动合同期限（月）')</func>"},{"headerAlign":"left","field":"PROBATIONPERIOD","minWidth":100,"title":"<func>this.i18NameParse('null','试用期（月）')</func>"},{"headerAlign":"left","field":"EMPLOYMENTDESCRIPTION","minWidth":100,"title":"<func>this.i18NameParse('null','备注')</func>"},{"headerAlign":"left","field":"APPLICANT_ID_","minWidth":100,"title":"<func>this.i18NameParse('null','应聘者Guid')</func>"},{"headerAlign":"left","field":"CANDIDATE_ID_","minWidth":100,"title":"<func>this.i18NameParse('null','应聘者Cid')</func>"},{"headerAlign":"left","field":"INPUT_58VO9","minWidth":100,"title":"<func>this.i18NameParse('null','候选人姓名')</func>"},{"headerAlign":"left","field":"CELL","minWidth":100,"title":"<func>this.i18NameParse('null','手机号码')</func>"},{"headerAlign":"left","slots":{"default":"ARRIVALDATE"},"field":"ARRIVALDATE","minWidth":100,"title":"<func>this.i18NameParse('null','到岗时间')</func>"},{"headerAlign":"left","field":"NOWPRETAXFIXSALARY","minWidth":100,"title":"<func>this.i18NameParse('null','现有税前固薪（元/月）')</func>"},{"headerAlign":"left","field":"EXPECTPRETAXFIXSALARY","minWidth":100,"title":"<func>this.i18NameParse('null','期望税前固薪（元/月））')</func>"},{"headerAlign":"left","field":"BSRESUMEATTAURL","minWidth":100,"title":"<func>this.i18NameParse('null','北森简历附件链接')</func>"},{"headerAlign":"left","field":"ISPAASFUTURES","minWidth":100,"title":"<func>this.i18NameParse('null','是否通过期货从业资格')</func>"},{"headerAlign":"left","field":"TOEMPCOMPANY","minWidth":100,"title":"<func>this.i18NameParse('null','拟入职公司ID')</func>"},{"headerAlign":"left","field":"TOEMPCOMPANY_NAME","minWidth":100,"title":"<func>this.i18NameParse('null','拟入职公司')</func>"},{"headerAlign":"left","field":"UPLOADDVXUE","minWidth":100,"title":"<func>this.i18NameParse('null','体检报告附件')</func>"},{"headerAlign":"left","field":"PARTTIMEEMPLOYER","minWidth":100,"title":"<func>this.i18NameParse('null','兼职单位')</func>"},{"headerAlign":"left","field":"PARTTIMEDEPARTMENT","minWidth":100,"title":"<func>this.i18NameParse('null','兼职部门')</func>"},{"headerAlign":"left","field":"PARTTIMEJOBTITLE","minWidth":100,"title":"<func>this.i18NameParse('null','兼职岗位名称')</func>"},{"headerAlign":"left","field":"PARTSTARTTIME","minWidth":100,"title":"<func>this.i18NameParse('null','兼职开始时间')</func>"},{"headerAlign":"left","field":"PARTENDTIME","minWidth":100,"title":"<func>this.i18NameParse('null','兼职预计结束时间')</func>"},{"headerAlign":"left","field":"PARTRESPONTIMEJOB","minWidth":100,"title":"<func>this.i18NameParse('null','兼职主要职责')</func>"},{"headerAlign":"left","field":"INPUT_RZ1FG","minWidth":100,"title":"<func>this.i18NameParse('null','社会信用代码')</func>"},{"headerAlign":"left","field":"ISLISTEDCOMPANY","minWidth":100,"title":"<func>this.i18NameParse('null','是否上市公司')</func>"},{"headerAlign":"left","field":"SECURITIERESIGNATIONTIME","minWidth":100,"title":"<func>this.i18NameParse('null','从证监会系统离职时间')</func>"},{"headerAlign":"left","field":"RESIGNATIONMETHOD","minWidth":100,"title":"<func>this.i18NameParse('null','离职方式')</func>"},{"headerAlign":"left","field":"LINEGROUPLEVEL","minWidth":100,"title":"<func>this.i18NameParse('null','所属条线')</func>"},{"headerAlign":"left","field":"UNTILDEPARTMENT","minWidth":100,"title":"<func>this.i18NameParse('null','离职前在证监会系统任职部门')</func>"},{"headerAlign":"left","field":"UNTILPOST","minWidth":100,"title":"<func>this.i18NameParse('null','离职前职务')</func>"},{"headerAlign":"left","field":"ISUNTILDEPARTMENTLEVEL","minWidth":100,"title":"<func>this.i18NameParse('null','离职前是否是处级(中层)以上干部')</func>"},{"headerAlign":"left","field":"CONCURRENTLYSERVINCOMME","minWidth":100,"title":"<func>this.i18NameParse('null','离职前三年内是否曾在发审委、重组委、科创板或创业板上市委兼任委员')</func>"},{"headerAlign":"left","field":"STARTTIME","minWidth":100,"title":"<func>this.i18NameParse('null','开始时间')</func>"},{"headerAlign":"left","field":"ENDTIME","minWidth":100,"title":"<func>this.i18NameParse('null','结束时间')</func>"},{"headerAlign":"left","field":"ORGANIZATIONFULLNAME","minWidth":100,"title":"<func>this.i18NameParse('null','机构全称')</func>"},{"headerAlign":"left","field":"DEPARTMENTNAME","minWidth":100,"title":"<func>this.i18NameParse('null','部门名称')</func>"},{"headerAlign":"left","field":"JOBTITLE","minWidth":100,"title":"<func>this.i18NameParse('null','岗位名称')</func>"}],
+          {
+            title:this.$ti18('rxList.action','操作'),
+            dataIndex:'action',
+            align:'center',
+            width:50,
+            scopedSlots:{customRender:'action'}
+          }
+        ],
+            dataSource:this.selectedRows?this.selectedRows:[],
+      },
+      fieldRequired:[],
+      urlParams:{
+        <#if params??&&(params?size>0)>
+            <#assign  keys=params?keys/>
+            <#list keys as key>
+        '${key}':"${params[key]}",
+      </#list>
+      </#if>
+      },
+    }
+    },
+    created() {
+    },
+    methods: {
+
+    },
+    computed: {
+            // 固定显示的按钮
+            fixedButtons() {
+                const defaults = ['toggleFullScreen', 'onXLSExportShow', 'onRefresh'];
+                return this.topButtonColumns.filter(x => defaults.includes(x.btnClick));
+            },
+            // 排除固定显示的按钮
+            restButtons() {
+                const defaults = ['toggleFullScreen', 'onXLSExport', 'onXLSExportShow', 'onRefresh'];
+                return this.topButtonColumns.filter(x => !defaults.includes(x.btnClick));
+            },
+            // XLSExport下拉默认导出按钮
+            defaultDropdown() {
+            	const defaults = ['onXLSExport'];
+                return this.topButtonColumns.filter(x => defaults.includes(x.btnClick));
+            }
+        },
+  }
+</script>
+<!--script-->
+
+<style scoped>
+  .listSearch{
+    margin-left:16px;
+    cursor: pointer;
+  }
+  .listSearch i{
+    margin-right: 4px;
+  }
+  .actspan{
+    color: #BFBFBF !important;
+    cursor: not-allowed;
+    pointer-events:none
+  }
+  .rx-layout-middle-container {
+  	background: #ffff;
+    padding: 10px;
+    border-radius: 6px;
+  }
+  .circle-btn {
+  	margin-left: 8px;
+  }
+</style>
