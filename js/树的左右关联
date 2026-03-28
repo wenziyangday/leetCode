@@ -1,0 +1,5 @@
+handleSearch() {
+      	window.URLPARAMS = this.urlConfig.queryParam;
+         this.urlConfig.queryParam = {...this.urlConfig.queryParam, ...(window?.RELPARAMS || {})}
+          this.searchAll();
+      }

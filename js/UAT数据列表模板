@@ -1,0 +1,590 @@
+<template>
+    <#-- 构建外部传入参数 -->
+    <#noparse>
+  <#assign query="">
+  <#if params??&&(params?size>0)>
+  <#assign query="?">
+  <#assign  keys=params?keys/>
+  <#list keys as key>
+  <#if (key_index==0)>
+  <#assign query=query + key +"=" + params[key] >
+  <#else>
+  <#assign query=query +"&" +key +"=" + params[key] >
+</#if>
+</#list>
+</#if>
+</#noparse>
+<rx-layout :buttonHidden="buttonHidden" style="padding: 10px" class="list-layout-box <#if (formBoList.isLeftTree == "YES" && tabTreeColumns?size > 0)>list-layout-tree-box</#if>">
+    <#if (formBoList.isLeftTree=='YES' && tabTreeColumns?size > 0)>
+      <template #left>
+          <#if (tabTreeColumns?size > 1)><a-tabs v-model="activeKey"></#if>
+              <#list tabTreeColumns as tab>
+                  <#if (tabTreeColumns?size > 1)><a-tab-pane forceRender tab="${tab.treeId}" key="${tab.tabName}" :closable="false"></#if>
+                <div class="treeNav">{{i18List('navigationTree','导航树')}}</div>
+                <!--leftTree-->
+                <rx-vue-tree
+                    ref="${tab.tabName}"
+                    url="${ctxPath}/api-form/form/core/formBoList/${tab.tabName}/getTreeJson<#noparse>${query}</#noparse>"
+                    :showCheckbox="false"
+                    ajax-type="post"
+                    data-field="result.data"
+                    :asyncTree="'${tab.isLazy}'=='YES'"
+                        <#if tab.isLazy=='YES'>
+                          :expandClick="loadTreeByParent"
+                        </#if>
+                    label="${tab.textField}"
+                    field="${tab.idField}"
+					:expandedLayer="${tab.expandLevel}"
+                    id-field="${tab.idField}"
+                        <#if tab.parentField??>
+                          parent-field="${tab.parentField}"
+                        </#if>
+                        <#if tab.onlySelLeaf??>
+                          :onlyChildNode="'${tab.onlySelLeaf}'=='YES'"
+                        </#if>
+                    @rowClick="${tab.onnodeclick}"
+                />
+                <!--leftTree-->
+                  <#if (tabTreeColumns?size > 1)></a-tab-pane></#if>
+              </#list>
+              <#if (tabTreeColumns?size > 1)></a-tabs></#if>
+      </template>
+    </#if>
+  <template #middle>
+    <rx-fit>
+      <#if formBoList.isSearchView=="YES">
+      <template #head>
+            <#if  ((formBoList.isShowSearch !='YES' || !(searchColumns?size > 0)) && formBoList.enableAlert=="YES")>
+               <a-alert :message="`${formBoList.alertMessage}`" <#if formBoList.alertStyle == 'banner'>banner<#else> type="${formBoList.alertStyle}"</#if> :closable="'${formBoList.enableAlertClose}' === 'YES'" :show-icon="'${formBoList.alertIcon}' === 'YES'" style="margin:0 0 12px;white-space: pre-line;<#if formBoList.alertStyle == 'banner'>background: #fff !important;</#if>" />
+            </#if>
+        <rx-search-list :showSearchList='showSearchList' @click="handSearchClick" :searchCommonActive='searchCommonActive'></rx-search-list>
+        <rx-list-group :groupViewOptions='groupViewOptions' @groupViewSelectChange='groupViewSelectChange'></rx-list-group>
+      </template>
+      </#if>
+      <template #middle>
+        <rx-fit v-model="fitSearch" :searchBox="isheader?'head':'middle'" :mousedownShow="false">
+          <template #head>
+                <#if  (formBoList.isSearchView !="YES" && (formBoList.isShowSearch !='YES' || !(searchColumns?size > 0)) && formBoList.enableAlert=="YES")>
+                     <a-alert :message="`${formBoList.alertMessage}`" <#if formBoList.alertStyle == 'banner'>banner<#else> type="${formBoList.alertStyle}"</#if> :closable="'${formBoList.enableAlertClose}' === 'YES'" :show-icon="'${formBoList.alertIcon}' === 'YES'" style="margin:0 0 12px;white-space: pre-line;<#if formBoList.alertStyle == 'banner'>background: #fff !important;</#if>" />
+               </#if>
+            <div class="list-toolbar" :class="{'list-toolbar-empty':topButtonColumns.length === 0}">
+              <!--button-->
+              <rx-buttons :btns="restButtons" :btnSize="<#if formBoList.buttonMax??>${formBoList.buttonMax}<#else>1</#if>"
+                          :custom="true" :btnRight="btnRight" :size="8"  :hasAllRight="hasAllRight"
+              ></rx-buttons>
+              <!--button-->
+              <span class="search-btn-box">
+            <span v-if="formBoList.dataStyle=='tree'">
+              <a-checkbox v-model:checked="allowCascade">{{i18List('cascadeSelect','级联选择')}}</a-checkbox>
+            </span>
+            <rx-list-layout
+                :list-layout="listLayout"
+                :list-layout-json="listLayoutJson"
+                @listLayoutChange="listLayoutChange"
+            ></rx-list-layout>
+            <span v-if="groupViewJson.length>0">
+              <rx-list-group
+                  :group-view="groupView"
+                  :group-view-select="groupViewSelect"
+                  :group-view-json="groupViewJson"
+                  :group-view-select-options="groupViewSelectOptions"
+                  @groupViewChange="groupViewChange"
+                  @groupViewSelectChange="groupViewSelectChange"
+              ></rx-list-group>
+            </span>
+              <#if formBoList.isSearchView=="NO">
+                <span class="rx-dropdown-span" v-if="formBoList.isShowView=='YES'">
+                  <span class="listView">{{i18List('queryView','查询视图')}}</span>
+                  <a-dropdown v-model:value="visible" :getPopupContainer="p=>p.parentNode">
+                    <span class="rx-ant-dropdown-text">
+                      <span class="ant-dropdown-link">{{queryStrategy}}</span>
+                      <my-icon :type="'iconicon-test40'"></my-icon>
+                    </span>
+                    <template #overlay>
+                      <a-menu @click="handSearchCommonClick">
+                      <template v-if="searchCommonList.length == 0">
+                        <a-menu-item class="rx-dropdown-titile-disabled" :disabled="true">{{i18List('sysView','系统视图')}}</a-menu-item>
+                        <a-menu-item key="all" :class="{'rx-dropdown-active':activeAll}">{{$ti18('rxList.all','全部')}}</a-menu-item>
+                      </template>
+                      <template v-if="searchCommonList.length > 0">
+                        <a-menu-item class="rx-dropdown-titile-disabled" :disabled="true">{{i18List('sysView','系统视图')}}</a-menu-item>
+                        <a-menu-item key="all" :class="{'rx-dropdown-active':activeAll}">{{$ti18('rxList.all','全部')}}</a-menu-item>
+                        <a-menu-item :key="item.key" v-for="item of searchCommonList" :class="{'rx-dropdown-item-common':true,'rx-dropdown-active':item.active}">
+                          <div class="rx-itme">
+                            <span class="rx-text">{{ item.label }}</span>
+                          </div>
+                        </a-menu-item>
+                      </template>
+                      <template v-if="searchUserList.length > 0">
+                        <a-menu-item class="rx-dropdown-titile-disabled" :disabled="true">{{i18List('personalView','个人视图')}}</a-menu-item>
+                        <a-menu-item :key="item.key" v-for="item of searchUserList" :class="{'rx-dropdown-item-user':true,'rx-dropdown-active':item.active}">
+                          <div class="rx-itme">
+                            <span class="rx-text">{{ item.label }}</span>
+                          </div>
+                        </a-menu-item>
+                      </template>
+                    </a-menu>
+                    </template>
+                  </a-dropdown>
+                </span>
+              </#if>
+                  <#if (searchColumns?size > 0)>
+                    <a-button  shape="circle" v-if="!isheader && formBoList.isShowSearch=='YES'" class="circle-btn" @click="searchShow" @mousedown.stop ><SearchOutlined /></a-button>
+                  </#if>
+              <rx-buttons :btns="fixedButtons" :btnSize="12"
+                          :custom="true" :btnRight="btnRight" :size="8"  :hasAllRight="hasAllRight"
+                          :is-only-icon="true" :is-circle="true" :defaultDropdown="defaultDropdown"
+              ></rx-buttons>
+              <!--视图管理-->
+              <a-button  shape="circle" v-if="formBoList.isShowView=='YES'"  class="circle-btn" @click="openViewVisiBle">
+                  <iconShow :icon="viewSetting"/>
+              </a-button>
+              <!--字段显隐-->
+              <a-button shape="circle" v-if="formBoList.isFieldShow=='YES' && listLayout=='table'" class="circle-btn" @click="openFieldVisiBle">
+                <SettingOutlined />
+              </a-button>
+          </span>
+            </div>
+          </template>
+            <#if (formBoList.isShowSearch=='YES' && searchColumns?size > 0)>
+              <template #search>
+                    <#if formBoList.enableAlert=="YES">
+                        <a-alert :message="`${formBoList.alertMessage}`" <#if formBoList.alertStyle == 'banner'>banner<#else> type="${formBoList.alertStyle}"</#if> :closable="'${formBoList.enableAlertClose}' === 'YES'" :show-icon="'${formBoList.alertIcon}' === 'YES'" style="margin:0 0 12px;white-space: pre-line;<#if formBoList.alertStyle == 'banner'>background: #fff !important;</#if>" />
+                    </#if>
+                <!--search-->
+                  <#if (formBoList.isSearchHeader?? && formBoList.isSearchHeader=='YES')>
+                        <div class="ant-form x-list-a-form" :layout="islayout?'ant-form-vertical':'ant-form-horizontal'">
+                    <!--<a-form class="x-list-a-form" :layout="islayout?'vertical':'horizontal'">-->
+                      <div class="x-list-search-box">
+                          <#list searchColumns as search>
+                              <#if (search_index<formBoList.searchMax)>
+                                  <@handSearch search=search search_index=search_index formBoList=formBoList></@handSearch>
+                              </#if>
+                          </#list>
+                        <template v-if="advanced">
+                            <#list searchColumns as search>
+                                <#if (search_index>=formBoList.searchMax)>
+                                    <@handSearch search=search search_index=search_index formBoList=formBoList></@handSearch>
+                                </#if>
+                            </#list>
+                        </template>
+                          <#if (searchColumns?size > 0)>
+                            <div class="x-list-search-item x-list-search-submit" v-if="isheader">
+                  	<span class="x-list-search-submit-buttons">
+                    	<a-button type="primary" @click="searchAll"><SearchOutlined />{{$ti18('rxList.searchBtn','查询')}}</a-button>
+                    	<a-button style="margin-left: 4px" @click="resetSearch" >{{$ti18('rxList.resetBtn','重置')}}</a-button>
+                      	<#if (searchColumns?size > formBoList.searchMax)>
+                          <a @click="toggleAdvanced" style="margin-left: 8px">
+                          	{{ advanced ? $ti18('rxList.putAwayBtn','收起') : $ti18('rxList.openBtn','展开') }}
+                          	<UpOutlined v-if="advanced"/>
+                          	<DownOutlined v-else />
+                        	</a>
+                        </#if>
+                  	</span>
+                            </div>
+                          </#if>
+                      </div>
+                    <!--</a-form>-->
+</div>
+                  <#else>
+                    <div class="list-search x-list-search">
+                        <div class="ant-form x-list-a-form" :layout="islayout?'ant-form-vertical':'ant-form-horizontal'" :labelCol="islayout?'':{ span: 6 }">
+                      <!--<a-form  class="x-list-search-a-form" :layout="islayout?'vertical':'horizontal'" :labelCol="islayout?'':{ span: 6 }">-->
+                        <div class="x-list-search-box x-list-search-fit-box">
+                            <#list searchColumns as search>
+                                <@handSearch search=search search_index=search_index formBoList=formBoList></@handSearch>
+                            </#list>
+                        </div>
+                      <!--</a-form>-->
+</div>
+
+                      <div class="list-search-toolbar">
+                          <#if (searchColumns?size > 0)>
+                            <a-button type="primary" @click="searchAll(close)"><SearchOutlined />{{$ti18('rxList.searchBtn','查询')}}</a-button>
+                            <a-button style="margin-left: 4px" @click="resetSearch" >{{$ti18('rxList.resetBtn','重置')}}</a-button>
+                          </#if>
+                      </div>
+                    </div>
+                  </#if>
+                <!--search-->
+              </template>
+            </#if>
+          <template #middle>
+            <div style="height:100%;display: flex;overflow: auto;">
+              <div style='flex:1;display: flex;flex-direction: column;overflow: auto;'>
+                <!---开启搜索过滤1--begin-->
+                  <#if (filterSearchColumns?size > 0)>
+                    <filter-dropdown-list-view v-if ="filterDropdownList.length>0" ref="filterDropdownListView"
+                                               :filterDropdownList="filterDropdownList"
+                                               @delFilterDropdownOne="delFilterDropdownOne" @delFilterDropdownAll="delFilterDropdownAll" />
+                  </#if>
+                <!---开启搜索过滤1--end-->
+                <!--table-->
+                <div style="flex: 1;overflow: auto;">
+                  <rx-grid ref="table"
+                           :border="formdata?.tableStyleAlia"
+                           :lineHeight="formdata?.lineHeightAlia"
+                           :row-class-name="listTableRowClassName"
+                           :cell-class-name="listTableCellClassName"
+                           v-if="listLayout=='table'"
+                           :hasSeq="false"
+                           :scrollX="{}"
+                           v-model:checkRowKeys="selectedRows"
+                           :columns="columns"
+                           :height="formBoList.heightAuto == 'YES'? 'auto' : '100%'"
+                           :isShowSelectColumn="formBoList.isShowSelectColumn == 'YES'"
+                           :selectConfig="{align: 'center',type:formBoList.multiSelect?'checkbox':'radio',checkStrictly:formBoList.dataStyle=='tree' && !allowCascade}"
+                           :pageConfig="pageConfig"
+                          <#if formBoList.dataStyle=='tree'>
+                            :treeConfig="treeConfig"
+                          </#if>
+                           :hasPage="${(formBoList.isPage=='YES' && (formBoList.dataStyle!='tree' || formBoList.isLazy=='YES'))?string('true','false')}"
+                           :field="formBoList.idField"
+                           url="${ctxPath}/api-form/form/core/formBoList/${formBoList.key}/getData"
+                           :urlConfig="urlConfig"
+                           @selectMethod="selectMethod"
+                           @cellClick="cellClick"
+                           @cellDblClick="rowDblClick"
+                           @refreshSearch="getListDataFun"
+                           :rowEditConfig="{autoClear:false}"
+                           :loadDataOnstart="loadDataOnstart"
+                           :showColumns="showColumns"
+                           :defaultShowColumns="defaultShowColumns"
+                           :expandConfig="expandConfig"
+                           @urlData='handleUrlData'
+                          <#if (!formBoList.rowOverflow)>
+                            :show-overflow="false"
+                          </#if>
+                          <#if (formBoList.showSummaryRow=='YES')>
+                            :footerConfig="footerConfig"
+                          </#if>
+                  >
+                      <#list cellEditorColumns as cellEditor>
+                          <@handCol cellEditor=cellEditor cellEditorIndex=cellEditor_index></@handCol>
+                      </#list>
+                      <#if (formBoList.showSummaryRow=='YES')>
+                          <#list summaryAry as summary>
+                              <@handFooter fieldName=summary.fieldName isSummaryPage=isSummaryPage></@handFooter>
+                          </#list>
+                      </#if>
+                      <#if (formBoList.isExpandRow=='YES')>
+                        <template #${expandRowContent}="{row,rowIndex}">
+                            <#if expandRowJsonType=='self'>
+                                ${expandRowJsonListHtml}
+                            <#elseif expandRowJsonType=='form'>
+                              <rx-form-solution-show :config="expandRowJson" :record="row"></rx-form-solution-show>
+                            <#elseif expandRowJsonType=='list'>
+                              <rx-form-bo-list :config="expandRowJson" :record="row"></rx-form-bo-list>
+                            </#if>
+                        </template>
+                      </#if>
+                    <!---开启搜索过滤2--begin-->
+                      <#if (filterSearchColumns?size > 0)>
+                          <#list filterSearchColumns as search>
+                              <@handFilterSearch search=search search_index=search_index></@handFilterSearch>
+                          </#list>
+                      </#if>
+                    <!---开启搜索过滤2--end-->
+                  </rx-grid>
+                  <!--table-->
+                  <!--layout-->
+                  <rx-list-layout-view v-else
+                                       :type="listLayout"
+                                       :config="listLayoutJson[listLayout].config"
+                                       :loadDataOnstart="loadDataOnstart"
+                                       :defaultPageSize="${formBoList.pageSize}"
+                                       :idField="formBoList.idField"
+                                       :showPage="'${formBoList.isPage}'=='YES'"
+                                       data-field="result.data"
+                                       :columns="columns"
+                                       url="${ctxPath}/api-form/form/core/formBoList/${formBoList.key}/getData"
+                                       ref="layoutTable"
+                                       @selectChange="selectChange"
+                                       @rowDblClick="rowDblClick"
+                                       @rowClick="rowClick"
+                                       :getCheckboxProps="getCheckboxPropsFun"
+                                       :queryParam="queryParam"
+                                       :allowRowSelect="true"
+                                       :multiSelect="formBoList.multiSelect"
+                                       @getListData="getListData"
+                  >
+                  </rx-list-layout-view>
+                </div>
+                <!--layout-->
+              </div>
+              <div v-if="(formBoList.multiSelect==true && formBoList.isPage=='YES' && formBoList.isDialog=='YES')" class="list-dialog-layout" showButton="true">
+                <div class="list-dialog-header">
+                  <div class="list-dialog-header-text">已选（{{selectedRows.length}}）</div>
+                  <div class="list-dialog-del-all" @click.stop="cleanListDialogSelectAll"><rx-icon-show icon="icon-linea-shanchuqingchu"/>清空</div>
+                </div>
+                <a-table size="small" :rowKey="formBoList.idField"  v-bind="selectedTable">
+                  <template #bodyCell="{ text, column, index, record }">
+                    <template v-if="column.dataIndex === 'action'">
+                      <span class="list-dialog-del-btn" @click="handleDeleteSelected(record,index)"><rx-icon-show icon='icon-lineVue3_delete'/></span>
+                    </template>
+                  </template>
+                </a-table>
+              </div>
+            </div>
+          </template>
+        </rx-fit>
+      </template>
+    </rx-fit>
+  </template>
+</rx-layout>
+</template>
+
+<!--script-->
+<script>
+  export default {
+    name: "${formBoList.key}",
+    data() {
+      return {
+        buttonHidden:['head'],
+        alias:"${formBoList.key}<#noparse><#if pmtAlias??>_${pmtAlias}</#if></#noparse>",
+        columns:${gridColumns?replace('"<func>', '')?replace('</func>"', '')},
+        expandConfig:{
+          <#if (formBoList.isExpandRow=='YES')>
+          labelField:'${expandField}',
+          </#if>
+        },
+        <#if (formBoList.showSummaryRow=='YES')>
+        footerConfig:[
+            <#if (isSummaryPage=='YES')>{ <#if (formBoList.multiSelect=='NO')>radio<#else>checkbox</#if>:{title:'${formBoList.summaryPageName}'},mergeCell:[{row:0,col:0,rowspan:1,colspan:2}]},</#if>
+          {<#if (formBoList.multiSelect=='NO')>radio<#else>checkbox</#if>:{title:'${formBoList.summaryName}'},mergeCell:[{row:<#if (isSummaryPage=='YES')>1<#else>0</#if>,col:0,rowspan:1,colspan:2}]}
+        ],
+        </#if>
+        <#if formBoList.dataStyle=='tree'>
+        treeConfig:{
+          transform:true,
+          rowField: '<#if formBoList.useCondSql=='WEBREQ' || formBoList.useCondSql=='INTERFACE'>${idField}<#else>${idField?upper_case}</#if>',
+          parentField: '<#if formBoList.useCondSql=='WEBREQ' || formBoList.useCondSql=='INTERFACE'>${parentField}<#else>${parentField?upper_case}</#if>',
+          lazy: ${(formBoList.isLazy=='YES')?string('true','false')},
+          hasChild: 'hasChild',
+          <#if formBoList.isLazy=='YES'>
+          loadMethod:this.rowExpandMethod
+          </#if>
+        },
+        </#if>
+        urlConfig:{
+          ajaxType:'post',
+          contentType:'json',
+          queryParam:{},
+          dataField:'result.data',
+          totalField:'result.totalCount'
+        },
+        pageConfig:{
+          <#if formBoList.pageSize??>pageSize:${formBoList.pageSize},</#if>
+          pageSizes:[10,20,30,40,50]
+        },
+        loadDataOnstart:${(formBoList.isInitData?? && formBoList.isInitData=='YES')?string('true','false')},
+        //rx-fit,搜索栏放在头部或者 弹框 ；
+        isheader:<#if (formBoList.isSearchHeader?? && formBoList.isSearchHeader=='YES')>true<#else>false</#if>,
+        islayout:<#if (formBoList.isSearchLayout?? && formBoList.isSearchLayout=='YES')>true<#else>false</#if>,
+        searches:[],
+        <#if expandRowJsonType!='self'>
+        expandRowJson:${expandRowJson},
+        </#if>
+        topButtonColumns:${topButtonHtml?replace('"<func>', '')?replace('</func>"', '')},
+        <#if (searchColumns?size > 0)>
+        <#list searchColumns as search>
+        <#if (search.type=='query' && (search.fc=='checkboxgroup' || search.fc=='select' || search.fc=='treeselect') && !search.from??)>
+        selectOptions${search_index}:[],
+        <#elseif (search.type=='query' && (search.fc=='checkboxgroup' || search.fc=='select' || search.fc=='treeselect') && search.from=='self')>
+        selectOptions${search_index}:${search.props},
+        <#elseif (search.type=='query' && (search.fc=='select' || search.fc=='treeselect') && search.from=='sql')>
+        selectParams${search_index}:${search.params},
+        </#if>
+        </#list>
+        </#if>
+        <#list cellEditorColumns as cellEditor>
+        <#if (cellEditor.type=='control' && cellEditor.control=='select' && !cellEditor.controlConf??)>
+        cellOptions${cellEditor_index}:[],
+        <#elseif (cellEditor.type=='control' && cellEditor.control=='dialog' && !cellEditor.controlConf??)>
+        returnFields${cellEditor_index}:[],
+        <#elseif (cellEditor.type=='control' && cellEditor.control=='select' && cellEditor.controlConf.from=='self')>
+        cellOptions${cellEditor_index}:${cellEditor.controlConf.props},
+        <#elseif (cellEditor.type=='control' && cellEditor.control=='dialog')>
+        returnFields${cellEditor_index}:${cellEditor.controlConf.returnFields},
+        </#if>
+        </#list>
+        <#if (tabTreeColumns?size>0)>activeKey: '${tabTreeColumns[0].tabName}', </#if>
+        //<!---开启搜索过滤3--begin-->
+        <#if (filterSearchColumns?size > 0)>
+        <#list filterSearchColumns as search>
+        <#if (search.type=='query' && (search.fc=='checkboxgroup' || search.fc=='select' || search.fc=='treeselect') && !search.from??)>
+        selectOptions${search_index}:[],
+        <#elseif (search.type=='query' && (search.fc=='checkboxgroup' || search.fc=='select' || search.fc=='treeselect') && search.from=='self')>
+        selectOptions${search_index}:${search.props},
+        <#elseif (search.type=='query' && (search.fc=='select' || search.fc=='treeselect') && search.from=='sql')>
+        selectParams${search_index}:${search.params},
+        </#if>
+        </#list>
+        </#if>
+       // <!---开启搜索过滤3--end-->
+        temVar:{},
+        flowData:[],
+        formBoList:{
+          isPage: '${formBoList.isPage}',
+          isShowSelectColumn: '${formBoList.isShowSelectColumn}',
+          multiSelect:
+              <#noparse>
+              <#if params ?? && params.single ?? && params.single == "false" >
+          ${(params.single=="true")?string('false','true')},
+          <#elseif params ?? && params.single == "true" >
+      false,
+          <#else>
+      ${formBoList.multiSelect},
+    </#if>
+      </#noparse>
+      formAlias: '${formAlias}',
+          formAddAlias: '${formAddAlias}',
+          formDetailAlias: '${formDetailAlias}',
+          rowEdit: '${formBoList.rowEdit}',
+          isMax: '${formBoList.isMax}',
+          width: ${formBoList.width?c},
+          height: ${formBoList.height?c},
+          isShade: '${formBoList.isShade}',
+          tableStyle:<#if formBoList.tableStyle??>${formBoList.tableStyle}<#else>0</#if>,
+          lineHeight:<#if formBoList.lineHeight??>${formBoList.lineHeight}<#else>0</#if>,
+          isShowView: '${formBoList.isShowView}',
+          heightAuto:'${formBoList.heightAuto}',
+          isShowSearch: '${formBoList.isShowSearch}',
+          isFieldShow: '${formBoList.isFieldShow}',
+          id: '${formBoList.id}',
+          appId: '${formBoList.appId}',
+          name: '${formBoList.name}',
+          dataStyle: '${formBoList.dataStyle}',
+          idField: '<#if formBoList.useCondSql=='WEBREQ' || formBoList.useCondSql=='INTERFACE'>${idField}<#else>${idField?upper_case}</#if>',
+          textField: '<#if formBoList.useCondSql=='WEBREQ' || formBoList.useCondSql=='INTERFACE'>${textField}<#else>${textField?upper_case}</#if>',
+          parentField: '<#if formBoList.useCondSql=='WEBREQ' || formBoList.useCondSql=='INTERFACE'>${parentField}<#else>${parentField?upper_case}</#if>',
+          <#if formBoList.publishConf??>
+          publishConf: ${formBoList.publishConf},
+          </#if>
+          <#if formBoList.instColumnConfig??>
+          instColumnConfig: ${formBoList.instColumnConfig},
+          </#if>
+          key: '${formBoList.key}',
+          isDialog:'${formBoList.isDialog}',
+          isTreeDlg:'${isTreeDlg}',
+          isConfig:'NO',
+          busSolution:'${busSolution}'
+    },
+      //默认查询条件参数
+      <#if (searchColumns?size > 0)>
+      tmpQueryParams: {
+        <#list searchColumns as search>
+        <#if (search.type=='query' && search.defaultValConf?? && search.defaultValConf!="")>
+        <#if search.fc=='datepicker' || search.fc=='month' || search.fc=='rangepicker'>queryField_${search.fieldName}<#elseif search.autoFilter=='YES'>"Q_<#if search.tablePre?? && search.tablePre!="">${search.tablePre}.</#if>${search.fieldName}<#if search.dataType=='int'>_I_<#elseif search.dataType=='date'>_D_<#else>_S_</#if>${search.fieldOp}"<#else>${search.fieldName}</#if>:{autoFilter:'${search.autoFilter}',tablePre:'${search.tablePre}',fieldName:'${search.fieldName}',fieldOp:'${search.fieldOp}',defaultValConf:${search.defaultValConf}},
+        </#if>
+        </#list>
+      },
+      <#else >
+      tmpQueryParams:{},
+      </#if>
+      queryId:'<#noparse><#if params?? && params.queryId??>${params.queryId}</#if></#noparse>',
+          showColumns:<#noparse><#if showColumns??>${showColumns}<#else>[]</#if></#noparse>,
+        defaultShowColumns:<#noparse><#if defaultShowColumns??>${defaultShowColumns}<#else>[]</#if></#noparse>,
+        rowButtons:${rowButtons},
+            btnRight:<#noparse><#if btnRight??>${btnRight}<#else>[]</#if></#noparse>,
+        hasAllRight:'<#noparse><#if hasAllRight??>${hasAllRight}</#if></#noparse>',
+            pmtDatas:<#noparse><#if pmtDatas??>${pmtDatas}<#else>{}</#if></#noparse>,
+      groupViewJson:${groupViewJson},
+          listLayoutJson:${listLayoutJson},
+          linkRenders:<@getLinkRenders cols=cellEditorColumns />,
+      linkDefs:<@getLinkConfs cols=cellEditorColumns />,
+      fileRenders:<@getFileRender cols=cellEditorColumns />,
+      //已选择列表
+      selectedTable:{
+        pagination: false,
+            scroll: {y:580},
+        columns : [
+          ...${dialgColumns},
+          {
+            title:this.$ti18('rxList.action','操作'),
+            dataIndex:'action',
+            align:'center',
+            width:50,
+            scopedSlots:{customRender:'action'}
+          }
+        ],
+            dataSource:this.selectedRows?this.selectedRows:[],
+      },
+      <#if fieldRequired??>
+      fieldRequired:${fieldRequired},
+          <#else>
+          fieldRequired:{},
+      </#if>
+      urlParams:{
+        <#noparse>
+        <#if params??&&(params?size>0)>
+            <#assign  keys=params?keys/>
+            <#list keys as key>
+        "${key}":`${params[key]}`,
+      </#list>
+      </#if>
+        </#noparse>
+      },
+    }
+    },
+    created() {
+      <#if (searchColumns?size > 0)>
+      <#list searchColumns as search>
+      <#if (search.type=='query' && (search.fc=='select' || search.fc=='treeselect') && search.from?? && search.from=='sql')>
+      this.searches.push({fieldName:'${search.fieldName}',tablePre:'${search.tablePre}',fieldOp:'${search.fieldOp}',params:${search.params}});
+      </#if>
+      </#list>
+      </#if>
+    },
+    methods: {
+      <#if (tabTreeColumns?size > 0)>
+      <#list tabTreeColumns as tab>
+      <#if tab.onnodeclick?? && bodyScript?index_of(tab.onnodeclick)==-1 >
+      ${tab.onnodeclick}(tree,parenData,active)
+      {
+        this.handTreeClick(active?[tree["${tab.idField}"]]:[], '<#if tab.paramName??>${tab.paramName}</#if>');
+      }
+      ,
+      </#if>
+      </#list>
+      </#if>
+      <#if (topButtonColumns?size > 0)>
+      <#list topButtonColumns as button>
+      <#if button.btnType=='scriptBtn'>
+      ${button.btnClick}(btn){
+          btn.loading = false;
+        this.handButtonUrl('/api-form/form/core/formBoList/'+this.formBoList.key+'/selfButtonExe/${button.btnName}');
+      },
+      </#if>
+      </#list>
+      </#if>
+      ${bodyScript}
+    },
+    computed: {
+      // 固定显示的按钮
+      fixedButtons() {
+          const defaults = ['toggleFullScreen', 'onXLSExportShow', 'onRefresh'];
+          return this.topButtonColumns.filter(x => defaults.includes(x.btnClick));
+      },
+      // 排除固定显示的按钮
+      restButtons() {
+          const defaults = ['toggleFullScreen', 'onXLSExportShow', 'onRefresh', 'onXLSExport'];
+          return this.topButtonColumns.filter(x => !defaults.includes(x.btnClick));
+      },
+      // XLSExport下拉默认导出按钮
+      defaultDropdown() {
+        const defaults = ['onXLSExport'];
+        return this.topButtonColumns.filter(x => defaults.includes(x.btnClick));
+      },
+     // 视图控制
+      viewSetting() {
+        return {"iconType":"icon-park","name":"system","theme":"outline","fill":"#333","strokeLinejoin":"round","strokeLinecap":"round","strokeWidth":4}
+      }
+    },
+  }
+</script>
+<!--script-->
+
+<style scoped>
+  ${cssStyle}
+</style>
